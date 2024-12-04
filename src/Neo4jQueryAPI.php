@@ -44,8 +44,22 @@ class Neo4jQueryAPI
         ]);
         $data = json_decode($response->getBody()->getContents(), true);
 
-        return $data;
+        return $this->normalizeResults($data);
+    }
 
+    private function normalizeResults(array $results): array
+    {
+        if (isset($results['data']['fields']) && isset($results['data']['values'])) {
+            $fields = $results['data']['fields'];
+            $values = $results['data']['values'];
 
+            $normalizedData = array_map(function ($row) use ($fields) {
+                return ['row' => array_combine($fields, $row)];
+            }, $values);
+
+            return ['data' => $normalizedData];
+        }
+
+        return $results; // Return unchanged if no transformation is needed
     }
 }
