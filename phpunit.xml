@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php">
+    <php>
+        <!-- Define environment variables here -->
+        <env name="NEO4J_ADDRESS" value="https://bb79fe35.databases.neo4j.io"/>
+        <env name="NEO4J_USERNAME" value="neo4j"/>
+        <env name="NEO4J_PASSWORD" value="OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0"/>
+    </php>
+</phpunit>

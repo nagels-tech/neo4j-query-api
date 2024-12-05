@@ -2,20 +2,25 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
-use function PHPUnit\Framework\assertEquals;
 
 class Neo4jQueryAPIIntegrationTest1 extends TestCase
 {
-    private string $address;
-    private string $username;
-    private string $password;
-    private string $query;
+
+    public static function setUpBeforeClass(): void
+    {
+        $api = Neo4jQueryAPI::login(
+            'https://bb79fe35.databases.neo4j.io',
+            'neo4j',
+            'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0'
+        );
+
+
+        self::clearDatabase($api);
+
+        self::populateFixtures($api);
+    }
 
     protected function setUp(): void
     {
@@ -26,20 +31,32 @@ class Neo4jQueryAPIIntegrationTest1 extends TestCase
         $this->query = 'MATCH (n:Person) WHERE n.name IN ["neo4j-php-client", "neo4j-symfony"] RETURN n.name';
     }
 
-    /**
-     * Test method using the data provider.
-     *
-     * @dataProvider queryProvider
-     */
+    private static function clearDatabase(Neo4jQueryAPI $api): void
+    {
+
+        $api->run('MATCH (n) DETACH DELETE n', []);
+    }
+
+
+    private static function populateFixtures(Neo4jQueryAPI $api): void
+    {
+
+        $api->run('CREATE (:Person {name: "neo4j-php-client"})', []);
+        $api->run('CREATE (:Person {name: "neo4j-symfony"})', []);
+    }
+
     public function testRunSuccessWithParameters(
         string $address,
         string $username,
         string $password,
         string $query,
-        array $expectedResults
-    ): void {
+        array  $expectedResults
+    ): void
+    {
+
         $api = Neo4jQueryAPI::login($address, $username, $password);
-        $results = $api->run($query);
+
+        $results = $api->run($query, []);
 
         if (isset($results['bookmarks'])) {
             unset($results['bookmarks']);
@@ -48,6 +65,7 @@ class Neo4jQueryAPIIntegrationTest1 extends TestCase
         $this->assertIsArray($results);
         $this->assertEquals($expectedResults, $results);
     }
+
 
     public static function queryProvider(): array
     {

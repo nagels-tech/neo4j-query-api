@@ -12,9 +12,6 @@ use function PHPUnit\Framework\assertEquals;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
-    private string $address;
-    private string $username;
-    private string $password;
 
     protected function setUp(): void
     {
@@ -28,7 +25,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $api = Neo4jQueryAPI::login('https://bb79fe35.databases.neo4j.io', 'neo4j', 'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0');
 
 // Run the query and fetch results
-        $results = $api->run('MATCH (n:Person) RETURN n LIMIT 10');
+        $results = $api->run('MATCH (n:Person) RETURN n LIMIT 10',[]);
         $this->assertIsArray($results);
     }
 }

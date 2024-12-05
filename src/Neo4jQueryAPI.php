@@ -31,12 +31,11 @@ class Neo4jQueryAPI
         return new self($client);
     }
 
-    public function run(string $cypher, string $database = 'neo4j'): array
+    public function run(string $cypher, array $parameters, string $database = 'neo4j'): array
     {
-
         $payload = [
             'statement' => $cypher,
-            'parameters' => new stdClass(),
+            'parameters' => $parameters  === [] ? new  stdClass() : $parameters,
         ];
 
         $response = $this->client->post('/db/' . $database . '/query/v2', [

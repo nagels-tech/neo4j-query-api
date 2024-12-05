@@ -11,16 +11,14 @@ use PHPUnit\Framework\TestCase;
 
 class Neo4jQueryAPIUnitTest extends TestCase
 {
-    private string $address;
-    private string $username;
-    private string $password;
-
     protected function setUp(): void
     {
         parent::setUp();
-        $this->address = 'https://bb79fe35.databases.neo4j.io';
-        $this->username = 'neo4j';
-        $this->password = 'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0';
+
+        // Use environment variables from phpunit.xml
+        $this->address = getenv('NEO4J_ADDRESS');
+        $this->username = getenv('NEO4J_USERNAME');
+        $this->password = getenv('NEO4J_PASSWORD');
     }
 
     public function testCorrectClientSetup(): void
@@ -31,7 +29,6 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
         $clientReflection = new \ReflectionClass(Neo4jQueryAPI::class);
         $clientProperty = $clientReflection->getProperty('client');
-        $clientProperty->setAccessible(true);
         $client = $clientProperty->getValue($neo4jQueryAPI);
 
         $this->assertInstanceOf(Client::class, $client);
@@ -44,20 +41,23 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
     public function testRunSuccess(): void
     {
+
         $mock = new MockHandler([
             new Response(200, ['X-Foo' => 'Bar'], '{"hello":"world"}'),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
+
         $client = new Client(['handler' => $handlerStack]);
 
         $neo4jQueryAPI = new Neo4jQueryAPI($client);
 
-
         $cypherQuery = 'MATCH (n:Person) RETURN n LIMIT 5';
-        $result = $neo4jQueryAPI->run($cypherQuery);
+
+        $result = $neo4jQueryAPI->run($cypherQuery, []);
 
         print_r($result);
+
         $this->assertEquals(['hello' => 'world'], $result);
     }
 }
