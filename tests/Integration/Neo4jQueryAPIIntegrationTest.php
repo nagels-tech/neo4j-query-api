@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -9,6 +10,9 @@ use PHPUnit\Framework\TestCase;
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
 
+    /**
+     * @throws GuzzleException
+     */
     public static function setUpBeforeClass(): void
     {
         $api = Neo4jQueryAPI::login(
@@ -30,16 +34,25 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         self::validateFixtures($api);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private static function clearDatabase(Neo4jQueryAPI $api): void
     {
         $api->run('MATCH (n) DETACH DELETE n',[]);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private static function createConstraints(Neo4jQueryAPI $api): void
     {
         $api->run('CREATE CONSTRAINT IF NOT EXISTS FOR (p:Person1) REQUIRE p.name IS UNIQUE',[]);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private static function populateFixtures(Neo4jQueryAPI $api, array $names): void
     {
         foreach ($names as $name) {
@@ -47,12 +60,18 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         }
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private static function validateFixtures(Neo4jQueryAPI $api): void
     {
         $results = $api->run('MATCH (p:Person) RETURN p.name',[]);
         print_r($results);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     #[DataProvider(methodName: 'queryProvider')]
     public function testRunSuccessWithParameters(
         string $address,
