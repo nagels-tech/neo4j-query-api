@@ -35,7 +35,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
         // Use Reflection to get the client property
         $clientReflection = new \ReflectionClass(Neo4jQueryAPI::class);
         $clientProperty = $clientReflection->getProperty('client');
-        $clientProperty->setAccessible(true); // Make private property accessible
+        // Make private property accessible
         $client = $clientProperty->getValue($neo4jQueryAPI);
 
         $this->assertInstanceOf(Client::class, $client);
