@@ -38,7 +38,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
      */
     private static function clearDatabase(Neo4jQueryAPI $api): void
     {
-        $api->run('MATCH (n) DETACH DELETE n',[]);
+        $api->run('MATCH (n) DETACH DELETE n', []);
     }
 
     /**
@@ -46,7 +46,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
      */
     private static function createConstraints(Neo4jQueryAPI $api): void
     {
-        $api->run('CREATE CONSTRAINT IF NOT EXISTS FOR (p:Person1) REQUIRE p.name IS UNIQUE',[]);
+        $api->run('CREATE CONSTRAINT IF NOT EXISTS FOR (p:Person1) REQUIRE p.name IS UNIQUE', []);
     }
 
     /**
@@ -64,7 +64,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
      */
     private static function validateFixtures(Neo4jQueryAPI $api): void
     {
-        $results = $api->run('MATCH (p:Person) RETURN p.name',[]);
+        $results = $api->run('MATCH (p:Person) RETURN p.name', []);
         print_r($results);
     }
 
@@ -77,9 +77,10 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         string $username,
         string $password,
         string $query,
-        array $parameters,
-        array $expectedResults
-    ): void {
+        array  $parameters,
+        array  $expectedResults
+    ): void
+    {
         $api = Neo4jQueryAPI::login($address, $username, $password);
         $results = $api->run($query, $parameters);
 
@@ -140,6 +141,30 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 'neo4j',
                 'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
                 'MATCH (n:NonExistentLabel) RETURN n',
+                [],
+                [
+                    'data' => [],
+                ],
+            ],
+
+            // Test with an empty name list
+            'testWithEmptyNameList' => [
+                'https://bb79fe35.databases.neo4j.io',
+                'neo4j',
+                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
+                'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
+                ['names' => []],
+                [
+                    'data' => [],
+                ],
+            ],
+
+            // Test for no data
+            'testWithNoData' => [
+                'https://bb79fe35.databases.neo4j.io',
+                'neo4j',
+                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
+                'MATCH (n:Person) WHERE n.age > 100 RETURN n.name',
                 [],
                 [
                     'data' => [],
