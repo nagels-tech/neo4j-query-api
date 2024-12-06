@@ -44,4 +44,4 @@ jobs:
           echo "NEO4J_PASSWORD=${{ secrets.NEO4J_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Run Tests without phpunit.xml
-        run: vendor/bin/phpunit --configuration phpunit.dist.xml --testdox
+        run: vendor/bin/phpunit --configuration phpunit.dist.xml

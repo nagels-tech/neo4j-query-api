@@ -7,10 +7,12 @@
         </testsuite>
     </testsuites>
 
-    <!-- Logging -->
+<!--
+    &lt;!&ndash; Logging &ndash;&gt;
     <logging>
         <log type="testdox" target="php://stdout" />
     </logging>
+-->
 
     <!-- No need to set sensitive information here -->
 </phpunit>
