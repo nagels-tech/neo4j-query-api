@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="vendor/autoload.php">
+    <!-- Test Suite Configuration -->
+    <testsuites>
+        <testsuite name="Application Test Suite">
+            <directory>./tests</directory> <!-- Path to your tests directory -->
+        </testsuite>
+    </testsuites>
+
+    <!-- Logging -->
+    <logging>
+        <log type="testdox" target="php://stdout" />
+    </logging>
+
+    <!-- No need to set sensitive information here -->
+</phpunit>
