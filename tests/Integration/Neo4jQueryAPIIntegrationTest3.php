@@ -32,7 +32,7 @@ class Neo4jQueryAPIIntegrationTest3 extends TestCase
 
     private static function clearDatabase(Neo4jQueryAPI $api): void
     {
-        $api->run('MATCH (n) DETACH DELETE n' ,[]);
+        $api->run('MATCH (n) DETACH DELETE n',[]);
     }
 
     private static function createConstraints(Neo4jQueryAPI $api): void

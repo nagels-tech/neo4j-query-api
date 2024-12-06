@@ -37,11 +37,7 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
 
-      - name: Set up environment variables from secrets
-        run: |
-          echo "NEO4J_ADDRESS=${{ secrets.NEO4J_ADDRESS }}" >> $GITHUB_ENV
-          echo "NEO4J_USERNAME=${{ secrets.NEO4J_USERNAME }}" >> $GITHUB_ENV
-          echo "NEO4J_PASSWORD=${{ secrets.NEO4J_PASSWORD }}" >> $GITHUB_ENV
+
 
       - name: Run Tests without phpunit.xml
         run: vendor/bin/phpunit --configuration phpunit.dist.xml

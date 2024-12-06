@@ -3,6 +3,7 @@
 namespace Neo4j\QueryAPI;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use RuntimeException;
 use stdClass;
@@ -31,6 +32,9 @@ class Neo4jQueryAPI
         return new self($client);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function run(string $cypher, array $parameters, string $database = 'neo4j'): array
     {
         $payload = [
