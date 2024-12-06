@@ -3,6 +3,7 @@
 namespace Neo4j\QueryAPI\Tests\Unit;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -39,6 +40,9 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $this->assertEquals('application/json', $config['headers']['Content-Type']);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function testRunSuccess(): void
     {
 
@@ -56,7 +60,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
         $result = $neo4jQueryAPI->run($cypherQuery, []);
 
-        print_r($result);
+      //  print_r($result);
 
         $this->assertEquals(['hello' => 'world'], $result);
     }
