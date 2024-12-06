@@ -9,16 +9,15 @@ use PHPUnit\Framework\TestCase;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
-
     /**
      * @throws GuzzleException
      */
     public static function setUpBeforeClass(): void
     {
         $api = Neo4jQueryAPI::login(
-            'https://bb79fe35.databases.neo4j.io',
-            'neo4j',
-            'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0'
+            getenv('NEO4J_ADDRESS'),
+            getenv('NEO4J_USERNAME'),
+            getenv('NEO4J_PASSWORD')
         );
 
         // Clear the database
@@ -94,7 +93,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     public static function queryProvider(): array
     {
         return [
-            [
+            // Basic test with exact names
+            'testWithExactNames' => [
                 'https://bb79fe35.databases.neo4j.io',
                 'neo4j',
                 'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
@@ -105,6 +105,57 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                         ['row' => ['n.name' => 'bob1']],
                         ['row' => ['n.name' => 'alicy']],
                     ],
+                ],
+            ],
+
+            // Test with no matching names
+            'testWithNoMatchingNames' => [
+                'https://bb79fe35.databases.neo4j.io',
+                'neo4j',
+                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
+                'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
+                ['names' => ['charlie', 'david']],
+                [
+                    'data' => [],
+                ],
+            ],
+
+            // Test with a single name
+            'testWithSingleName' => [
+                'https://bb79fe35.databases.neo4j.io',
+                'neo4j',
+                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
+                'MATCH (n:Person) WHERE n.name = $name RETURN n.name',
+                ['name' => 'bob1'],
+                [
+                    'data' => [
+                        ['row' => ['n.name' => 'bob1']],
+                    ],
+                ],
+            ],
+
+            // Test for non-existent label
+            'testWithNonExistentLabel' => [
+                'https://bb79fe35.databases.neo4j.io',
+                'neo4j',
+                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
+                'MATCH (n:NonExistentLabel) RETURN n',
+                [],
+                [
+                    'data' => [],
+                ],
+            ],
+
+
+            // Test with an invalid query that should return an error
+            'testWithInvalidQuery' => [
+                'https://bb79fe35.databases.neo4j.io',
+                'neo4j',
+                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
+                'MATCH (n:Person) WHERE n.nonexistentProperty = $value RETURN n.name',
+                ['value' => 'someValue'],
+                [
+                    'data' => [],
                 ],
             ],
         ];

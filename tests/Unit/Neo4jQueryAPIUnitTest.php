@@ -60,7 +60,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
         $result = $neo4jQueryAPI->run($cypherQuery, []);
 
-      //  print_r($result);
+       print_r($result);
 
         $this->assertEquals(['hello' => 'world'], $result);
     }
