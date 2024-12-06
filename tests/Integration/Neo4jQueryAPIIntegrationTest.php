@@ -16,9 +16,10 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->address = 'https://bb79fe35.databases.neo4j.io';
-        $this->username = 'neo4j';
-        $this->password = 'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0';
+        // Use environment variables from phpunit.xml
+        $this->address = getenv('NEO4J_ADDRESS');
+        $this->username = getenv('NEO4J_USERNAME');
+        $this->password = getenv('NEO4J_PASSWORD');
     }
     public function testRunSuccess(): void
     {

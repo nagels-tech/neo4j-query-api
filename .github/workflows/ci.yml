@@ -1,0 +1,48 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches-ignore:
+      - '**' # Ignore all branches pushed as part of a pull request
+  pull_request:
+    branches:
+      - '**'
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: Run PHPUnit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          tools: composer, xdebug
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist
+
+      - name: Verify phpunit.xml
+        run: |
+          if [ ! -f phpunit.xml ]; then
+            echo "phpunit.xml not found, ensure the configuration file exists."
+            exit 1
+          fi
+
+      - name: Run Tests
+        run: vendor/bin/phpunit

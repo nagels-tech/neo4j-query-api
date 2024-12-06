@@ -12,9 +12,9 @@ class Neo4jQueryAPIIntegrationTest2 extends TestCase
     public static function setUpBeforeClass(): void
     {
         $api = Neo4jQueryAPI::login(
-            'https://bb79fe35.databases.neo4j.io',
-            'neo4j',
-            'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0'
+            getenv('NEO4J_ADDRESS'),
+            getenv('NEO4J_USERNAME'),
+            getenv('NEO4J_PASSWORD')
         );
 
         // Clear the database
@@ -30,9 +30,9 @@ class Neo4jQueryAPIIntegrationTest2 extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->address = 'https://bb79fe35.databases.neo4j.io';
-        $this->username = 'neo4j';
-        $this->password = 'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0';
+        $this->address = getenv('NEO4J_ADDRESS');
+        $this->username = getenv('NEO4J_USERNAME');
+        $this->password = getenv('NEO4J_PASSWORD');
         $this->query = 'MATCH (n:Person) RETURN n.name LIMIT 2';
     }
 
