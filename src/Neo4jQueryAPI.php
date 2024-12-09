@@ -25,7 +25,8 @@ class Neo4jQueryAPI
             'timeout' => 10.0,
             'headers' => [
                 'Authorization' => 'Basic ' . base64_encode("$username:$password"),
-                'Content-Type' => 'application/json',
+                'Content-Type' => 'application/vnd.neo4j.query',
+                'Accept'=>'application/vnd.neo4j.query',
             ],
         ]);
 
@@ -57,7 +58,15 @@ class Neo4jQueryAPI
             $values = $results['data']['values'];
 
             $normalizedData = array_map(function ($row) use ($fields) {
-                return ['row' => array_combine($fields, $row)];
+                return [
+                    'row' => array_map(function ($value) {
+                        // Check if the value is an object that represents a Neo4j value and extract its value
+                        if (is_array($value) && isset($value['_value'])) {
+                            return $value['_value']; // Extract the actual value if it's a Neo4j object
+                        }
+                        return $value; // Return as is if it's already a primitive value
+                    }, array_combine($fields, $row)),
+                ];
             }, $values);
 
             return ['data' => $normalizedData];
@@ -65,4 +74,20 @@ class Neo4jQueryAPI
 
         return $results; // Return unchanged if no transformation is needed
     }
+
+    /*    private function normalizeResults(array $results): array
+        {
+            if (isset($results['data']['fields']) && isset($results['data']['values'])) {
+                $fields = $results['data']['fields'];
+                $values = $results['data']['values'];
+
+                $normalizedData = array_map(function ($row) use ($fields) {
+                    return ['row' => array_combine($fields, $row)];
+                }, $values);
+
+                return ['data' => $normalizedData];
+            }
+
+            return $results; // Return unchanged if no transformation is needed
+        }*/
 }

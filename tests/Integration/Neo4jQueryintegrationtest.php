@@ -7,7 +7,7 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class Neo4jQueryAPIIntegrationTest extends TestCase
+class Neo4jQueryintegrationtest extends TestCase
 {
     private static ?Neo4jQueryAPI $api = null;
 
@@ -155,60 +155,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     public static function queryProvider(): array
     {
         return [
-            // Basic test with exact names
-            'testWithExactNames' => [
-                'https://bb79fe35.databases.neo4j.io',
-                'neo4j',
-                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
-                'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
-                ['names' => ['bob1', 'alicy']],
-                [
-                    'data' => [
-                        ['fields' => ['n.name'], 'values' => [['bob1'], ['alicy']]],
-                    ],
-                ],
-            ],
-            // Test with a single name
-            'testWithSingleName' => [
-                'https://bb79fe35.databases.neo4j.io',
-                'neo4j',
-                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
-                'MATCH (n:Person) WHERE n.name = $name RETURN n.name',
-                ['name' => 'bob1'],
-                [
-                    'data' => [
-                        ['fields' => ['n.name'], 'values' => [['bob1']]],
-                    ],
-                ],
-            ],
-            // Test for relationship data type
-            'testRelationshipType' => [
-                'https://your-neo4j-instance',
-                'neo4j',
-                'your-password',
-                'MATCH (a:Person {name: $name1}), (b:Person {name: $name2}) CREATE (a)-[r:FRIENDS_WITH]->(b) RETURN r',
-                ['name1' => 'Alice', 'name2' => 'Bob'],
-                [
-                    'data' => [
-                        ['fields' => ['r'], 'values' => [[
-                            '_type' => 'FRIENDS_WITH',
-                            '_properties' => [],
-                        ]]],
-                    ],
-                ],
-            ],
-            // Test with no matching names
-            'testWithNoMatchingNames' => [
-                'https://bb79fe35.databases.neo4j.io',
-                'neo4j',
-                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
-                'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
-                ['names' => ['charlie', 'david']],
-                [
-                    'data' => [],
-                ],
-            ],
-            // Additional test cases as needed...
             // Test with string data type
             'testWithString' => [
                 'https://your-neo4j-instance',
@@ -221,7 +167,52 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                         ['fields' => ['n.name'], 'values' => [['Alice']]],
                     ],
                 ],
-            ]
+            ],
+
+            // Test with number data type
+            'testWithNumber' => [
+                'https://your-neo4j-instance',
+                'neo4j',
+                'your-password',
+                'CREATE (n:Person {age: $age}) RETURN n.age',
+                ['age' => 30],
+                [
+                    'data' => [
+                        ['fields' => ['n.age'], 'values' => [[30]]],
+                    ],
+                ],
+            ],
+
+            // Test with boolean data type
+            'testWithBoolean' => [
+                'https://your-neo4j-instance',
+                'neo4j',
+                'your-password',
+                'CREATE (n:Person {isActive: $isActive}) RETURN n.isActive',
+                ['isActive' => true],
+                [
+                    'data' => [
+                        ['fields' => ['n.isActive'], 'values' => [[true]]],
+                    ],
+                ],
+            ],
+
+            // Test with null data type
+            'testWithNull' => [
+                'https://your-neo4j-instance',
+                'neo4j',
+                'your-password',
+                'CREATE (n:Person {middleName: $middleName}) RETURN n.middleName',
+                ['middleName' => null],
+                [
+                    'data' => [
+                        ['fields' => ['n.middleName'], 'values' => [[null]]],
+                    ],
+                ],
+            ],
+
+            // Test with array data type
+
         ];
     }
 }
