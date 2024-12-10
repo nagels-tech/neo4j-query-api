@@ -46,48 +46,8 @@ class Neo4jQueryAPI
         $response = $this->client->post('/db/' . $database . '/query/v2', [
             'json' => $payload,
         ]);
-        $data = json_decode($response->getBody()->getContents(), true);
-
-        return $this->normalizeResults($data);
+        return json_decode($response->getBody()->getContents(), true);
     }
 
-    private function normalizeResults(array $results): array
-    {
-        if (isset($results['data']['fields']) && isset($results['data']['values'])) {
-            $fields = $results['data']['fields'];
-            $values = $results['data']['values'];
 
-            $normalizedData = array_map(function ($row) use ($fields) {
-                return [
-                    'row' => array_map(function ($value) {
-                        // Check if the value is an object that represents a Neo4j value and extract its value
-                        if (is_array($value) && isset($value['_value'])) {
-                            return $value['_value']; // Extract the actual value if it's a Neo4j object
-                        }
-                        return $value; // Return as is if it's already a primitive value
-                    }, array_combine($fields, $row)),
-                ];
-            }, $values);
-
-            return ['data' => $normalizedData];
-        }
-
-        return $results; // Return unchanged if no transformation is needed
-    }
-
-    /*    private function normalizeResults(array $results): array
-        {
-            if (isset($results['data']['fields']) && isset($results['data']['values'])) {
-                $fields = $results['data']['fields'];
-                $values = $results['data']['values'];
-
-                $normalizedData = array_map(function ($row) use ($fields) {
-                    return ['row' => array_combine($fields, $row)];
-                }, $values);
-
-                return ['data' => $normalizedData];
-            }
-
-            return $results; // Return unchanged if no transformation is needed
-        }*/
 }

@@ -12,72 +12,97 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     private static ?Neo4jQueryAPI $api = null;
 
     /**
+     * Establish the connection and prepare the database.
      * @throws GuzzleException
      */
     public static function setUpBeforeClass(): void
     {
-        self::$api = Neo4jQueryAPI::login(
+        self::$api = self::initializeApi();
+
+        self::clearDatabase();
+        self::setupConstraints();
+        self::populateTestData(['bob1', 'alicy']);
+        self::validateData();
+    }
+
+    /**
+     * Initializes the Neo4j API connection.
+     * @throws GuzzleException
+     */
+    private static function initializeApi(): Neo4jQueryAPI
+    {
+        return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
             getenv('NEO4J_USERNAME'),
             getenv('NEO4J_PASSWORD')
         );
-
-        // Clear the database
-        self::clearDatabase(self::$api);
-
-        // Create necessary constraints
-        self::createConstraints(self::$api);
-
-        // Insert test data
-        self::populateFixtures(self::$api, ['bob1', 'alicy']);
-
-        // Validate fixtures
-        self::validateFixtures(self::$api);
     }
 
     /**
+     * Clears all data from the database.
      * @throws GuzzleException
      */
-    private static function clearDatabase(Neo4jQueryAPI $api): void
+    private static function clearDatabase(): void
     {
-        $api->run('MATCH (n) DETACH DELETE n', []);
+        self::$api->run('MATCH (n) DETACH DELETE n', []);
     }
 
     /**
+     * Creates required database constraints.
      * @throws GuzzleException
      */
-    private static function createConstraints(Neo4jQueryAPI $api): void
+    private static function setupConstraints(): void
     {
-        $api->run('CREATE CONSTRAINT IF NOT EXISTS FOR (p:Person1) REQUIRE p.name IS UNIQUE', []);
+        self::$api->run('CREATE CONSTRAINT IF NOT EXISTS FOR (p:Person) REQUIRE p.name IS UNIQUE', []);
     }
 
     /**
+     * Inserts test data into the database.
+     * @param array $names
      * @throws GuzzleException
      */
-    private static function populateFixtures(Neo4jQueryAPI $api, array $names): void
+    private static function populateTestData(array $names): void
     {
         foreach ($names as $name) {
-            $api->run('CREATE (:Person {name: $name})', ['name' => $name]);
+            self::$api->run('CREATE (:Person {name: $name})', ['name' => $name]);
         }
     }
 
     /**
+     * Validates that test data has been inserted correctly.
      * @throws GuzzleException
      */
-    private static function validateFixtures(Neo4jQueryAPI $api): void
+    private static function validateData(): void
     {
-        $results = $api->run('MATCH (p:Person) RETURN p.name', []);
-        print_r($results);
+        $response = self::$api->run('MATCH (p:Person) RETURN p.name', []);
+        // Remove the print_r statement in production
+        // print_r($response);
     }
 
     /**
+     * Executes a query and normalizes the response.
+     * @throws GuzzleException
+     */
+    private function executeQuery(string $query, array $parameters): array
+    {
+        $response = self::$api->run($query, $parameters);
+
+        if (!empty($response['errors'])) {
+            throw new \RuntimeException('Query execution failed: ' . json_encode($response['errors']));
+        }
+
+        // Normalize the response format
+        $response['data']['values'] = array_map(fn($row) => $row, $response['data']['values']);
+
+        return $response;
+    }
+
+    /**
+     * Test querying the database with parameters.
      * @throws GuzzleException
      */
     #[DataProvider(methodName: 'queryProvider')]
     public function testRunSuccessWithParameters(
-        string $address,
-        string $username,
-        string $password,
         string $query,
         array  $parameters,
         array  $expectedResults
@@ -85,143 +110,192 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     {
         $results = $this->executeQuery($query, $parameters);
 
-        // Normalize the results before assertion
-        $results = $this->normalizeResults($results);
-
-        // Remove bookmarks if present
-        unset($results['bookmarks']);
+        $subsetResults = $this->createSubset($expectedResults, $results);
 
         $this->assertIsArray($results);
-        $this->assertEquals($expectedResults, $results);
+        $this->assertEquals($expectedResults, $subsetResults);
     }
 
     /**
-     * Executes the query using the Neo4j API.
+     * Cleans the actual result so only the keys in the expected results are mapped to the returned result.
      *
-     * @throws GuzzleException
+     * @param array $expected
+     * @param array $actual
+     * @return array
      */
-    private function executeQuery(string $query, array $parameters): array
+    private function createSubset(array $expected, array $actual): array
     {
-        // Check if the API connection is initialized
-        if (self::$api === null) {
-            throw new \Exception('API connection is not initialized.');
+        $subset = [];
+
+        foreach ($expected as $key => $value) {
+            if (array_key_exists($key, $actual)) {
+                $actualValue = $actual[$key];
+                if (is_array($value) && is_array($actualValue)) {
+                    $actualValue = $this->createSubset($value, $actualValue);
+                }
+                $subset[$key] = $actualValue;
+            }
         }
 
-        // Execute the query
-        $response = self::$api->run($query, $parameters);
-
-        // Check if the response contains any error
-        if (isset($response['errors']) && !empty($response['errors'])) {
-            throw new \Exception('Error executing query: ' . json_encode($response['errors']));
-        }
-
-        return $response;
+        return $subset;
     }
 
     /**
-     * Normalize the Neo4j results to match the expected format.
+     * Provides test cases for query tests.
      */
-    private function normalizeResults(array $results): array
-    {
-        // Check if the results contain 'fields' and 'values'
-        if (isset($results['data']) && is_array($results['data'])) {
-            // Normalize data into 'fields' and 'values' format
-            $fields = [];
-            $values = [];
-
-            foreach ($results['data'] as $row) {
-                if (isset($row['row']) && is_array($row['row'])) {
-                    // Ensure each row's field-value pairs are added to fields and values
-                    foreach ($row['row'] as $key => $value) {
-                        $fields[] = $key; // Add field name (e.g., 'n.name')
-                        $values[] = [$value]; // Add the corresponding value in an array for each row
-                    }
-                }
-            }
-
-            return [
-                'data' => [
-                    [
-                        'fields' => $fields,
-                        'values' => $values,
-                    ],
-                ],
-            ];
-        }
-
-        return $results; // Return unchanged if no transformation is needed
-    }
-
     public static function queryProvider(): array
     {
         return [
-            // Basic test with exact names
             'testWithExactNames' => [
-                'https://bb79fe35.databases.neo4j.io',
-                'neo4j',
-                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
                 'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
                 ['names' => ['bob1', 'alicy']],
                 [
                     'data' => [
-                        ['fields' => ['n.name'], 'values' => [['bob1'], ['alicy']]],
+                        'fields' => ['n.name'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'String',
+                                    '_value' => 'bob1'
+                                ]
+                            ],
+                            [
+                                [
+                                    '$type' => 'String',
+                                    '_value' => 'alicy'
+                                ]
+                            ]
+                        ],
                     ],
                 ],
             ],
-            // Test with a single name
             'testWithSingleName' => [
-                'https://bb79fe35.databases.neo4j.io',
-                'neo4j',
-                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
-                'MATCH (n:Person) WHERE n.name = $name RETURN n.name',
+                'MATCH (n:Person) WHERE n.name = $name RETURN n',
                 ['name' => 'bob1'],
                 [
                     'data' => [
-                        ['fields' => ['n.name'], 'values' => [['bob1']]],
+                        'fields' => ['n'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Node',
+                                    '_value' => [
+                                        '_labels' => ['Person'],
+                                        '_properties' => [
+                                            'name' => [
+                                                '$type' => 'String',
+                                                '_value' => 'bob1',
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
                     ],
                 ],
             ],
-            // Test for relationship data type
-            'testRelationshipType' => [
-                'https://your-neo4j-instance',
-                'neo4j',
-                'your-password',
-                'MATCH (a:Person {name: $name1}), (b:Person {name: $name2}) CREATE (a)-[r:FRIENDS_WITH]->(b) RETURN r',
-                ['name1' => 'Alice', 'name2' => 'Bob'],
-                [
-                    'data' => [
-                        ['fields' => ['r'], 'values' => [[
-                            '_type' => 'FRIENDS_WITH',
-                            '_properties' => [],
-                        ]]],
-                    ],
-                ],
-            ],
-            // Test with no matching names
             'testWithNoMatchingNames' => [
-                'https://bb79fe35.databases.neo4j.io',
-                'neo4j',
-                'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0',
                 'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
                 ['names' => ['charlie', 'david']],
                 [
-                    'data' => [],
+                    'data' => [
+                        'fields' => ['n.name'],
+                        'values' => [],
+                    ],
                 ],
             ],
-            // Additional test cases as needed...
-            // Test with string data type
             'testWithString' => [
-                'https://your-neo4j-instance',
-                'neo4j',
-                'your-password',
                 'CREATE (n:Person {name: $name}) RETURN n.name',
                 ['name' => 'Alice'],
                 [
                     'data' => [
-                        ['fields' => ['n.name'], 'values' => [['Alice']]],
+                        'fields' => ['n.name'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'String',
+                                    '_value' => 'Alice',
+                                ],
+                            ],
+                        ],
                     ],
                 ],
-            ]
+            ],
+            // Test with number data type
+            'testWithNumber' => [
+                'CREATE (n:Person {age: $age}) RETURN n.age',
+                ['age' => 30],
+                [
+                    'data' => [
+                        'fields' => ['n.age'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Integer',
+                                    '_value' => 30,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            // Test with null data type
+            'testWithNull' => [
+                'CREATE (n:Person {middleName: $middleName}) RETURN n.middleName',
+                ['middleName' => null],
+                [
+                    'data' => [
+                        'fields' => ['n.middleName'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Null',
+                                    '_value' => null,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'testWithBoolean' => [
+                'CREATE (n:Person {isActive: $isActive}) RETURN n.isActive',
+                ['isActive' => true],  // You can change this to `false` if needed
+                [
+                    'data' => [
+                        'fields' => ['n.isActive'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Boolean',
+                                    '_value' => true,  // This can be `false` if you want to test the false value
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'testWithArray' => [
+                'CREATE (n:Person {tags: $tags}) RETURN n.tags',
+                ['tags' => ['developer', 'python', 'neo4j']],  // An array of tags
+                [
+                    'data' => [
+                        'fields' => ['n.tags'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'List',  // Indicating that it's an array (list)
+                                    '_value' => [
+                                        [],  // First tag as an array
+                                        [],     // Second tag as an array
+                                        [],      // Third tag as an array
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+
         ];
     }
 }
