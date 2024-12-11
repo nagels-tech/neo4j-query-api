@@ -11,10 +11,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private static ?Neo4jQueryAPI $api = null;
 
-    /**
-     * Establish the connection and prepare the database.
-     * @throws GuzzleException
-     */
     public static function setUpBeforeClass(): void
     {
         self::$api = self::initializeApi();
@@ -25,10 +21,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         self::validateData();
     }
 
-    /**
-     * Initializes the Neo4j API connection.
-     * @throws GuzzleException
-     */
     private static function initializeApi(): Neo4jQueryAPI
     {
         return Neo4jQueryAPI::login(
@@ -38,29 +30,16 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         );
     }
 
-    /**
-     * Clears all data from the database.
-     * @throws GuzzleException
-     */
     private static function clearDatabase(): void
     {
         self::$api->run('MATCH (n) DETACH DELETE n', []);
     }
 
-    /**
-     * Creates required database constraints.
-     * @throws GuzzleException
-     */
     private static function setupConstraints(): void
     {
         self::$api->run('CREATE CONSTRAINT IF NOT EXISTS FOR (p:Person) REQUIRE p.name IS UNIQUE', []);
     }
 
-    /**
-     * Inserts test data into the database.
-     * @param array $names
-     * @throws GuzzleException
-     */
     private static function populateTestData(array $names): void
     {
         foreach ($names as $name) {
@@ -68,21 +47,18 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         }
     }
 
-    /**
-     * Validates that test data has been inserted correctly.
-     * @throws GuzzleException
-     */
     private static function validateData(): void
     {
-        $response = self::$api->run('MATCH (p:Person) RETURN p.name', []);
-        // Remove the print_r statement in production
-        // print_r($response);
+        $response = self::$api->run('MATCH (p:Person) RETURN p.name AS name, p.email AS email, p.age AS age, p AS person', []);
+
+        foreach ($response as $person) {
+            echo $person->get('name');
+            echo $person->get('email');
+            echo $person->get('age');
+
+        }
     }
 
-    /**
-     * Executes a query and normalizes the response.
-     * @throws GuzzleException
-     */
     private function executeQuery(string $query, array $parameters): array
     {
         $response = self::$api->run($query, $parameters);
@@ -91,16 +67,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             throw new \RuntimeException('Query execution failed: ' . json_encode($response['errors']));
         }
 
-        // Normalize the response format
         $response['data']['values'] = array_map(fn($row) => $row, $response['data']['values']);
 
         return $response;
     }
 
-    /**
-     * Test querying the database with parameters.
-     * @throws GuzzleException
-     */
     #[DataProvider(methodName: 'queryProvider')]
     public function testRunSuccessWithParameters(
         string $query,
@@ -116,13 +87,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertEquals($expectedResults, $subsetResults);
     }
 
-    /**
-     * Cleans the actual result so only the keys in the expected results are mapped to the returned result.
-     *
-     * @param array $expected
-     * @param array $actual
-     * @return array
-     */
     private function createSubset(array $expected, array $actual): array
     {
         $subset = [];
@@ -140,11 +104,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         return $subset;
     }
 
-    /**
-     * Provides test cases for query tests.
-     */
     public static function queryProvider(): array
     {
+        $decodedBinary = base64_decode('U29tZSByYW5kb20gYmluYXJ5IGRhdGE=');
         return [
             'testWithExactNames' => [
                 'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
@@ -221,7 +183,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
-            // Test with number data type
             'testWithNumber' => [
                 'CREATE (n:Person {age: $age}) RETURN n.age',
                 ['age' => 30],
@@ -239,7 +200,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
-            // Test with null data type
             'testWithNull' => [
                 'CREATE (n:Person {middleName: $middleName}) RETURN n.middleName',
                 ['middleName' => null],
@@ -259,7 +219,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             ],
             'testWithBoolean' => [
                 'CREATE (n:Person {isActive: $isActive}) RETURN n.isActive',
-                ['isActive' => true],  // You can change this to `false` if needed
+                ['isActive' => true],
                 [
                     'data' => [
                         'fields' => ['n.isActive'],
@@ -267,7 +227,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                             [
                                 [
                                     '$type' => 'Boolean',
-                                    '_value' => true,  // This can be `false` if you want to test the false value
+                                    '_value' => true,
                                 ],
                             ],
                         ],
@@ -276,18 +236,132 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             ],
             'testWithArray' => [
                 'CREATE (n:Person {tags: $tags}) RETURN n.tags',
-                ['tags' => ['developer', 'python', 'neo4j']],  // An array of tags
+                ['tags' => ['developer', 'python', 'neo4j']],
                 [
                     'data' => [
                         'fields' => ['n.tags'],
                         'values' => [
                             [
                                 [
-                                    '$type' => 'List',  // Indicating that it's an array (list)
+                                    '$type' => 'List',
                                     '_value' => [
-                                        [],  // First tag as an array
-                                        [],     // Second tag as an array
-                                        [],      // Third tag as an array
+                                        [],
+                                        [],
+                                        [],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'testWithDate' => [
+                'CREATE (n:Person {date: datetime($date)}) RETURN n.date',
+                ['date' => "2024-12-11T11:00:00Z"],
+                [
+                    'data' => [
+                        'fields' => ['n.date'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'OffsetDateTime',
+                                    '_value' => '2024-12-11T11:00:00Z',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+
+            'testWithDuration' => [
+                'CREATE (n:Person {duration: duration($duration)}) RETURN n.duration',
+                ['duration' => 'P14DT16H12M'],
+                [
+                    'data' => [
+                        'fields' => ['n.duration'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Duration',
+                                    '_value' => 'P14DT16H12M',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            /*'testWithBinary' => [
+                'CREATE (n:Person {binary:$binary}) RETURN n.binary',
+                ['binary' => 'U29tZSByYW5kb20gYmluYXJ5IGRhdGE='],
+                [
+                    'data' => [
+                        'fields' => ['n.binary'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Bytes',
+                                    '_value' => 'U29tZSByYW5kb20gYmluYXJ5IGRhdGE=',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],*/
+            'testWithPoint' => [
+                'CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
+                [
+                    'Point' => [
+                        'longitude' => 1.2, // X-coordinate (longitude)
+                        'latitude' => 3.4,  // Y-coordinate (latitude)
+                        'crs' => 'wgs-84', // Geographic CRS (SRID=4326)
+                    ],
+                ],
+                [
+                    'data' => [
+                        'fields' => ['n.Point'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Point',
+                                    '_value' => 'SRID=4326;POINT (1.2 3.4)',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+
+            'testWithNode' => [
+                'CREATE (n:Person {name: $name, age: $age, location: $location}) RETURN n',
+                [
+                    'name' => 'Ayush',
+                    'age' => 30,
+                    'location' => 'New York',
+                ],
+                [
+                    'data' => [
+                        'fields' => ['n'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Node',
+                                    '_value' => [
+
+                                        '_labels' => ['Person'],
+                                        '_properties' => [
+                                            'name' => [
+                                                '$type' => 'String',
+                                                '_value' => 'Ayush',
+                                            ],
+                                            'age' => [
+                                                '$type' => 'Integer',
+                                                '_value' => 30,
+                                            ],
+                                            'location' => [
+                                                '$type' => 'String',
+                                                '_value' => 'New York',
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],
@@ -296,6 +370,80 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 ],
             ],
 
+            'testWithSimpleRelationship' => [
+                'CREATE (a:Person {name: "A"}), (b:Person {name: "B"}), (a)-[r:FRIENDS]->(b)RETURN a, b, r',
+                [],
+                [
+                    'data' => [
+                        'fields' => ['a', 'b', 'r'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Node',
+                                    '_value' => [
+                                        '_labels' => ['Person'],
+                                        '_properties' => ['name' => ['_value' => 'A']]
+                                    ]
+                                ],
+                                [
+                                    '$type' => 'Node',
+                                    '_value' => [
+                                        '_labels' => ['Person'],
+                                        '_properties' => ['name' => ['_value' => 'B']]
+                                    ]
+                                ],
+                                [
+                                    '$type' => 'Relationship',
+                                    '_value' => [
+
+                                        '_type' => 'FRIENDS',
+                                        '_properties' => []
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+            ],
+            'testWithPath' => [
+                'CREATE (a:Person {name: "A"}), (b:Person {name: "B"}), path = (a)-[r:FRIENDS]->(b) RETURN path',
+                [],
+                [
+                    'data' => [
+                        'fields' => ['path'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Path',
+                                    '_value' => [
+                                        [
+                                            '$type' => 'Node',
+                                            '_value' => [
+                                                '_labels' => ['Person'],
+                                                '_properties' => ['name' => ['_value' => 'A']],
+                                            ],
+                                        ],
+                                        [
+                                            '$type' => 'Relationship',
+                                            '_value' => [
+                                                '_type' => 'FRIENDS',
+                                                '_properties' => [],
+                                            ],
+                                        ],
+                                        [
+                                            '$type' => 'Node',
+                                            '_value' => [
+                                                '_labels' => ['Person'],
+                                                '_properties' => ['name' => ['_value' => 'B']],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 }
