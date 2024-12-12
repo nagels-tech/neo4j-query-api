@@ -8,10 +8,6 @@ use Neo4j\QueryAPI\Objects\Path;
 
 class OGM
 {
-    /**
-     * @param array{'$type': string, '_value': mixed} $object
-     * @return mixed
-     */
     public function map(array $object): mixed
     {
         return match ($object['$type']) {
@@ -46,16 +42,16 @@ class OGM
     private function mapNode(array $nodeData): Node
     {
         return new Node(
-            $nodeData['_labels'], // Node labels
-            $this->mapProperties($nodeData['_properties']) // Node properties
+            $nodeData['_labels'],
+            $this->mapProperties($nodeData['_properties'])
         );
     }
 
     private function mapRelationship(array $relationshipData): Relationship
     {
         return new Relationship(
-            $relationshipData['_type'], // Relationship type
-            $this->mapProperties($relationshipData['_properties']) // Relationship properties
+            $relationshipData['_type'],
+            $this->mapProperties($relationshipData['_properties'])
         );
     }
 
@@ -77,7 +73,6 @@ class OGM
 
     private function mapProperties(array $properties): array
     {
-        // Map properties to their raw values (no special parsing)
         $mappedProperties = [];
         foreach ($properties as $key => $value) {
             $mappedProperties[$key] = $this->map($value);

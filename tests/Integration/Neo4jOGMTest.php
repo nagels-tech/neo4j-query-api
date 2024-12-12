@@ -89,7 +89,6 @@ class Neo4jOGMTest extends TestCase
     }
     public function testWithNode()
     {
-        // Simulate the result from the Neo4j database query
         $data = [
             'data' => [
                 'fields' => ['n'],
@@ -111,20 +110,18 @@ class Neo4jOGMTest extends TestCase
             ]
         ];
 
-
         $nodeData = $data['data']['values'][0][0]['_value'];
         $node = new Person($nodeData['_properties']);
 
         $properties = $node->getProperties();
 
-        $this->assertEquals('Ayush', $properties['name']['_value']);  // Ensure 'name' is a string
-        $this->assertEquals(30, $properties['age']['_value']);        // Ensure 'age' is an integer
-        $this->assertEquals('New York', $properties['location']['_value']); // Ensure 'location' is a string
+        $this->assertEquals('Ayush', $properties['name']['_value']);
+        $this->assertEquals(30, $properties['age']['_value']);
+        $this->assertEquals('New York', $properties['location']['_value']);
     }
 
     public function testWithSimpleRelationship()
     {
-        // Simulate the result from the Neo4j database query
         $data = [
             'data' => [
                 'fields' => ['a', 'b', 'r'],
@@ -156,7 +153,6 @@ class Neo4jOGMTest extends TestCase
             ]
         ];
 
-        // Parse the response and create the nodes and relationship
         $aData = $data['data']['values'][0][0]['_value'];
         $bData = $data['data']['values'][0][1]['_value'];
         $relationshipData = $data['data']['values'][0][2]['_value'];
@@ -165,7 +161,6 @@ class Neo4jOGMTest extends TestCase
         $bNode = new Person($bData['_properties']);
         $relationship = new Relationship($relationshipData['_type'], $relationshipData['_properties']);
 
-        // Assertions
         $this->assertEquals('A', $aNode->getProperties()['name']['_value']);
         $this->assertEquals('B', $bNode->getProperties()['name']['_value']);
         $this->assertEquals('FRIENDS', $relationship->getType());
@@ -173,7 +168,6 @@ class Neo4jOGMTest extends TestCase
 
     public function testWithPath()
     {
-        // Simulate the result from the Neo4j database query
         $data = [
             'data' => [
                 'fields' => ['path'],
@@ -210,7 +204,6 @@ class Neo4jOGMTest extends TestCase
             ]
         ];
 
-        // Parse the response and create the path
         $pathData = $data['data']['values'][0][0]['_value'];
         $nodes = [];
         $relationships = [];
@@ -223,12 +216,10 @@ class Neo4jOGMTest extends TestCase
             }
         }
 
-        // Create the path object
         $path = new Path($nodes, $relationships);
 
-        // Assertions
-        $this->assertCount(2, $path->getNodes()); // Should contain 2 nodes (A and B)
-        $this->assertCount(1, $path->getRelationships()); // Should contain 1 relationship (FRIENDS)
+        $this->assertCount(2, $path->getNodes());
+        $this->assertCount(1, $path->getRelationships());
         $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);
         $this->assertEquals('B', $path->getNodes()[1]->getProperties()['name']['_value']);
     }
