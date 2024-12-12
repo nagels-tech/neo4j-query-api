@@ -3,18 +3,20 @@
 namespace Neo4j\QueryAPI\Objects;
 
 /**
- * Represents a geographical point with longitude, latitude, and SRID (Spatial Reference System Identifier).
+ * Represents a geographical 3D point with longitude, latitude, altitude, and SRID (Spatial Reference System Identifier).
  */
-class Point
+class Point_3D
 {
     /**
      * @param float $longitude The longitude of the point.
      * @param float $latitude The latitude of the point.
+     * @param float $altitude The altitude of the point.
      * @param int $srid The Spatial Reference System Identifier (SRID).
      */
     public function __construct(
         public float $longitude,
         public float $latitude,
+        public float $altitude,
         public int   $srid
     ) {
     }
@@ -40,6 +42,16 @@ class Point
     }
 
     /**
+     * Get the altitude of the point.
+     *
+     * @return float Altitude value.
+     */
+    public function getAltitude(): float
+    {
+        return $this->altitude;
+    }
+
+    /**
      * Get the SRID (Spatial Reference System Identifier) of the point.
      *
      * @return int SRID value.
@@ -50,12 +62,12 @@ class Point
     }
 
     /**
-     * Convert the Point object to a string representation.
+     * Convert the Point3D object to a string representation.
      *
-     * @return string String representation in the format: "SRID=<srid>;POINT (<longitude> <latitude>)".
+     * @return string String representation in the format: "SRID=<srid>;POINT ( <longitude> <latitude> <altitude> )".
      */
     public function __toString(): string
     {
-        return "SRID={$this->srid};POINT ({$this->longitude} {$this->latitude})";
+        return "SRID={$this->srid};POINT ({$this->longitude} {$this->latitude} {$this->altitude})";
     }
 }

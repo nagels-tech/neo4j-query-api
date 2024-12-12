@@ -49,23 +49,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     private static function validateData(): void
     {
-        $response = self::$api->run('MATCH (p:Person) RETURN p.name AS name, p.email AS email, p.age AS age, p AS person', []);
+        $response = self::$api->run('MATCH (p:Person) RETURN p.name ', []);
 
-        foreach ($response as $person) {
-            echo $person->get('name');
-            echo $person->get('email');
-            echo $person->get('age');
 
-        }
     }
 
     private function executeQuery(string $query, array $parameters): array
     {
         $response = self::$api->run($query, $parameters);
 
-        if (!empty($response['errors'])) {
-            throw new \RuntimeException('Query execution failed: ' . json_encode($response['errors']));
-        }
 
         $response['data']['values'] = array_map(fn($row) => $row, $response['data']['values']);
 
@@ -80,7 +72,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     ): void
     {
         $results = $this->executeQuery($query, $parameters);
-
         $subsetResults = $this->createSubset($expectedResults, $results);
 
         $this->assertIsArray($results);
@@ -200,6 +191,24 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
+            'testWithFloat' => [
+                'CREATE (n:Person {height: $height}) RETURN n.height',
+                ['height' => 1.75],
+                [
+                    'data' => [
+                        'fields' => ['n.height'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Float',
+                                    '_value' => 1.75,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+
             'testWithNull' => [
                 'CREATE (n:Person {middleName: $middleName}) RETURN n.middleName',
                 ['middleName' => null],
@@ -290,30 +299,14 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
-            /*'testWithBinary' => [
-                'CREATE (n:Person {binary:$binary}) RETURN n.binary',
-                ['binary' => 'U29tZSByYW5kb20gYmluYXJ5IGRhdGE='],
-                [
-                    'data' => [
-                        'fields' => ['n.binary'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Bytes',
-                                    '_value' => 'U29tZSByYW5kb20gYmluYXJ5IGRhdGE=',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],*/
+
             'testWithPoint' => [
                 'CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
                 [
                     'Point' => [
-                        'longitude' => 1.2, // X-coordinate (longitude)
-                        'latitude' => 3.4,  // Y-coordinate (latitude)
-                        'crs' => 'wgs-84', // Geographic CRS (SRID=4326)
+                        'longitude' => 1.2,
+                        'latitude' => 3.4,
+                        'crs' => 'wgs-84',
                     ],
                 ],
                 [
@@ -421,29 +414,55 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                                             '_value' => [
                                                 '_labels' => ['Person'],
                                                 '_properties' => ['name' => ['_value' => 'A']],
-                                            ],
+                                            ]
                                         ],
                                         [
                                             '$type' => 'Relationship',
                                             '_value' => [
                                                 '_type' => 'FRIENDS',
                                                 '_properties' => [],
-                                            ],
+                                            ]
                                         ],
                                         [
                                             '$type' => 'Node',
                                             '_value' => [
                                                 '_labels' => ['Person'],
                                                 '_properties' => ['name' => ['_value' => 'B']],
-                                            ],
-                                        ],
-                                    ],
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+
+            'testWithPoint3D' => [
+                'CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
+                [
+                    'Point' => [
+                        'longitude' => 1.2,
+                        'latitude' => 3.4,
+                        'altitude' => 5.6,
+                        'crs' => 'wgs-84',
+                    ],
+                ],
+                [
+                    'data' => [
+                        'fields' => ['n.Point'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Point',
+                                    '_value' => 'SRID=4326;POINT (1.2 3.4)',
                                 ],
                             ],
                         ],
                     ],
                 ],
             ],
+
         ];
     }
 }

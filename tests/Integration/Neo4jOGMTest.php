@@ -5,6 +5,7 @@ namespace Neo4j\QueryAPI\Tests\Integration;
 use Neo4j\QueryAPI\Objects\Path;
 use Neo4j\QueryAPI\Objects\Person;
 use Neo4j\QueryAPI\Objects\Point;
+use Neo4j\QueryAPI\Objects\Point_3D;
 use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\OGM;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +24,14 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals(30, $this->ogm->map([
             '$type' => 'Integer',
             '_value' => 30,
+        ]));
+    }
+
+    public function testFloat(): void
+    {
+        $this->assertEquals(1.75, $this->ogm->map([
+            '$type' => 'float',
+            '_value' => 1.75,
         ]));
     }
 
@@ -223,4 +232,8 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);
         $this->assertEquals('B', $path->getNodes()[1]->getProperties()['name']['_value']);
     }
+
+
+
+
 }

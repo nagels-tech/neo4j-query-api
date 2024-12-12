@@ -12,6 +12,7 @@ class OGM
     {
         return match ($object['$type']) {
             'Integer' => $object['_value'],
+            'float' => $object['_value'],
             'String' => $object['_value'],
             'Boolean' => $object['_value'],
             'Null' => $object['_value'],
@@ -79,4 +80,5 @@ class OGM
         }
         return $mappedProperties;
     }
+
 }
