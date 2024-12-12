@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use Neo4j\QueryAPI\Objects\Path;
 use Neo4j\QueryAPI\Objects\Person;
 use Neo4j\QueryAPI\Objects\Point;
 use Neo4j\QueryAPI\Objects\Relationship;
@@ -170,4 +171,65 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals('FRIENDS', $relationship->getType());
     }
 
+    public function testWithPath()
+    {
+        // Simulate the result from the Neo4j database query
+        $data = [
+            'data' => [
+                'fields' => ['path'],
+                'values' => [
+                    [
+                        [
+                            '$type' => 'Path',
+                            '_value' => [
+                                [
+                                    '$type' => 'Node',
+                                    '_value' => [
+                                        '_labels' => ['Person'],
+                                        '_properties' => ['name' => ['_value' => 'A']],
+                                    ],
+                                ],
+                                [
+                                    '$type' => 'Relationship',
+                                    '_value' => [
+                                        '_type' => 'FRIENDS',
+                                        '_properties' => [],
+                                    ],
+                                ],
+                                [
+                                    '$type' => 'Node',
+                                    '_value' => [
+                                        '_labels' => ['Person'],
+                                        '_properties' => ['name' => ['_value' => 'B']],
+                                    ],
+                                ]
+                            ],
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        // Parse the response and create the path
+        $pathData = $data['data']['values'][0][0]['_value'];
+        $nodes = [];
+        $relationships = [];
+
+        foreach ($pathData as $item) {
+            if ($item['$type'] === 'Node') {
+                $nodes[] = new Person($item['_value']['_properties']);
+            } elseif ($item['$type'] === 'Relationship') {
+                $relationships[] = new Relationship($item['_value']['_type'], $item['_value']['_properties']);
+            }
+        }
+
+        // Create the path object
+        $path = new Path($nodes, $relationships);
+
+        // Assertions
+        $this->assertCount(2, $path->getNodes()); // Should contain 2 nodes (A and B)
+        $this->assertCount(1, $path->getRelationships()); // Should contain 1 relationship (FRIENDS)
+        $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);
+        $this->assertEquals('B', $path->getNodes()[1]->getProperties()['name']['_value']);
+    }
 }
