@@ -228,8 +228,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 ],
             ],
             'testWithArray' => [
+
                 'CREATE (n:Person {tags: $tags}) RETURN n.tags',
-                ['tags' => ['developer', 'python', 'neo4j']],
+                [
+                    'tags' => ['bob1', 'alicy'],
+                ],
                 [
                     'data' => [
                         'fields' => ['n.tags'],
@@ -238,9 +241,17 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                                 [
                                     '$type' => 'List',
                                     '_value' => [
-                                        [],
-                                        [],
-                                        [],
+                                        [
+
+                                            '$type' => 'String',
+                                            '_value' => 'bob1'
+
+                                        ],
+                                        [
+                                            '$type' => 'String',
+                                            '_value' => 'alicy'
+
+                                        ]
                                     ],
                                 ],
                             ],
@@ -481,6 +492,30 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                         ]
                     ]
                 ]
+            ],
+            'testWithMap' => [
+                'RETURN {hello: "hello"} AS map',
+                [],
+                [
+                    'data' => [
+                        'fields' => ['map'],
+                        'values' => [ // rows
+                            [ // first row
+                                [ // first element in the first row
+                                    '$type' => 'Map',
+                                    '_value' => [
+                                        'hello' => [
+                                            '$type' => 'String',
+                                            '_value' => 'hello',
+                                        ]
+                                    ],
+
+
+                                ],
+                            ]
+                        ],
+                    ],
+                ],
             ],
 
 

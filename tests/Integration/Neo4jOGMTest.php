@@ -66,6 +66,7 @@ class Neo4jOGMTest extends TestCase
             '_value' => '2024-12-11T11:00:00Z',
         ]));
     }
+
     public function testDuration(): void
     {
         $this->assertEquals('P14DT16H12M', $this->ogm->map([
@@ -102,6 +103,7 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals(100.5, $point->getHeight());
         $this->assertEquals(4979, $point->getSrid());
     }
+
     public function testWithCartesian2DPoint(): void
     {
         $point = $this->ogm->map([
@@ -114,6 +116,7 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals(20.7, $point->getY());
         $this->assertEquals(7203, $point->getSrid());
     }
+
     public function testWithCartesian3DPoint(): void
     {
         $point = $this->ogm->map([
@@ -131,13 +134,35 @@ class Neo4jOGMTest extends TestCase
 
     public function testArray(): void
     {
-        $arrayData = ['developer', 'python', 'neo4j'];
+        $arrayData = ['bob1', 'alicy'];
 
         $this->assertEquals($arrayData, $this->ogm->map([
             '$type' => 'Array',
             '_value' => $arrayData,
         ]));
     }
+
+    public function testMap(): void
+    {
+        $mapData = ['hello' =>
+            [ '$type' => 'String',
+            '_value' => 'hello',]
+        ];
+        $this->assertEquals(
+            $mapData,
+            $this->ogm->map([
+                '$type' => 'Map',
+                '_value' => [
+                    'hello' => [
+                        '$type' => 'String',
+                        '_value' => 'hello',
+                    ],
+                ],
+            ])
+        );
+    }
+
+
     public function testWithNode()
     {
         $data = [
@@ -274,8 +299,6 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);
         $this->assertEquals('B', $path->getNodes()[1]->getProperties()['name']['_value']);
     }
-
-
 
 
 }

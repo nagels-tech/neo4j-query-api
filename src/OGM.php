@@ -20,6 +20,7 @@ class OGM
             'Array' => $object['_value'],
             'Duration' => $object['_value'],
             'OffsetDateTime' => $object['_value'],
+            'Map' => $object['_value'],
             'Point' => $this->parseWKT($object['_value']),
             'Node' => $this->mapNode($object['_value']),
             'Relationship' => $this->mapRelationship($object['_value']),
