@@ -20,7 +20,6 @@ class Neo4jQueryAPIUnitTest extends TestCase
     {
         parent::setUp();
 
-        // Use environment variables from phpunit.xml
         $this->address = getenv('NEO4J_ADDRESS');
         $this->username = getenv('NEO4J_USERNAME');
         $this->password = getenv('NEO4J_PASSWORD');
@@ -32,10 +31,8 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
         $this->assertInstanceOf(Neo4jQueryAPI::class, $neo4jQueryAPI);
 
-        // Use Reflection to get the client property
         $clientReflection = new \ReflectionClass(Neo4jQueryAPI::class);
         $clientProperty = $clientReflection->getProperty('client');
-        // Make private property accessible
         $client = $clientProperty->getValue($neo4jQueryAPI);
 
         $this->assertInstanceOf(Client::class, $client);
@@ -43,7 +40,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $config = $client->getConfig();
         $this->assertEquals(rtrim($this->address, '/'), $config['base_uri']);
         $this->assertEquals('Basic ' . base64_encode("{$this->username}:{$this->password}"), $config['headers']['Authorization']);
-        $this->assertEquals('application/json', $config['headers']['Content-Type']);
+        $this->assertEquals('application/vnd.neo4j.query', $config['headers']['Content-Type']);
     }
 
     /**
@@ -51,7 +48,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
      */
     public function testRunSuccess(): void
     {
-        // Mock a successful response from Neo4j server
+
         $mock = new MockHandler([
             new Response(200, ['X-Foo' => 'Bar'], '{"hello":"world"}'),
         ]);
@@ -61,16 +58,12 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
         $neo4jQueryAPI = new Neo4jQueryAPI($client);
 
-        // Use a sample Cypher query to run on the Neo4j server
         $cypherQuery = 'MATCH (n:Person) RETURN n LIMIT 5';
 
-        // Execute the query and capture the result
+
         $result = $neo4jQueryAPI->run($cypherQuery, []);
 
-        // Output for debugging
-        print_r($result);
 
-        // Verify the response matches the expected output
         $this->assertEquals(['hello' => 'world'], $result);
     }
 }

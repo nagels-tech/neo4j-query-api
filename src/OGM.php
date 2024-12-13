@@ -29,7 +29,7 @@ class OGM
         };
     }
 
-    private function parseWKT(string $wkt): Point
+    public static function parseWKT(string $wkt): Point
     {
         $sridPart = substr($wkt, 0, strpos($wkt, ';'));
         $srid = (int)str_replace('SRID=', '', $sridPart);
@@ -41,28 +41,16 @@ class OGM
         $pointPart = trim($pointPart, ' ()');
         $coordinates = explode(' ', $pointPart);
 
-        if (count($coordinates) == 2) {
-            list($longitude, $latitude) = $coordinates;
-            $x = (float)$longitude;
-            $y = (float)$latitude;
-            $z = 0.0;
-        } elseif (count($coordinates) == 3) {
-            list($longitude, $latitude, $height) = $coordinates;
-            $x = (float)$longitude;
-            $y = (float)$latitude;
-            $z = (float)$height;
+        if (count($coordinates) === 2) {
+            [$x, $y] = $coordinates;
+            $z = null;
+        } elseif (count($coordinates) === 3) {
+            [$x, $y, $z] = $coordinates;
         } else {
-            throw new InvalidArgumentException("Invalid WKT format: unable to parse coordinates.");
+            throw new \InvalidArgumentException("Invalid WKT format: unable to parse coordinates.");
         }
-        return new Point(
-            $longitude,
-            $latitude,
-            $z,
-            $x,
-            $y,
-            $z,
-            $srid
-        );
+
+        return new Point((float)$x, (float)$y, $z !== null ? (float)$z : null, $srid);
     }
 
 

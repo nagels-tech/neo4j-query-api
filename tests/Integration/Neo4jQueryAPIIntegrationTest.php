@@ -82,7 +82,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public static function queryProvider(): array
     {
-        $decodedBinary = base64_decode('U29tZSByYW5kb20gYmluYXJ5IGRhdGE=');
+
         return [
             'testWithExactNames' => [
                 'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',

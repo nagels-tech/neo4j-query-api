@@ -84,10 +84,12 @@ class Neo4jOGMTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Point::class, $point);
-        $this->assertEquals(1.2, $point->getLongitude());
-        $this->assertEquals(3.4, $point->getLatitude());
+        $this->assertEquals(1.2, $point->getX()); // x is longitude
+        $this->assertEquals(3.4, $point->getY()); // y is latitude
+        $this->assertNull($point->getZ()); // Ensure z is null for 2D point
         $this->assertEquals(4326, $point->getSrid());
     }
+
 
     public function testWithWGS84_3DPoint(): void
     {
@@ -98,9 +100,9 @@ class Neo4jOGMTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Point::class, $point);
-        $this->assertEquals(12.34, $point->getLongitude());
-        $this->assertEquals(56.78, $point->getLatitude());
-        $this->assertEquals(100.5, $point->getHeight());
+        $this->assertEquals(12.34, $point->getX());
+        $this->assertEquals(56.78, $point->getY());
+        $this->assertEquals(100.5, $point->getZ());
         $this->assertEquals(4979, $point->getSrid());
     }
 
