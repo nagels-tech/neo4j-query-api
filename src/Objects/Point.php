@@ -15,7 +15,11 @@ class Point
     public function __construct(
         public float $longitude,
         public float $latitude,
-        public int   $srid
+        public float $height,
+        public float $x,
+        public float $y,
+        public float $z,
+        public int   $srid,
     ) {
     }
 
@@ -38,6 +42,39 @@ class Point
     {
         return $this->latitude;
     }
+    public function getHeight(): float
+    {
+        return $this->height;
+    }
+    /**
+     * Get the x of the point.
+     *
+     * @return float x value.
+     */
+    public function getX(): float
+    {
+        return $this->x;
+    }
+    /**
+     * Get the y of the point.
+     *
+     * @return float y value.
+     */
+    public function getY(): float
+    {
+        return $this->y;
+    }
+
+    /**
+     * Get the z of the point.
+     *
+     * @return float z value.
+     */
+    public function getZ(): float
+    {
+        return $this->z;
+    }
+
 
     /**
      * Get the SRID (Spatial Reference System Identifier) of the point.
@@ -56,6 +93,6 @@ class Point
      */
     public function __toString(): string
     {
-        return "SRID={$this->srid};POINT ({$this->longitude} {$this->latitude})";
+        return "SRID={$this->srid};POINT ({$this->longitude} {$this->latitude} {$this->x} {$this->y})";
     }
 }

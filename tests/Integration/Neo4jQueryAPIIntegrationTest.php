@@ -2,26 +2,23 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
-    private static ?Neo4jQueryAPI $api = null;
+    private Neo4jQueryAPI $api;
 
-    public static function setUpBeforeClass(): void
+    public function setUp(): void
     {
-        self::$api = self::initializeApi();
+        $this->api = $this->initializeApi();
 
-        self::clearDatabase();
-        self::setupConstraints();
-        self::populateTestData(['bob1', 'alicy']);
-        self::validateData();
+        $this->clearDatabase();
+        $this->populateTestData(['bob1', 'alicy']);
     }
 
-    private static function initializeApi(): Neo4jQueryAPI
+    private function initializeApi(): Neo4jQueryAPI
     {
         return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
@@ -30,33 +27,21 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         );
     }
 
-    private static function clearDatabase(): void
+    private function clearDatabase(): void
     {
-        self::$api->run('MATCH (n) DETACH DELETE n', []);
+        $this->api->run('MATCH (n) DETACH DELETE n', []);
     }
 
-    private static function setupConstraints(): void
-    {
-        self::$api->run('CREATE CONSTRAINT IF NOT EXISTS FOR (p:Person) REQUIRE p.name IS UNIQUE', []);
-    }
-
-    private static function populateTestData(array $names): void
+    private function populateTestData(array $names): void
     {
         foreach ($names as $name) {
-            self::$api->run('CREATE (:Person {name: $name})', ['name' => $name]);
+            $this->api->run('CREATE (:Person {name: $name})', ['name' => $name]);
         }
-    }
-
-    private static function validateData(): void
-    {
-        $response = self::$api->run('MATCH (p:Person) RETURN p.name ', []);
-
-
     }
 
     private function executeQuery(string $query, array $parameters): array
     {
-        $response = self::$api->run($query, $parameters);
+        $response = $this->api->run($query, $parameters);
 
 
         $response['data']['values'] = array_map(fn($row) => $row, $response['data']['values']);
@@ -157,24 +142,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
-            'testWithString' => [
-                'CREATE (n:Person {name: $name}) RETURN n.name',
-                ['name' => 'Alice'],
-                [
-                    'data' => [
-                        'fields' => ['n.name'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'String',
-                                    '_value' => 'Alice',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            'testWithNumber' => [
+            'testWithInteger' => [
                 'CREATE (n:Person {age: $age}) RETURN n.age',
                 ['age' => 30],
                 [
@@ -208,7 +176,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
-
             'testWithNull' => [
                 'CREATE (n:Person {middleName: $middleName}) RETURN n.middleName',
                 ['middleName' => null],
@@ -237,6 +204,23 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                                 [
                                     '$type' => 'Boolean',
                                     '_value' => true,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'testWithString' => [
+                'CREATE (n:Person {name: $name}) RETURN n.name',
+                ['name' => 'Alice'],
+                [
+                    'data' => [
+                        'fields' => ['n.name'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'String',
+                                    '_value' => 'Alice',
                                 ],
                             ],
                         ],
@@ -281,7 +265,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
-
             'testWithDuration' => [
                 'CREATE (n:Person {duration: duration($duration)}) RETURN n.duration',
                 ['duration' => 'P14DT16H12M'],
@@ -299,8 +282,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
-
-            'testWithPoint' => [
+            'testWithWGS84_2DPoint' => [
                 'CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
                 [
                     'Point' => [
@@ -323,7 +305,71 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
-
+            'testWithWGS84_3DPoint' => [
+                'CREATE (n:Person {Point: point({longitude: $longitude, latitude: $latitude, height: $height, srid: $srid})}) RETURN n.Point',
+                [
+                    'longitude' => 12.34,
+                    'latitude' => 56.78,
+                    'height' => 100.5,
+                    'srid' => 4979,
+                ],
+                [
+                    'data' => [
+                        'fields' => ['n.Point'],
+                        'values' => [
+                            0 => [
+                                0 => [
+                                    '$type' => 'Point',
+                                    '_value' => 'SRID=4979;POINT Z (12.34 56.78 100.5)',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'testWithCartesian2DPoint' => [
+                'CREATE (n:Person {Point: point({x: $x, y: $y, srid: $srid})}) RETURN n.Point',
+                [
+                    'x' => 10.5,
+                    'y' => 20.7,
+                    'srid' => 7203,
+                ],
+                [
+                    'data' => [
+                        'fields' => ['n.Point'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Point',
+                                    '_value' => 'SRID=7203;POINT (10.5 20.7)',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'testWithCartesian3DPoint' => [
+                'CREATE (n:Person {Point: point({x: $x, y: $y, z: $z, srid: $srid})}) RETURN n.Point',
+                [
+                    'x' => 10.5,
+                    'y' => 20.7,
+                    'z' => 30.9,
+                    'srid' => 9157,
+                ],
+                [
+                    'data' => [
+                        'fields' => ['n.Point'],
+                        'values' => [
+                            [
+                                [
+                                    '$type' => 'Point',
+                                    '_value' => 'SRID=9157;POINT Z (10.5 20.7 30.9)',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             'testWithNode' => [
                 'CREATE (n:Person {name: $name, age: $age, location: $location}) RETURN n',
                 [
@@ -362,7 +408,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ],
                 ],
             ],
-
             'testWithSimpleRelationship' => [
                 'CREATE (a:Person {name: "A"}), (b:Person {name: "B"}), (a)-[r:FRIENDS]->(b)RETURN a, b, r',
                 [],
@@ -399,7 +444,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 ],
             ],
             'testWithPath' => [
-                'CREATE (a:Person {name: "A"}), (b:Person {name: "B"}), path = (a)-[r:FRIENDS]->(b) RETURN path',
+                'CREATE (a:Person {name: "A"}), (b:Person {name: "B"}), (a) - [r:FRIENDS] -> (b) WITH a, b, r MATCH path = (a) - [r] -> (b) RETURN path',
                 [],
                 [
                     'data' => [
@@ -438,30 +483,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 ]
             ],
 
-            'testWithPoint3D' => [
-                'CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
-                [
-                    'Point' => [
-                        'longitude' => 1.2,
-                        'latitude' => 3.4,
-                        'altitude' => 5.6,
-                        'crs' => 'wgs-84',
-                    ],
-                ],
-                [
-                    'data' => [
-                        'fields' => ['n.Point'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Point',
-                                    '_value' => 'SRID=4326;POINT (1.2 3.4)',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
 
         ];
     }

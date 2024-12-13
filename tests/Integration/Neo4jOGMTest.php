@@ -75,7 +75,7 @@ class Neo4jOGMTest extends TestCase
     }
 
 
-    public function testPoint(): void
+    public function testWithWGS84_2DPoint(): void
     {
         $point = $this->ogm->map([
             '$type' => 'Point',
@@ -87,6 +87,48 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals(3.4, $point->getLatitude());
         $this->assertEquals(4326, $point->getSrid());
     }
+
+    public function testWithWGS84_3DPoint(): void
+    {
+        // Simulate mapping the raw WKT data into the Point object
+        $point = $this->ogm->map([
+            '$type' => 'Point',
+            '_value' => 'SRID=4979;POINT Z (12.34 56.78 100.5)',
+        ]);
+
+        $this->assertInstanceOf(Point::class, $point);
+        $this->assertEquals(12.34, $point->getLongitude());
+        $this->assertEquals(56.78, $point->getLatitude());
+        $this->assertEquals(100.5, $point->getHeight());
+        $this->assertEquals(4979, $point->getSrid());
+    }
+    public function testWithCartesian2DPoint(): void
+    {
+        $point = $this->ogm->map([
+            '$type' => 'Point',
+            '_value' => 'SRID=7203;POINT (10.5 20.7)',
+        ]);
+
+        $this->assertInstanceOf(Point::class, $point);
+        $this->assertEquals(10.5, $point->getX());
+        $this->assertEquals(20.7, $point->getY());
+        $this->assertEquals(7203, $point->getSrid());
+    }
+    public function testWithCartesian3DPoint(): void
+    {
+        $point = $this->ogm->map([
+            '$type' => 'Point',
+            '_value' => 'SRID=9157;POINT Z (10.5 20.7 30.9)',
+        ]);
+
+        $this->assertInstanceOf(Point::class, $point);
+        $this->assertEquals(10.5, $point->getX());
+        $this->assertEquals(20.7, $point->getY());
+        $this->assertEquals(30.9, $point->getZ());
+        $this->assertEquals(9157, $point->getSrid());
+    }
+
+
     public function testArray(): void
     {
         $arrayData = ['developer', 'python', 'neo4j'];

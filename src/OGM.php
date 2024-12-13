@@ -1,4 +1,5 @@
 <?php
+
 namespace Neo4j\QueryAPI;
 
 use Neo4j\QueryAPI\Objects\Point;
@@ -33,12 +34,36 @@ class OGM
         $srid = (int)str_replace('SRID=', '', $sridPart);
 
         $pointPart = substr($wkt, strpos($wkt, 'POINT') + 6);
+        if (strpos($pointPart, 'Z') !== false) {
+            $pointPart = str_replace('Z', '', $pointPart);
+        }
         $pointPart = trim($pointPart, ' ()');
+        $coordinates = explode(' ', $pointPart);
 
-        list($longitude, $latitude) = explode(' ', $pointPart);
-
-        return new Point((float)$longitude, (float)$latitude, $srid);
+        if (count($coordinates) == 2) {
+            list($longitude, $latitude) = $coordinates;
+            $x = (float)$longitude;
+            $y = (float)$latitude;
+            $z = 0.0;
+        } elseif (count($coordinates) == 3) {
+            list($longitude, $latitude, $height) = $coordinates;
+            $x = (float)$longitude;
+            $y = (float)$latitude;
+            $z = (float)$height;
+        } else {
+            throw new InvalidArgumentException("Invalid WKT format: unable to parse coordinates.");
+        }
+        return new Point(
+            $longitude,
+            $latitude,
+            $z,
+            $x,
+            $y,
+            $z,
+            $srid
+        );
     }
+
 
     private function mapNode(array $nodeData): Node
     {
