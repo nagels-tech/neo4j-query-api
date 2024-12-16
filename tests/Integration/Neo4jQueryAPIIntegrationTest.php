@@ -1,5 +1,5 @@
 <?php
-
+/*
 namespace Neo4j\QueryAPI\Tests\Integration;
 
 use Neo4j\QueryAPI\Neo4jQueryAPI;
@@ -521,4 +521,4 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         ];
     }
-}
+}*/

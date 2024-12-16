@@ -17,7 +17,6 @@ class Neo4jOGMTest extends TestCase
     public function setUp(): void
     {
         $this->ogm = new OGM();
-        $this->api = $this->initializeApi();
     }
     private function initializeApi(): Neo4jQueryAPI
     {
