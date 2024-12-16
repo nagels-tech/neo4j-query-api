@@ -1,7 +1,8 @@
 <?php
-/*
+
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -10,35 +11,48 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
 
+    /**
+     * @throws GuzzleException
+     */
     public function setUp(): void
     {
         $this->api = $this->initializeApi();
 
         $this->clearDatabase();
-        $this->populateTestData(['bob1', 'alicy']);
+        $this->populateTestData();
     }
 
     private function initializeApi(): Neo4jQueryAPI
     {
         return Neo4jQueryAPI::login(
-            getenv('NEO4J_ADDRESS'),
-            getenv('NEO4J_USERNAME'),
-            getenv('NEO4J_PASSWORD')
+            getenv('NEO4J_ADDRESS') ?: 'https://bb79fe35.databases.neo4j.io',
+            getenv('NEO4J_USERNAME') ?: 'neo4j',
+            getenv('NEO4J_PASSWORD') ?: 'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0'
         );
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private function clearDatabase(): void
     {
         $this->api->run('MATCH (n) DETACH DELETE n', []);
     }
 
-    private function populateTestData(array $names): void
+    /**
+     * @throws GuzzleException
+     */
+    private function populateTestData(): void
     {
+        $names = ['bob1', 'alicy'];
         foreach ($names as $name) {
             $this->api->run('CREATE (:Person {name: $name})', ['name' => $name]);
         }
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private function executeQuery(string $query, array $parameters): array
     {
         $response = $this->api->run($query, $parameters);
@@ -49,13 +63,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         return $response;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     #[DataProvider(methodName: 'queryProvider')]
     public function testRunSuccessWithParameters(
         string $query,
         array  $parameters,
         array  $expectedResults
-    ): void
-    {
+    ): void {
         $results = $this->executeQuery($query, $parameters);
         $subsetResults = $this->createSubset($expectedResults, $results);
 
@@ -521,4 +537,4 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         ];
     }
-}*/
+}

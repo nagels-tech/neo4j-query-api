@@ -18,14 +18,7 @@ class Neo4jOGMTest extends TestCase
     {
         $this->ogm = new OGM();
     }
-    private function initializeApi(): Neo4jQueryAPI
-    {
-        return Neo4jQueryAPI::login(
-            getenv('NEO4J_ADDRESS'),
-            getenv('NEO4J_USERNAME'),
-            getenv('NEO4J_PASSWORD')
-        );
-    }
+
     public function testInteger(): void
     {
         $this->assertEquals(30, $this->ogm->map([
