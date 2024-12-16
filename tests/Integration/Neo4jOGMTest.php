@@ -2,10 +2,10 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Objects\Path;
 use Neo4j\QueryAPI\Objects\Person;
 use Neo4j\QueryAPI\Objects\Point;
-use Neo4j\QueryAPI\Objects\Point_3D;
 use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\OGM;
 use PHPUnit\Framework\TestCase;
@@ -17,8 +17,16 @@ class Neo4jOGMTest extends TestCase
     public function setUp(): void
     {
         $this->ogm = new OGM();
+        $this->api = $this->initializeApi();
     }
-
+    private function initializeApi(): Neo4jQueryAPI
+    {
+        return Neo4jQueryAPI::login(
+            getenv('NEO4J_ADDRESS'),
+            getenv('NEO4J_USERNAME'),
+            getenv('NEO4J_PASSWORD')
+        );
+    }
     public function testInteger(): void
     {
         $this->assertEquals(30, $this->ogm->map([
