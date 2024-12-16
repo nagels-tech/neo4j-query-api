@@ -13,6 +13,5 @@
         <log type="testdox" target="php://stdout" />
     </logging>
 -->
-
     <!-- No need to set sensitive information here -->
 </phpunit>
