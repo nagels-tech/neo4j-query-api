@@ -8,11 +8,64 @@ use Neo4j\QueryAPI\Objects\Person;
 use Neo4j\QueryAPI\Objects\Point;
 use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\OGM;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class Neo4jOGMTest extends TestCase
 {
     private OGM $ogm;
+
+    public static function integerDataProvider(): array
+    {
+        return [
+            'Test with age 30' => [
+                'CREATE (n:Person {age: $age}) RETURN n.age',
+                ['age' => 30],
+                30,  // Expected result should be just the integer, not an array
+            ],
+            'Test with age 40' => [
+                'CREATE (n:Person {age: $age}) RETURN n.age',
+                ['age' => 40],
+                40,  // Expected result should be just the integer
+            ],
+
+        ];
+    }
+
+    public static function floatDataProvider(): array
+    {
+        return [
+            'Test with height 1.75' => [
+                'CREATE (n:Person {height: $height}) RETURN n.height',
+                ['height' => 1.75],
+                1.75, // Expecting a float value directly, not wrapped in an array
+            ],
+
+        ];
+    }
+
+    public static function nullDataProvider()
+    {
+        return
+            [
+
+                'testWithNull' => [
+                    'CREATE (n:Person {middleName: $middleName}) RETURN n.middleName',
+                    ['middleName' => null],
+                    null,
+                    ],
+            ];
+    }
+
+    public static function booleanDataProvider():array
+    {
+        return [
+            ['query1', ['_value' => true], true],
+            ['query2', ['_value' => false], false],
+            ['query3', ['_value' => null], null], // Optional if you want to test null as well.
+        ];
+    }
+
 
     public function setUp(): void
     {
@@ -136,20 +189,43 @@ class Neo4jOGMTest extends TestCase
 
     public function testArray(): void
     {
-        $arrayData = ['bob1', 'alicy'];
-
-        $this->assertEquals($arrayData, $this->ogm->map([
+        $input = [
             '$type' => 'Array',
-            '_value' => $arrayData,
-        ]));
+            '_value' => [
+                [
+                    [
+                        '$type' => 'String',
+                        '_value' => 'bob1',
+                    ],
+                    [
+                        '$type' => 'String',
+                        '_value' => 'alicy',
+                    ],
+                ],
+            ],
+        ];
+
+        $expectedOutput = [
+            0 => [
+                [
+                    '$type' => 'String',
+                    '_value' => 'bob1',
+                ],
+                [
+                    '$type' => 'String',
+                    '_value' => 'alicy',
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedOutput, $this->ogm->map($input));
     }
+
+
 
     public function testMap(): void
     {
-        $mapData = ['hello' =>
-            [ '$type' => 'String',
-            '_value' => 'hello',]
-        ];
+        $mapData = ['hello' => 'hello'];
         $this->assertEquals(
             $mapData,
             $this->ogm->map([
@@ -301,6 +377,49 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);
         $this->assertEquals('B', $path->getNodes()[1]->getProperties()['name']['_value']);
     }
+
+    #[DataProvider('integerDataProvider')] public function testWithInteger(string $query, array $parameters, int $expectedResult): void
+    {
+        $actual = $this->ogm->map([
+            '$type' => 'Integer',
+            '_value' => $parameters['age'],
+        ]);
+
+        $this->assertEquals($expectedResult, $actual);
+    }
+
+    #[DataProvider('floatDataProvider')]
+    public function testWithFloat(string $query, array $parameters, float $expectedResult): void
+    {
+        $actual = $this->ogm->map([
+            '$type' => 'float',
+            '_value' => $parameters['height'],
+        ]);
+
+        $this->assertEquals($expectedResult, $actual);
+    }
+
+
+    #[DataProvider('nullDataProvider')]
+    public function testWithNull(string $query, array $parameters, ?string $expectedResult): void
+    {
+        $actual = $this->ogm->map([
+            '$type' => 'Null',
+            '_value' => null,
+        ]);
+        $this->assertEquals($expectedResult, $actual);
+    }
+
+    #[DataProvider('booleanDataProvider')]
+    public function testWithBoolean(string $query, array $parameters, ?bool $expectedResult): void
+    {
+        $actual = $this->ogm->map([
+            '$type' => 'Boolean',
+            '_value' => $parameters['_value'],
+        ]);
+        $this->assertEquals($expectedResult, $actual);
+    }
+
 
 
 }
