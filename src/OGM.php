@@ -20,7 +20,7 @@ class OGM
             'Array' => $object['_value'],
             'Duration' => $object['_value'],
             'OffsetDateTime' => $object['_value'],
-            'Map' => $object['_value'],
+            'Map' => $this->mapProperties($object['_value']),
             'Point' => $this->parseWKT($object['_value']),
             'Node' => $this->mapNode($object['_value']),
             'Relationship' => $this->mapRelationship($object['_value']),
@@ -52,29 +52,7 @@ class OGM
         return new Point((float)$x, (float)$y, $z !== null ? (float)$z : null, $srid);
     }
 
-    /*public static function parseWKT(string $wkt): Point
-            [$x, $y] = $coordinates;
-            $z = null;
-            {
-                $sridPart = substr($wkt, 0, strpos($wkt, ';'));
-                $srid = (int)str_replace('SRID=', '', $sridPart);
 
-                $pointPart = substr($wkt, strpos($wkt, 'POINT') + 6);
-                if (strpos($pointPart, 'Z') !== false) {
-                    $pointPart = str_replace('Z', '', $pointPart);
-                }
-                $pointPart = trim($pointPart, ' ()');
-                $coordinates = explode(' ', $pointPart);
-
-                if (count($coordinates) === 2) {
-        } elseif (count($coordinates) === 3) {
-            [$x, $y, $z] = $coordinates;
-        } else {
-            throw new \InvalidArgumentException("Invalid WKT format: unable to parse coordinates.");
-        }
-
-        return new Point((float)$x, (float)$y, $z !== null ? (float)$z : null, $srid);
-    }*/
 
 
     private function mapNode(array $nodeData): Node
