@@ -66,6 +66,15 @@ class Neo4jOGMTest extends TestCase
         ];
     }
 
+    public static function stringDataProvider():array
+    {
+        return [
+            ['query1', ['_value' => 'Hello, world!'], 'Hello, world!'],
+            ['query2', ['_value' => ''], ''], // Test empty string
+            ['query3', ['_value' => null], null], // Optional if null handling is needed
+        ];
+    }
+
 
     public function setUp(): void
     {
@@ -146,7 +155,7 @@ class Neo4jOGMTest extends TestCase
 
     public function testWithWGS84_3DPoint(): void
     {
-        // Simulate mapping the raw WKT data into the Point object
+
         $point = $this->ogm->map([
             '$type' => 'Point',
             '_value' => 'SRID=4979;POINT Z (12.34 56.78 100.5)',
@@ -415,6 +424,16 @@ class Neo4jOGMTest extends TestCase
     {
         $actual = $this->ogm->map([
             '$type' => 'Boolean',
+            '_value' => $parameters['_value'],
+        ]);
+        $this->assertEquals($expectedResult, $actual);
+    }
+
+    #[DataProvider('stringDataProvider')]
+    public function testWithString(string $query, array $parameters, ?string $expectedResult): void
+    {
+        $actual = $this->ogm->map([
+            '$type' => 'String',
             '_value' => $parameters['_value'],
         ]);
         $this->assertEquals($expectedResult, $actual);

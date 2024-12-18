@@ -3,7 +3,9 @@
 namespace Neo4j\QueryAPI\Tests\Integration;
 
 use GuzzleHttp\Exception\GuzzleException;
+use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Service\Neo4jClient;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -77,6 +79,22 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertIsArray($results);
         $this->assertEquals($expectedResults, $subsetResults);
+    }
+
+    public function testInvalidQueryException(): void
+    {
+        $this->expectException(Neo4jException::class);
+
+        try {
+            $client = new Neo4jClient();
+            $client->executeQuery('CREATE (:Person {createdAt: $date})', [
+                'date' => new \DateTime('2000-01-01 00:00:00')
+            ]);
+        } catch (Neo4jException $e) {
+            $this->assertEquals('Neo.DatabaseError.Database.UnableToStartDatabase', $e->getErrorCode());
+            $this->assertEquals('Unable to start database.', $e->getMessage());
+            throw $e;
+        }
     }
 
     private function createSubset(array $expected, array $actual): array
