@@ -5,6 +5,7 @@ namespace Neo4j\QueryAPI;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Neo4j\QueryAPI\Results\ResultSet;
 use RuntimeException;
 use stdClass;
 
@@ -36,17 +37,24 @@ class Neo4jQueryAPI
     /**
      * @throws GuzzleException
      */
-    public function run(string $cypher, array $parameters, string $database = 'neo4j'): array
+    public function run(string $cypher, array $parameters, string $database = 'neo4j'): ResultSet
     {
         $payload = [
             'statement' => $cypher,
-            'parameters' => $parameters  === [] ? new  stdClass() : $parameters,
+            'parameters' => $parameters === [] ? new stdClass() : $parameters,
         ];
 
         $response = $this->client->post('/db/' . $database . '/query/v2', [
             'json' => $payload,
         ]);
-        return json_decode($response->getBody()->getContents(), true);
+
+
+        $data = json_decode($response->getBody()->getContents(), true);
+
+
+        $ogm = new OGM();
+
+        return new ResultSet($data['data']['fields'], $data['data']['values'], $ogm);
     }
 
 

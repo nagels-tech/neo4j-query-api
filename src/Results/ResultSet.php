@@ -13,10 +13,6 @@ class ResultSet implements IteratorAggregate
 
     public function __construct(private array $keys, private array $resultRows, private OGM $ogm)
     {
-        if (empty($this->keys)) {
-            throw new InvalidArgumentException('The keys array cannot be empty.');
-        }
-
         $this->rows = array_map(function ($resultRow) {
             $data = [];
             foreach ($this->keys as $index => $key) {
