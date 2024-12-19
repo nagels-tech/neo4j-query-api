@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
@@ -40,7 +41,7 @@ class Neo4jQueryAPI
      * @throws Neo4jException
      * @throws RequestExceptionInterface
      */
-    public function run(string $cypher, array $parameters, string $database = 'neo4j'): array
+    public function run(string $cypher, array $parameters, string $database = 'neo4j'): ResultSet
     {
         try {
             // Prepare the payload for the request
@@ -55,7 +56,10 @@ class Neo4jQueryAPI
             ]);
 
             // Decode the response body
-            return json_decode($response->getBody()->getContents(), true);
+            $data = json_decode($response->getBody()->getContents(), true);
+            $ogm = new OGM();
+
+            return new ResultSet($data['data']['fields'], $data['data']['values'], $ogm);
         } catch (RequestExceptionInterface $e) {
             $response = $e->getResponse();
             if ($response !== null) {

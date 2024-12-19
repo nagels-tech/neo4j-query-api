@@ -9,6 +9,10 @@ use Neo4j\QueryAPI\Objects\Path;
 
 class OGM
 {
+    /**
+     * @param array{'$type': string, '_value': mixed} $object
+     * @return mixed
+     */
     public function map(array $object): mixed
     {
         return match ($object['$type']) {
