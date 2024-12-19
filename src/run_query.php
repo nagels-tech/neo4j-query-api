@@ -15,7 +15,7 @@ try {
     );
 
     // Define a Cypher query
-    $query = "MATCH (n:Person {DateTime:'2024-12-11T11:00:00Z'}) RETURN n LIMIT 10";
+    $query = "MATCH (n:Person) RETURN n ";
 
     // Fetch results in plain JSON format
     $plainResults = $api->run($query, [], 'neo4j', false);
