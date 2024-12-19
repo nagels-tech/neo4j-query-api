@@ -17,6 +17,7 @@ class OGM
             'String' => $object['_value'],
             'Boolean' => $object['_value'],
             'Point' => $this->parseWKT($object['_value']),
+            default => $object['_value'],
         };
     }
 
