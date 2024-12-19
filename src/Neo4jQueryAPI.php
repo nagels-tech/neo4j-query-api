@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Neo4j\QueryAPI\Exception\Neo4jException;
+use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
 use stdClass;
 
@@ -36,7 +37,8 @@ class Neo4jQueryAPI
     }
 
     /**
-     * @throws GuzzleException
+     * @throws Neo4jException
+     * @throws RequestExceptionInterface
      */
     public function run(string $cypher, array $parameters, string $database = 'neo4j'): array
     {
@@ -54,20 +56,16 @@ class Neo4jQueryAPI
 
             // Decode the response body
             return json_decode($response->getBody()->getContents(), true);
-        } catch (RequestException $e) {
-            // Catch any HTTP request errors
-            $errorResponse = [
-                'code' => 'Neo.HttpRequestError',
-                'message' => 'HTTP request failed: ' . $e->getMessage(),
-            ];
-            throw Neo4jException::fromNeo4jResponse($errorResponse);
-        } catch (Exception $e) {
-            // Catch any other unexpected errors
-            $errorResponse = [
-                'code' => 'Neo.UnknownError',
-                'message' => 'An unknown error occurred: ' . $e->getMessage(),
-            ];
-            throw Neo4jException::fromNeo4jResponse($errorResponse);
+        } catch (RequestExceptionInterface $e) {
+            $response = $e->getResponse();
+            if ($response !== null) {
+                $contents = $response->getBody()->getContents();
+                $errorResponse = json_decode($contents, true);
+
+                throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
+            }
+
+            throw $e;
         }
     }
 

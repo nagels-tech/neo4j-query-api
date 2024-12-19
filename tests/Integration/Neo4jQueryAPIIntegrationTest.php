@@ -73,7 +73,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         string $query,
         array  $parameters,
         array  $expectedResults
-    ): void {
+    ): void
+    {
         $results = $this->executeQuery($query, $parameters);
         $subsetResults = $this->createSubset($expectedResults, $results);
 
@@ -83,19 +84,43 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testInvalidQueryException(): void
     {
-        $this->expectException(Neo4jException::class);
-
         try {
-            $client = new Neo4jClient();
-            $client->executeQuery('CREATE (:Person {createdAt: $date})', [
+            $this->api->run('CREATE (:Person {createdAt: $invalidParam})', [
                 'date' => new \DateTime('2000-01-01 00:00:00')
             ]);
-        } catch (Neo4jException $e) {
-            $this->assertEquals('Neo.DatabaseError.Database.UnableToStartDatabase', $e->getErrorCode());
-            $this->assertEquals('Unable to start database.', $e->getMessage());
-            throw $e;
+        } catch (\Throwable $e) {
+            $this->assertInstanceOf(Neo4jException::class, $e);
+            $this->assertEquals('Neo.ClientError.Statement.ParameterMissing', $e->getErrorCode());
+            $this->assertEquals('Expected parameter(s): invalidParam', $e->getMessage());
         }
     }
+
+    public function testInvalidInputException(): void
+    {
+        try {
+            $this->api->run('match (n:Person) return', []);
+        } catch (\Throwable $e) {
+            $this->assertInstanceOf(Neo4jException::class, $e);
+            $this->assertEquals('Neo.ClientError.Statement.SyntaxError', $e->getErrorCode());
+            $this->assertEquals('Invalid input \'\': expected an expression, \'*\' or \'DISTINCT\' (line 1, column 24 (offset: 23))
+"match (n:Person) return"
+                        ^', $e->getMessage());
+        }
+    }
+
+    public function testCreateDuplicateConstraintException(): void
+    {
+        try {
+            $this->api->run('CREATE CONSTRAINT person_name FOR (n:Person1) REQUIRE n.name IS UNIQUE', []);
+            $this->fail('Expected a Neo4jException to be thrown.');
+        } catch (Neo4jException $e) {
+//            $errorMessages = $e->getErrorType() . $e->errorSubType() . $e->errorName();
+            $this->assertInstanceOf(Neo4jException::class, $e);
+            $this->assertEquals('Neo.ClientError.Schema.ConstraintWithNameAlreadyExists', $e->getErrorCode());
+            $this->assertNotEmpty($e->getMessage());
+        }
+    }
+
 
     private function createSubset(array $expected, array $actual): array
     {
@@ -113,8 +138,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         return $subset;
     }
-
-
 
 
     public static function queryProvider(): array
