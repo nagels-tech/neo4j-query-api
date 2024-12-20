@@ -32,17 +32,7 @@ class Neo4jOGMTest extends TestCase
         ];
     }
 
-    public static function floatDataProvider(): array
-    {
-        return [
-            'Test with height 1.75' => [
-                'CREATE (n:Person {height: $height}) RETURN n.height',
-                ['height' => 1.75],
-                1.75, // Expecting a float value directly, not wrapped in an array
-            ],
 
-        ];
-    }
 
     public static function nullDataProvider()
     {
@@ -92,7 +82,7 @@ class Neo4jOGMTest extends TestCase
     public function testFloat(): void
     {
         $this->assertEquals(1.75, $this->ogm->map([
-            '$type' => 'float',
+            '$type' => 'Float',
             '_value' => 1.75,
         ]));
     }
@@ -397,16 +387,8 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals($expectedResult, $actual);
     }
 
-    #[DataProvider('floatDataProvider')]
-    public function testWithFloat(string $query, array $parameters, float $expectedResult): void
-    {
-        $actual = $this->ogm->map([
-            '$type' => 'float',
-            '_value' => $parameters['height'],
-        ]);
 
-        $this->assertEquals($expectedResult, $actual);
-    }
+
 
 
     #[DataProvider('nullDataProvider')]

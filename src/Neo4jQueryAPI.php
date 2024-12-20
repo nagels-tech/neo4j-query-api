@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Psr\Http\Client\RequestExceptionInterface;
@@ -59,7 +60,18 @@ class Neo4jQueryAPI
             $data = json_decode($response->getBody()->getContents(), true);
             $ogm = new OGM();
 
-            return new ResultSet($data['data']['fields'], $data['data']['values'], $ogm);
+            $keys = $data['data']['fields'];
+            $values = $data['data']['values'];
+            $rows = array_map(function ($resultRow) use ($ogm, $keys) {
+                $data = [];
+                foreach ($keys as $index => $key) {
+                    $fieldData = $resultRow[$index] ?? null;
+                    $data[$key] = $ogm->map($fieldData);
+                }
+                return new ResultRow($data);
+            }, $values);
+
+            return new ResultSet($rows);
         } catch (RequestExceptionInterface $e) {
             $response = $e->getResponse();
             if ($response !== null) {

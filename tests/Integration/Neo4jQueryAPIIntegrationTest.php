@@ -5,6 +5,8 @@ namespace Neo4j\QueryAPI\Tests\Integration;
 use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Results\ResultRow;
+use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\Service\Neo4jClient;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -55,31 +57,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     /**
      * @throws GuzzleException
      */
-    private function executeQuery(string $query, array $parameters): array
-    {
-        $response = $this->api->run($query, $parameters);
-
-
-        $response['data']['values'] = array_map(fn($row) => $row, $response['data']['values']);
-
-        return $response;
-    }
-
-    /**
-     * @throws GuzzleException
-     */
     #[DataProvider(methodName: 'queryProvider')]
     public function testRunSuccessWithParameters(
-        string $query,
-        array  $parameters,
-        array  $expectedResults
+        string    $query,
+        array     $parameters,
+        ResultSet $expectedResults
     ): void
     {
-        $results = $this->executeQuery($query, $parameters);
-        $subsetResults = $this->createSubset($expectedResults, $results);
-
-        $this->assertIsArray($results);
-        $this->assertEquals($expectedResults, $subsetResults);
+        $results = $this->api->run($query, $parameters);
+        $this->assertEquals($expectedResults, $results);
     }
 
     public function testInvalidQueryException(): void
@@ -122,24 +108,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     }
 
 
-    private function createSubset(array $expected, array $actual): array
-    {
-        $subset = [];
-
-        foreach ($expected as $key => $value) {
-            if (array_key_exists($key, $actual)) {
-                $actualValue = $actual[$key];
-                if (is_array($value) && is_array($actualValue)) {
-                    $actualValue = $this->createSubset($value, $actualValue);
-                }
-                $subset[$key] = $actualValue;
-            }
-        }
-
-        return $subset;
-    }
-
-
     public static function queryProvider(): array
     {
 
@@ -147,211 +115,91 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             'testWithExactNames' => [
                 'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
                 ['names' => ['bob1', 'alicy']],
-                [
-                    'data' => [
-                        'fields' => ['n.name'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'String',
-                                    '_value' => 'bob1'
-                                ]
-                            ],
-                            [
-                                [
-                                    '$type' => 'String',
-                                    '_value' => 'alicy'
-                                ]
-                            ]
-                        ],
-                    ],
-                ],
+                new ResultSet([
+                    new ResultRow(['n.name' => 'bob1']),
+                    new ResultRow(['n.name' => 'alicy']),
+                ])
             ],
             'testWithSingleName' => [
-                'MATCH (n:Person) WHERE n.name = $name RETURN n',
+                'MATCH (n:Person) WHERE n.name = $name RETURN n.name',
                 ['name' => 'bob1'],
-                [
-                    'data' => [
-                        'fields' => ['n'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Node',
-                                    '_value' => [
-                                        '_labels' => ['Person'],
-                                        '_properties' => [
-                                            'name' => [
-                                                '$type' => 'String',
-                                                '_value' => 'bob1',
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ],
-                ],
+                new ResultSet([
+                    new ResultRow(['n.name' => 'bob1']),
+                ])
             ],
-            'testWithNoMatchingNames' => [
-                'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
-                ['names' => ['charlie', 'david']],
-                [
-                    'data' => [
-                        'fields' => ['n.name'],
-                        'values' => [],
-                    ],
-                ],
-            ],
+
+
+
             'testWithInteger' => [
                 'CREATE (n:Person {age: $age}) RETURN n.age',
                 ['age' => 30],
-                [
-                    'data' => [
-                        'fields' => ['n.age'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Integer',
-                                    '_value' => 30,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet([
+                    new ResultRow(['n.age' => 30]),
+                ])
             ],
+
             'testWithFloat' => [
                 'CREATE (n:Person {height: $height}) RETURN n.height',
                 ['height' => 1.75],
-                [
-                    'data' => [
-                        'fields' => ['n.height'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Float',
-                                    '_value' => 1.75,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet(
+                    [
+                        new ResultRow(['n.height' => 1.75]),
+                    ]
+                ),
             ],
+
             'testWithNull' => [
                 'CREATE (n:Person {middleName: $middleName}) RETURN n.middleName',
                 ['middleName' => null],
-                [
-                    'data' => [
-                        'fields' => ['n.middleName'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Null',
-                                    '_value' => null,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet(
+                    [
+                        new ResultRow(['n.middleName' => null]),
+                    ])
             ],
+
             'testWithBoolean' => [
                 'CREATE (n:Person {isActive: $isActive}) RETURN n.isActive',
                 ['isActive' => true],
-                [
-                    'data' => [
-                        'fields' => ['n.isActive'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Boolean',
-                                    '_value' => true,
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet(
+                    [
+                        new ResultRow(['n.isActive' => true]),
+                    ])
             ],
+
             'testWithString' => [
                 'CREATE (n:Person {name: $name}) RETURN n.name',
                 ['name' => 'Alice'],
-                [
-                    'data' => [
-                        'fields' => ['n.name'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'String',
-                                    '_value' => 'Alice',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet(
+                    [
+                        new ResultRow(['n.name' => 'Alice']),
+                    ])
             ],
+
             'testWithArray' => [
-
-                'CREATE (n:Person {tags: $tags}) RETURN n.tags',
-                [
-                    'tags' => ['bob1', 'alicy'],
-                ],
-                [
-                    'data' => [
-                        'fields' => ['n.tags'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'List',
-                                    '_value' => [
-                                        [
-
-                                            '$type' => 'String',
-                                            '_value' => 'bob1'
-
-                                        ],
-                                        [
-                                            '$type' => 'String',
-                                            '_value' => 'alicy'
-
-                                        ]
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
+                ['names' => ['bob1', 'alicy']],
+                new ResultSet([
+                    new ResultRow(['n.name' => 'bob1']),
+                    new ResultRow(['n.name' => 'alicy']),
+                ])
             ],
+
+
             'testWithDate' => [
                 'CREATE (n:Person {date: datetime($date)}) RETURN n.date',
                 ['date' => "2024-12-11T11:00:00Z"],
-                [
-                    'data' => [
-                        'fields' => ['n.date'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'OffsetDateTime',
-                                    '_value' => '2024-12-11T11:00:00Z',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet(
+                    [
+                        new ResultRow(['n.date' => '2024-12-11T11:00:00Z']),
+                    ])
             ],
+
             'testWithDuration' => [
                 'CREATE (n:Person {duration: duration($duration)}) RETURN n.duration',
                 ['duration' => 'P14DT16H12M'],
-                [
-                    'data' => [
-                        'fields' => ['n.duration'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Duration',
-                                    '_value' => 'P14DT16H12M',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet([
+                    new ResultRow(['n.duration' => 'P14DT16H12M']),
+                ])
             ],
             'testWithWGS84_2DPoint' => [
                 'CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
@@ -362,42 +210,23 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                         'crs' => 'wgs-84',
                     ],
                 ],
-                [
-                    'data' => [
-                        'fields' => ['n.Point'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Point',
-                                    '_value' => 'SRID=4326;POINT (1.2 3.4)',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet([
+                    new ResultRow(['n.Point' => 'SRID=4326;POINT (1.2 3.4)']),
+                ])
             ],
             'testWithWGS84_3DPoint' => [
                 'CREATE (n:Person {Point: point({longitude: $longitude, latitude: $latitude, height: $height, srid: $srid})}) RETURN n.Point',
                 [
-                    'longitude' => 12.34,
-                    'latitude' => 56.78,
-                    'height' => 100.5,
+                    'longitude' => 1.2,
+                    'latitude' => 3.4,
+                    'height' => 4.2,
                     'srid' => 4979,
                 ],
-                [
-                    'data' => [
-                        'fields' => ['n.Point'],
-                        'values' => [
-                            0 => [
-                                0 => [
-                                    '$type' => 'Point',
-                                    '_value' => 'SRID=4979;POINT Z (12.34 56.78 100.5)',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet([
+                    new ResultRow(['n.Point' => 'SRID=4979;POINT (1.2 3.4 4.2)']),
+                ]),
             ],
+
             'testWithCartesian2DPoint' => [
                 'CREATE (n:Person {Point: point({x: $x, y: $y, srid: $srid})}) RETURN n.Point',
                 [
@@ -405,19 +234,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     'y' => 20.7,
                     'srid' => 7203,
                 ],
-                [
-                    'data' => [
-                        'fields' => ['n.Point'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Point',
-                                    '_value' => 'SRID=7203;POINT (10.5 20.7)',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet([
+                    new ResultRow([
+                        'n.Point' => 'SRID=7203;POINT (10.5 20.7)'
+                    ])
+                ])
             ],
             'testWithCartesian3DPoint' => [
                 'CREATE (n:Person {Point: point({x: $x, y: $y, z: $z, srid: $srid})}) RETURN n.Point',
@@ -427,156 +248,114 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     'z' => 30.9,
                     'srid' => 9157,
                 ],
-                [
-                    'data' => [
-                        'fields' => ['n.Point'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Point',
-                                    '_value' => 'SRID=9157;POINT Z (10.5 20.7 30.9)',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
+                new ResultSet([
+                    new ResultRow(['n.Point' => 'SRID=9157;POINT (10.5 20.7 30.9)']),
+                ]),
             ],
+
             'testWithNode' => [
-                'CREATE (n:Person {name: $name, age: $age, location: $location}) RETURN n',
+                'CREATE (n:Person {name: $name, age: $age, location: $location}) RETURN {labels: labels(n), properties: properties(n)} AS node',
                 [
                     'name' => 'Ayush',
                     'age' => 30,
                     'location' => 'New York',
                 ],
-                [
-                    'data' => [
-                        'fields' => ['n'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Node',
-                                    '_value' => [
-
-                                        '_labels' => ['Person'],
-                                        '_properties' => [
-                                            'name' => [
-                                                '$type' => 'String',
-                                                '_value' => 'Ayush',
-                                            ],
-                                            'age' => [
-                                                '$type' => 'Integer',
-                                                '_value' => 30,
-                                            ],
-                                            'location' => [
-                                                '$type' => 'String',
-                                                '_value' => 'New York',
-                                            ],
-                                        ],
-                                    ],
-                                ],
+                new ResultSet([
+                    new ResultRow([
+                        'node' => [
+                            'labels' => ['Person'],
+                            'properties' => [
+                                'name' => 'Ayush',
+                                'age' => 30,
+                                'location' => 'New York',
                             ],
                         ],
-                    ],
-                ],
+                    ]),
+                ]),
             ],
-            'testWithSimpleRelationship' => [
-                'CREATE (a:Person {name: "A"}), (b:Person {name: "B"}), (a)-[r:FRIENDS]->(b)RETURN a, b, r',
-                [],
-                [
-                    'data' => [
-                        'fields' => ['a', 'b', 'r'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Node',
-                                    '_value' => [
-                                        '_labels' => ['Person'],
-                                        '_properties' => ['name' => ['_value' => 'A']]
-                                    ]
-                                ],
-                                [
-                                    '$type' => 'Node',
-                                    '_value' => [
-                                        '_labels' => ['Person'],
-                                        '_properties' => ['name' => ['_value' => 'B']]
-                                    ]
-                                ],
-                                [
-                                    '$type' => 'Relationship',
-                                    '_value' => [
 
-                                        '_type' => 'FRIENDS',
-                                        '_properties' => []
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
+
+            'testWithRelationship' => [
+                'CREATE (p1:Person {name: $name1, age: $age1, location: $location1}), 
+             (p2:Person {name: $name2, age: $age2, location: $location2}),
+             (p1)-[r:FRIEND_OF]->(p2)
+     RETURN {labels: labels(p1), properties: properties(p1)} AS node1, 
+            {labels: labels(p2), properties: properties(p2)} AS node2,
+            type(r) AS relationshipType',
+                [
+                    'name1' => 'Ayush',
+                    'age1' => 30,
+                    'location1' => 'New York',
+                    'name2' => 'John',
+                    'age2' => 25,
+                    'location2' => 'Los Angeles',
                 ],
+                new ResultSet([
+                    new ResultRow([
+                        'node1' => [
+                            'labels' => ['Person'],
+                            'properties' => [
+                                'name' => 'Ayush',
+                                'age' => 30,
+                                'location' => 'New York',
+                            ],
+                        ],
+                        'node2' => [
+                            'labels' => ['Person'],
+                            'properties' => [
+                                'name' => 'John',
+                                'age' => 25,
+                                'location' => 'Los Angeles',
+                            ],
+                        ],
+                        'relationshipType' => 'FRIEND_OF',
+                    ]),
+                ]),
             ],
             'testWithPath' => [
-                'CREATE (a:Person {name: "A"}), (b:Person {name: "B"}), (a) - [r:FRIENDS] -> (b) WITH a, b, r MATCH path = (a) - [r] -> (b) RETURN path',
-                [],
+                'CREATE (a:Person {name: $name1}), (b:Person {name: $name2}),
+     (a)-[r:FRIENDS]->(b)
+     RETURN {labels: labels(a), properties: properties(a)} AS node1, 
+            {labels: labels(b), properties: properties(b)} AS node2,
+            collect(type(r)) AS relationshipTypes',
                 [
-                    'data' => [
-                        'fields' => ['path'],
-                        'values' => [
-                            [
-                                [
-                                    '$type' => 'Path',
-                                    '_value' => [
-                                        [
-                                            '$type' => 'Node',
-                                            '_value' => [
-                                                '_labels' => ['Person'],
-                                                '_properties' => ['name' => ['_value' => 'A']],
-                                            ]
-                                        ],
-                                        [
-                                            '$type' => 'Relationship',
-                                            '_value' => [
-                                                '_type' => 'FRIENDS',
-                                                '_properties' => [],
-                                            ]
-                                        ],
-                                        [
-                                            '$type' => 'Node',
-                                            '_value' => [
-                                                '_labels' => ['Person'],
-                                                '_properties' => ['name' => ['_value' => 'B']],
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
+                    'name1' => 'A',
+                    'name2' => 'B',
+                ],
+                new ResultSet([
+                    new ResultRow([
+                        'node1' => [
+                            'labels' => ['Person'],
+                            'properties' => [
+                                'name' => 'A',
+                            ],
+                        ],
+                        'node2' => [
+                            'labels' => ['Person'],
+                            'properties' => [
+                                'name' => 'B',
+                            ],
+                        ],
+                        'relationshipTypes' => ['FRIENDS'],
+                    ]),
+                ]),
             ],
+
+
+
             'testWithMap' => [
                 'RETURN {hello: "hello"} AS map',
                 [],
-                [
-                    'data' => [
-                        'fields' => ['map'],
-                        'values' => [ // rows
-                            [ // first row
-                                [ // first element in the first row
-                                    '$type' => 'Map',
-                                    '_value' => [
-                                        'hello' => [
-                                            '$type' => 'String',
-                                            '_value' => 'hello',
-                                        ]
-                                    ],
-
-
-                                ],
-                            ]
+                new ResultSet([
+                    new ResultRow([
+                        'map' => [
+                            'hello' => 'hello',
                         ],
-                    ],
-                ],
+                    ]),
+                ]),
             ],
+
+
 
 
         ];

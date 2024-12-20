@@ -35,6 +35,7 @@ class ResultRow implements ArrayAccess
 {
     public function __construct(private array $data)
     {
+
     }
 
 
@@ -53,11 +54,11 @@ class ResultRow implements ArrayAccess
 
     public function offsetSet($offset, $value): void
     {
-        throw new BadMethodCallException("You cant set the value of column {$offset}.");
+        throw new BadMethodCallException("You can't set the value of column {$offset}.");
     }
     public function offsetUnset($offset): void
     {
-            throw new BadMethodCallException("You cant Unset {$offset}.");
+            throw new BadMethodCallException("You can't Unset {$offset}.");
 
     }
 
@@ -67,7 +68,10 @@ class ResultRow implements ArrayAccess
         return $this->offsetGet($row);
     }
 
-
+    public function toArray(): array
+    {
+        return $this->data;
+    }
 }
 
 
