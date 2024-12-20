@@ -1,5 +1,4 @@
 <?php
-//
 namespace Neo4j\QueryAPI\Results;
 
 use InvalidArgumentException;
@@ -9,18 +8,11 @@ use Traversable;
 
 class ResultSet implements IteratorAggregate
 {
-    private array $rows;
-
-    public function __construct(private array $keys, private array $resultRows, private OGM $ogm)
+    /**
+     * @param list<ResultRow> $rows
+     */
+    public function __construct(private readonly array $rows)
     {
-        $this->rows = array_map(function ($resultRow) {
-            $data = [];
-            foreach ($this->keys as $index => $key) {
-                $fieldData = $resultRow[$index] ?? null;
-                $data[$key] = $this->ogm->map($fieldData);
-            }
-            return new ResultRow($data);
-        }, $this->resultRows);
     }
 
     public function getIterator(): Traversable

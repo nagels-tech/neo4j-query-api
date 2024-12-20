@@ -17,21 +17,23 @@ class OGM
     {
         return match ($object['$type']) {
             'Integer' => $object['_value'],
-            'float' => $object['_value'],
+            'Float' => $object['_value'],
             'String' => $object['_value'],
             'Boolean' => $object['_value'],
             'Null' => $object['_value'],
-            'Array' => $object['_value'],
+            'Array' => $object['_value'], // Handle generic arrays
+            'List' => array_map([$this, 'map'], $object['_value']), // Recursively map lists
             'Duration' => $object['_value'],
             'OffsetDateTime' => $object['_value'],
+            'Node' => $this->mapNode($object['_value']),
             'Map' => $this->mapProperties($object['_value']),
             'Point' => $this->parseWKT($object['_value']),
-            'Node' => $this->mapNode($object['_value']),
             'Relationship' => $this->mapRelationship($object['_value']),
             'Path' => $this->mapPath($object['_value']),
             default => throw new \InvalidArgumentException('Unknown type: ' . $object['$type']),
         };
     }
+
     public static function parseWKT(string $wkt): Point
     {
         $sridPart = substr($wkt, 0, strpos($wkt, ';'));
@@ -62,10 +64,11 @@ class OGM
     private function mapNode(array $nodeData): Node
     {
         return new Node(
-            $nodeData['_labels'],
-            $this->mapProperties($nodeData['_properties'])
+            $nodeData['_labels'], // Labels of the node
+            $this->mapProperties($nodeData['_properties']) // Mapped properties
         );
     }
+
 
     private function mapRelationship(array $relationshipData): Relationship
     {

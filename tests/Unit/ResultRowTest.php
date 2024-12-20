@@ -42,7 +42,7 @@ class ResultRowTest extends TestCase
         ]);
 
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage("You cant set the value of column age.");
+        $this->expectExceptionMessage("You can't set the value of column age.");
 
         $row['age'] = 30;
     }
@@ -54,7 +54,7 @@ class ResultRowTest extends TestCase
         ]);
 
         $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage("You cant Unset name.");
+        $this->expectExceptionMessage("You can't Unset name.");
 
         unset($row['name']);
     }

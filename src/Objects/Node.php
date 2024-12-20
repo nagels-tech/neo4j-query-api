@@ -1,5 +1,4 @@
 <?php
-
 namespace Neo4j\QueryAPI\Objects;
 
 /**
@@ -47,5 +46,18 @@ class Node
     public function getProperties(): array
     {
         return $this->properties;
+    }
+
+    /**
+     * Convert the Node object to an array representation.
+     *
+     * @return array Node data as an array.
+     */
+    public function toArray(): array
+    {
+        return [
+            '_labels' => $this->labels,
+            '_properties' => $this->properties,
+        ];
     }
 }
