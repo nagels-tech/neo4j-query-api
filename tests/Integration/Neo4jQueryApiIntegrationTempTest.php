@@ -15,9 +15,10 @@ class Neo4jQueryApiIntegrationTempTest extends TestCase
 
         $this->clearDatabase();
         $this->setupConstraints();
-        $this->api->populateTestData(['bob1', 'alicy']);
-        $this->api->validateData();
+        $this->populateTestData(['bob1', 'alicy']);
+
     }
+
 
     private function initializeApi(): Neo4jQueryAPI
     {
@@ -33,12 +34,21 @@ class Neo4jQueryApiIntegrationTempTest extends TestCase
         $this->api->run('MATCH (n) DETACH DELETE n', []);
     }
 
+    private function setupConstraints(): void
+    {
+        $this->api->run('CREATE CONSTRAINT IF NOT EXISTS FOR (p:Person) REQUIRE p.name IS UNIQUE', []);
+    }
+
     private function populateTestData(array $names): void
     {
         foreach ($names as $name) {
             $this->api->run('CREATE (:Person {name: $name})', ['name' => $name]);
         }
     }
+
+
+
+
 
     public function testResultRowIntegration(): void
     {
