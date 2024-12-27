@@ -85,4 +85,9 @@ class Neo4jQueryAPI
         }
     }
 
+    public function beginTransaction(string $cypher = null, array $parameters = [], string $database = 'neo4j'): Transaction
+    {
+
+    }
+
 }
