@@ -35,6 +35,38 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         );
     }
 
+    public function testTransactionCommit(): void
+    {
+        // This test validates if a transaction exists in its own world until we commit it.
+        // by create a node in our transaction we validate if it exists within the transaction,
+        // but not the database.
+        // After we commit our transaction we are able to validate if our created node exists in the database.
+
+        $tsx = $this->api->beginTransaction();
+
+        // we create a human with a random name and remember our randomly generated name so
+        // we can query its existence.
+        // by creating it in a transaction it should not exist in the real database yet.
+        $name = mt_rand(1, 100000);
+        $tsx->run('CREATE (x:Human {name: $name})', ['name' => $name]);
+
+
+        // we simply validate if the human with the random name does not exist in the database, because we
+        // haven't commited our transaction yet.
+        $results = $this->api->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
+        $this->assertCount(0, $results);
+
+        // The human should of course only exist in the transaction, so we expect a count of 1 here.
+        $results = $tsx->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
+        $this->assertCount(1, $results);
+
+        $tsx->commit();
+
+        // Now that we have commited our transaction, the human should of course exist in our database
+        $results = $this->api->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
+        $this->assertCount(1, $results);
+    }
+
     /**
      * @throws GuzzleException
      */
