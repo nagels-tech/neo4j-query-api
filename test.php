@@ -27,7 +27,7 @@ $headers = [
 
 $client = new Client();
 
-$response = $client->post('http://localhost:7474/db/neo4j/query/v2/tx', [
+$response = $client->post('https://6f72daa1.databases.neo4j.io/db/neo4j/query/v2/tx', [
     'headers' => $headers,
     'body'    => $payload,
 ]);

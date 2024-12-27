@@ -1,32 +1,82 @@
 <?php
-/*
-require 'vendor/autoload.php';
 
-use Laudis\Neo4j\ClientBuilder;
-use Laudis\Neo4j\Authentication\Authenticate;
-
-$address = 'neo4j+s://bb79fe35.databases.neo4j.io';
+$neo4j_url = 'https://f2455ee6.databases.neo4j.io';
 $username = 'neo4j';
-$password = 'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0';
+$password = 'h5YLhuoSnPD6yMy8OwmFPXs6WkL8uX25zxHCKhiF_hY';
 
+function runNeo4jTransaction($query): void
+{
+    global $neo4j_url, $username, $password;
 
-    // Create a Neo4j client using the Laudis PHP driver with authentication
-    $client = ClientBuilder::create()
-        ->withDriver(
-            'bolt',
-            $address,
-            Authenticate::basic($username, $password) // Proper authentication object
-        )
-        ->build();
+    $ch = curl_init();
 
-    // Define the Cypher query
-    $cypherQuery = 'MATCH (n:Person) RETURN n LIMIT 10';
+    echo "Authorization Header: " . base64_encode("$username:$password") . "\n";
 
-    // Run the query and fetch results
-    $results = $client->run($cypherQuery);
+    curl_setopt($ch, CURLOPT_URL, $neo4j_url . '/db/neo4j/transaction/commit');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Content-Type: application/json',
+        'Authorization: Basic ' . base64_encode("$username:$password")
+    ]);
 
-    // Print the results
-    echo "<pre>";  // Optional: formats the output nicely for readability
-    print_r($results->toArray());
-    echo "</pre>";
-*/
+    $payload = json_encode([
+        "statements" => []
+    ]);
+
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+
+    $response = curl_exec($ch);
+    if(curl_errno($ch)) {
+        echo 'Error starting transaction: ' . curl_error($ch);
+        return;
+    }
+
+    echo "Transaction Start Response: ";
+    print_r($response);
+
+    $http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($http_status === 403) {
+        echo "403 Forbidden: Check credentials and permissions.\n";
+    }
+
+    $transaction_data = json_decode($response, true);
+
+    if (!isset($transaction_data['results'])) {
+        echo "Transaction creation failed or missing results. Response: ";
+        print_r($transaction_data);
+        return;
+    }
+
+    $query_data = [
+        "statements" => [
+            [
+                "statement" => $query
+            ]
+        ]
+    ];
+
+    curl_setopt($ch, CURLOPT_URL, $neo4j_url . '/db/neo4j/query/v2/tx');
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($query_data));
+
+    $response = curl_exec($ch);
+    if(curl_errno($ch)) {
+        echo 'Error running query: ' . curl_error($ch);
+        return;
+    }
+
+    $commit_data = json_decode($response, true);
+    if (isset($commit_data['errors']) && count($commit_data['errors']) > 0) {
+        echo "Query error: " . $commit_data['errors'][0]['message'];
+        return;
+    }
+
+    echo "Transaction successful. Data returned: ";
+    print_r($commit_data);
+
+    curl_close($ch);
+}
+
+$query = 'MATCH (n) RETURN n LIMIT 5';
+
+runNeo4jTransaction($query);

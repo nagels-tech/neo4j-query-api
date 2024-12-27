@@ -2,7 +2,7 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
-use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Transaction;
 use Neo4j\QueryAPI\Objects\Path;
 use Neo4j\QueryAPI\Objects\Person;
 use Neo4j\QueryAPI\Objects\Point;
