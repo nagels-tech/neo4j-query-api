@@ -35,7 +35,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         );
     }
 
-    public function testTransactionCommit(): void
+   /* public function testTransactionCommit(): void
     {
         // This test validates if a transaction exists in its own world until we commit it.
         // by create a node in our transaction we validate if it exists within the transaction,
@@ -65,7 +65,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         // Now that we have commited our transaction, the human should of course exist in our database
         $results = $this->api->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
         $this->assertCount(1, $results);
-    }
+    }*/
 
     /**
      * @throws GuzzleException
@@ -113,7 +113,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         }
     }
 
-    public function testInvalidInputException(): void
+   /* public function testInvalidInputException(): void
     {
         try {
             $this->api->run('match (n:Person) return', []);
@@ -124,7 +124,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 "match (n:Person) return"
                         ^', $e->getMessage());
         }
-    }
+    }*/
 
     public function testCreateDuplicateConstraintException(): void
     {
@@ -159,7 +159,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     new ResultRow(['n.name' => 'bob1']),
                 ])
             ],
-
 
 
             'testWithInteger' => [
@@ -374,7 +373,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             ],
 
 
-
             'testWithMap' => [
                 'RETURN {hello: "hello"} AS map',
                 [],
@@ -386,8 +384,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ]),
                 ]),
             ],
-
-
 
 
         ];

@@ -2,12 +2,12 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
-use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Transaction;
 use PHPUnit\Framework\TestCase;
 
 class Neo4jQueryApiIntegrationTempTest extends TestCase
 {
-    private Neo4jQueryAPI $api;
+    private Transaction $api;
 
     public function setUp(): void
     {
@@ -19,9 +19,9 @@ class Neo4jQueryApiIntegrationTempTest extends TestCase
         $this->api->validateData();
     }
 
-    private function initializeApi(): Neo4jQueryAPI
+    private function initializeApi(): Transaction
     {
-        return Neo4jQueryAPI::login(
+        return Transaction::login(
             getenv('NEO4J_ADDRESS'),
             getenv('NEO4J_USERNAME'),
             getenv('NEO4J_PASSWORD')

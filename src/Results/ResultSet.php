@@ -26,4 +26,6 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return count($this->rows);
     }
+
+
 }
