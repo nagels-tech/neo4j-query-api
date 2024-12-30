@@ -85,9 +85,16 @@ class Neo4jQueryAPI
         }
     }
 
-    public function beginTransaction(string $cypher = null, array $parameters = [], string $database = 'neo4j'): Transaction
+    public function beginTransaction(string $database = 'neo4j'): Transaction
     {
+        $response = $this->client->post("/db/neo4j/query/v2/tx");
 
+        $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
+        $responseData = json_decode($response->getBody(), true);
+        $transactionId = $responseData['transaction']['id'];
+
+
+
+        return new Transaction($this->client, $clusterAffinity, $transactionId);
     }
-
 }
