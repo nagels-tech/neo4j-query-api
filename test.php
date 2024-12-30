@@ -5,12 +5,12 @@ require 'vendor/autoload.php'; // Make sure Guzzle is installed (composer requir
 use GuzzleHttp\Client;
 
 //$neo4j_url = '***REMOVED***/db/neo4j/query/v2/tx';
-//$neo4j_url = 'http://localhost:7474/db/neo4j/query/v2/tx';
-$username  = 'neo4j';
-$password = 'your_password';
-//$password  = '***REMOVED***';
+$neo4j_url = '***REMOVED***/';
+$username = 'neo4j';
+//$password = 'your_password';
+$password = '***REMOVED***';
 
-$query = 'CREATE (n:Person) RETURN n';
+$query = 'CREATE (n:Person {name: "Bobby"}) RETURN n';
 
 $auth = base64_encode("$username:$password");
 
@@ -20,8 +20,8 @@ $payload = json_encode([
 
 $headers = [
     'Authorization' => 'Basic ' . $auth,
-    'Content-Type'  => 'application/json',
-    'Accept'        => 'application/json',
+    'Content-Type' => 'application/json',
+    'Accept' => 'application/json',
 ];
 
 
@@ -29,7 +29,7 @@ $client = new Client();
 
 $response = $client->post('***REMOVED***/db/neo4j/query/v2/tx', [
     'headers' => $headers,
-    'body'    => $payload,
+    'body' => $payload,
 ]);
 $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
 $responseData = json_decode($response->getBody(), true);
@@ -37,10 +37,10 @@ $headers['neo4j-cluster-affinity'] = $clusterAffinity;
 
 $transactionId = $responseData['transaction']['id'];
 
-$response = $client->delete('http://localhost:7474/db/neo4j/query/v2/tx/' . $transactionId, [
+/*$response = $client->delete('http://localhost:7474/db/neo4j/query/v2/tx/' . $transactionId, [
     'headers' => $headers,
     'body'    => $payload,
-]);
+]);*/
 $responseData = json_decode($response->getBody(), true);
 
 

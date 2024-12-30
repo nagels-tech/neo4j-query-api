@@ -2,31 +2,22 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use Neo4j\QueryAPI\Transaction;
+use Neo4j\QueryAPI\Neo4jQueryAPI;
 
-$baseUrl = '***REMOVED***';
+
+$neo4jUrl = '***REMOVED***/';
 $username = 'neo4j';
 $password = '***REMOVED***';
 
-try {
-    $transaction = new Transaction($baseUrl, $username, $password);
+$api = Neo4jQueryAPI::login($neo4jUrl, $username, $password);
 
-    $query = 'CREATE (n:Person {name: $name, age: $age}) RETURN n';
-    $parameters = [
-        'name' => 'Alice',
-        'age' => 30,
-    ];
+$transaction = $api->beginTransaction();
 
-    $resultSet = $transaction->run($query, $parameters);
+$query = 'CREATE (n:Person {name: "Bobby"}) RETURN n';
 
-    echo "Query executed successfully. Results:\n";
-    foreach ($resultSet as $row) {
-        print_r($row);
-    }
+$response = $transaction->run($query);
 
-    $transaction->commit();
-    echo "Transaction committed successfully.\n";
+print_r($response);
 
-} catch (Exception $e) {
-    echo "An error occurred: " . $e->getMessage() . "\n";
-}
+$transaction->commit();
+
