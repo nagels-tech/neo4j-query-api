@@ -8,9 +8,9 @@ require __DIR__ . '/../vendor/autoload.php';
 
 // Login to the Neo4j instance
 $api = Neo4jQueryAPI::login(
-    'https://bb79fe35.databases.neo4j.io',
+    'https://f2455ee6.databases.neo4j.io',
     'neo4j',
-    'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0'
+    'h5YLhuoSnPD6yMy8OwmFPXs6WkL8uX25zxHCKhiF_hY'
 );
 
 // Run a query to fetch results
