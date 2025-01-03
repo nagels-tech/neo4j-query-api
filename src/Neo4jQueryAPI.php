@@ -2,10 +2,14 @@
 
 namespace Neo4j\QueryAPI;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
+use Neo4j\QueryAPI\Exception\Neo4jException;
+use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
 use stdClass;
 
@@ -25,7 +29,7 @@ class Neo4jQueryAPI
             'base_uri' => rtrim($address, '/'),
             'timeout' => 10.0,
             'headers' => [
-                'Authorization' => 'Basic ' . base64_encode("$username:$password"),
+                'Authorization' => '',
                 'Content-Type' => 'application/vnd.neo4j.query',
                 'Accept'=>'application/vnd.neo4j.query',
             ],
@@ -35,27 +39,49 @@ class Neo4jQueryAPI
     }
 
     /**
-     * @throws GuzzleException
+     * @throws Neo4jException
+     * @throws RequestExceptionInterface
      */
     public function run(string $cypher, array $parameters, string $database = 'neo4j'): ResultSet
     {
-        $payload = [
-            'statement' => $cypher,
-            'parameters' => $parameters === [] ? new stdClass() : $parameters,
-        ];
+        try {
 
-        $response = $this->client->post('/db/' . $database . '/query/v2', [
-            'json' => $payload,
-        ]);
+            $payload = [
+                'statement' => $cypher,
+                'parameters' => empty($parameters) ? new stdClass() : $parameters,
+            ];
+
+            $response = $this->client->post('/db/' . $database . '/query/v2', [
+                'json' => $payload,
+            ]);
 
 
-        $data = json_decode($response->getBody()->getContents(), true);
+            $data = json_decode($response->getBody()->getContents(), true);
+            $ogm = new OGM();
 
+            $keys = $data['data']['fields'];
+            $values = $data['data']['values'];
+            $rows = array_map(function ($resultRow) use ($ogm, $keys) {
+                $data = [];
+                foreach ($keys as $index => $key) {
+                    $fieldData = $resultRow[$index] ?? null;
+                    $data[$key] = $ogm->map($fieldData);
+                }
+                return new ResultRow($data);
+            }, $values);
 
-        $ogm = new OGM();
+            return new ResultSet($ogm, $rows);
+        } catch (RequestExceptionInterface $e) {
+            $response = $e->getResponse();
+            if ($response !== null) {
+                $contents = $response->getBody()->getContents();
+                $errorResponse = json_decode($contents, true);
 
-        return new ResultSet($data['data']['fields'], $data['data']['values'], $ogm);
+                throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
+            }
+
+            throw $e;
+        }
     }
-
 
 }

@@ -1,30 +1,44 @@
 <?php
-//
 namespace Neo4j\QueryAPI\Results;
 
-use InvalidArgumentException;
 use IteratorAggregate;
+use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\OGM;
+use queryCounters;
 use Traversable;
 
 class ResultSet implements IteratorAggregate
 {
-    private array $rows;
+    /**
+     * @var list<ResultRow>
+     */
+    private array $rows = [];
 
-    public function __construct(private array $keys, private array $resultRows, private OGM $ogm)
+    /**
+     * @param OGM $ogm
+     */
+    public function __construct(private OGM $ogm, private ResultCounters $counters)
     {
-        $this->rows = array_map(function ($resultRow) {
-            $data = [];
-            foreach ($this->keys as $index => $key) {
-                $fieldData = $resultRow[$index] ?? null;
-                $data[$key] = $this->ogm->map($fieldData);
-            }
-            return new ResultRow($data);
-        }, $this->resultRows);
+    }
+
+    /**
+     *
+     * @param array $keys
+     * @param array $dataRows
+     */
+    public function initialize(array $dataRows): void
+    {
+        foreach ($dataRows as $dataRow) {
+            $this->rows[] = new ResultRow($this->ogm->map($dataRow));
+        }
     }
 
     public function getIterator(): Traversable
     {
         return new \ArrayIterator($this->rows);
+    }
+    public function getqueryCounters(): ?QueryCounters
+    {
+        return $this->counters;
     }
 }
