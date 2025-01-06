@@ -53,23 +53,24 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $name = (string)mt_rand(1, 100000);
 
         // Create a node within the transaction
-        $tsx->run('CREATE (x:Human {name: $name})', ['name' => $name]);  // Pass the array here
+        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
 
         // Validate that the node does not exist in the database before the transaction is committed
-        $results = $this->api->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
+        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(0, $results);
 
         // Validate that the node exists within the transaction
-        $results = $tsx->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
+        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(1, $results);
 
         // Commit the transaction
         $tsx->commit();
 
         // Validate that the node now exists in the database
-        $results = $this->api->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
-        $this->assertCount(0, $results);
+        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results); // Updated to expect 1 result
     }
+
 
 
 
