@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use Neo4j\QueryAPI\Transaction;
+use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
 
 class Neo4jQueryAPIUnitTest extends TestCase
@@ -27,11 +27,11 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
     public function testCorrectClientSetup(): void
     {
-        $neo4jQueryAPI = Transaction::login($this->address, $this->username, $this->password);
+        $neo4jQueryAPI = Neo4jQueryAPI::login($this->address, $this->username, $this->password);
 
-        $this->assertInstanceOf(Transaction::class, $neo4jQueryAPI);
+        $this->assertInstanceOf(Neo4jQueryAPI::class, $neo4jQueryAPI);
 
-        $clientReflection = new \ReflectionClass(Transaction::class);
+        $clientReflection = new \ReflectionClass(Neo4jQueryAPIs::class);
         $clientProperty = $clientReflection->getProperty('client');
         $client = $clientProperty->getValue($neo4jQueryAPI);
 
@@ -48,7 +48,6 @@ class Neo4jQueryAPIUnitTest extends TestCase
      */
     public function testRunSuccess(): void
     {
-
         $mock = new MockHandler([
             new Response(200, ['X-Foo' => 'Bar'], '{"hello":"world"}'),
         ]);
@@ -56,7 +55,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
 
-        $neo4jQueryAPI = new Transaction($client);
+        $neo4jQueryAPI = new Neo4jQueryAPI($client);
 
         $cypherQuery = 'MATCH (n:Person) RETURN n LIMIT 5';
 

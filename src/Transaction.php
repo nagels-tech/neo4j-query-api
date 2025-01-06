@@ -2,8 +2,8 @@
 
 namespace Neo4j\QueryAPI;
 
-use GuzzleHttp\Client;
 use Neo4j\QueryAPI\Exception\Neo4jException;
+use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
 use Psr\Http\Client\ClientInterface;
@@ -35,6 +35,7 @@ class Transaction
             'json' => [
                 'statement' => $query,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
+                'includeCounters' => true
             ],
         ]);
 
@@ -52,7 +53,22 @@ class Transaction
         $values = $data['data']['values'];
 
         if (empty($values)) {
-            return new ResultSet([]);
+            return new ResultSet([], new ResultCounters(
+                containsUpdates: $data['counters']['containsUpdates'],
+                nodesCreated: $data['counters']['nodesCreated'],
+                nodesDeleted: $data['counters']['nodesDeleted'],
+                propertiesSet: $data['counters']['propertiesSet'],
+                relationshipsCreated: $data['counters']['relationshipsCreated'],
+                relationshipsDeleted: $data['counters']['relationshipsDeleted'],
+                labelsAdded: $data['counters']['labelsAdded'],
+                labelsRemoved: $data['counters']['labelsRemoved'],
+                indexesAdded: $data['counters']['indexesAdded'],
+                indexesRemoved: $data['counters']['indexesRemoved'],
+                constraintsAdded: $data['counters']['constraintsAdded'],
+                constraintsRemoved: $data['counters']['constraintsRemoved'],
+                containsSystemUpdates: $data['counters']['containsSystemUpdates'],
+                systemUpdates: $data['counters']['systemUpdates']
+            ));
         }
 
         $ogm = new OGM();
@@ -65,7 +81,22 @@ class Transaction
             return new ResultRow($data);
         }, $values);
 
-        return new ResultSet($rows);
+        return new ResultSet($rows,  new ResultCounters(
+            containsUpdates: $data['counters']['containsUpdates'],
+            nodesCreated: $data['counters']['nodesCreated'],
+            nodesDeleted: $data['counters']['nodesDeleted'],
+            propertiesSet: $data['counters']['propertiesSet'],
+            relationshipsCreated: $data['counters']['relationshipsCreated'],
+            relationshipsDeleted: $data['counters']['relationshipsDeleted'],
+            labelsAdded: $data['counters']['labelsAdded'],
+            labelsRemoved: $data['counters']['labelsRemoved'],
+            indexesAdded: $data['counters']['indexesAdded'],
+            indexesRemoved: $data['counters']['indexesRemoved'],
+            constraintsAdded: $data['counters']['constraintsAdded'],
+            constraintsRemoved: $data['counters']['constraintsRemoved'],
+            containsSystemUpdates: $data['counters']['containsSystemUpdates'],
+            systemUpdates: $data['counters']['systemUpdates']
+        ));
     }
 
     public function commit(): void

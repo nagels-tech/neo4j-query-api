@@ -14,13 +14,21 @@ class ResultSetTest extends TestCase
     /**
      * Test that an empty keys array throws an exception.
      */
+
     public function testEmptyKeysThrowException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The keys array cannot be empty.');
 
         $mockOgm = $this->createMock(OGM::class);
-        new ResultSet([], [], $mockOgm);
+        $resultSet = new ResultSet($mockOgm);
+
+        // Call initialize with empty keys
+        $resultSet->initialize([], [
+            [
+                ['$type' => 'String', '_value' => 'Bob'],
+            ],
+        ]);
     }
 
     /**
@@ -31,7 +39,8 @@ class ResultSetTest extends TestCase
         $mockOgm = $this->createMock(OGM::class);
         $mockOgm->method('map')->willReturnCallback(fn($value) => $value['_value'] ?? null);
 
-        $resultSet = new ResultSet(
+        $resultSet = new ResultSet($mockOgm);
+        $resultSet->initialize(
             ['name', 'age', 'email'],
             [
                 [
@@ -61,7 +70,8 @@ class ResultSetTest extends TestCase
         $mockOgm = $this->createMock(OGM::class);
         $mockOgm->method('map')->willReturnCallback(fn($value) => $value['_value'] ?? null);
 
-        $resultSet = new ResultSet(
+        $resultSet = new ResultSet($mockOgm);
+        $resultSet->initialize(
             ['name', 'age', 'email'],
             [
                 [
@@ -89,7 +99,8 @@ class ResultSetTest extends TestCase
         $mockOgm = $this->createMock(OGM::class);
         $mockOgm->method('map')->willReturnCallback(fn($value) => $value['_value'] ?? null);
 
-        $resultSet = new ResultSet(
+        $resultSet = new ResultSet($mockOgm);
+        $resultSet->initialize(
             ['name', 'age', 'email'],
             [
                 [
