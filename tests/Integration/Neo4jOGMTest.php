@@ -421,6 +421,4 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals($expectedResult, $actual);
     }
 
-
-
 }
