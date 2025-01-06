@@ -31,7 +31,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
         $this->assertInstanceOf(Neo4jQueryAPI::class, $neo4jQueryAPI);
 
-        $clientReflection = new \ReflectionClass(Neo4jQueryAPI::class);
+        $clientReflection = new \ReflectionClass(Neo4jQueryAPIs::class);
         $clientProperty = $clientReflection->getProperty('client');
         $client = $clientProperty->getValue($neo4jQueryAPI);
 
@@ -48,7 +48,6 @@ class Neo4jQueryAPIUnitTest extends TestCase
      */
     public function testRunSuccess(): void
     {
-
         $mock = new MockHandler([
             new Response(200, ['X-Foo' => 'Bar'], '{"hello":"world"}'),
         ]);

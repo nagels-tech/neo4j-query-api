@@ -7,7 +7,7 @@ class queryCountersTest extends TestCase
 {
     public function testGetExistingCounter(): void
     {
-        $counters = new queryCounters([
+        $counters = new \Neo4j\QueryAPI\Objects\ResultCounters([
             'nodes_created' => 1,
             'relationships_created' => 2,
             'properties_set' => 3,

@@ -29,7 +29,7 @@ class Neo4jQueryAPI
             'base_uri' => rtrim($address, '/'),
             'timeout' => 10.0,
             'headers' => [
-                'Authorization' => '',
+                'Authorization' => 'Basic ' . base64_encode("$username:$password"),
                 'Content-Type' => 'application/vnd.neo4j.query',
                 'Accept'=>'application/vnd.neo4j.query',
             ],
@@ -45,17 +45,18 @@ class Neo4jQueryAPI
     public function run(string $cypher, array $parameters, string $database = 'neo4j'): ResultSet
     {
         try {
-
+            // Prepare the payload for the request
             $payload = [
                 'statement' => $cypher,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
             ];
 
+            // Execute the request to the Neo4j server
             $response = $this->client->post('/db/' . $database . '/query/v2', [
                 'json' => $payload,
             ]);
 
-
+            // Decode the response body
             $data = json_decode($response->getBody()->getContents(), true);
             $ogm = new OGM();
 
@@ -70,7 +71,7 @@ class Neo4jQueryAPI
                 return new ResultRow($data);
             }, $values);
 
-            return new ResultSet($ogm, $rows);
+            return new ResultSet($rows);
         } catch (RequestExceptionInterface $e) {
             $response = $e->getResponse();
             if ($response !== null) {
@@ -84,4 +85,16 @@ class Neo4jQueryAPI
         }
     }
 
+    public function beginTransaction(string $database = 'neo4j'): Transaction
+    {
+        $response = $this->client->post("/db/neo4j/query/v2/tx");
+
+        $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
+        $responseData = json_decode($response->getBody(), true);
+        $transactionId = $responseData['transaction']['id'];
+
+
+
+        return new Transaction($this->client, $clusterAffinity, $transactionId);
+    }
 }

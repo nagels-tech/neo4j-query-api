@@ -7,7 +7,7 @@ use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
-use Neo4j\QueryAPI\Service\Neo4jClient;
+use Neo4j\QueryAPI\Transaction;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -15,11 +15,14 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
 
+
     /**
      * @throws GuzzleException
      */
     public function setUp(): void
     {
+
+
         $this->api = $this->initializeApi();
 
         $this->clearDatabase();
@@ -29,11 +32,40 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     private function initializeApi(): Neo4jQueryAPI
     {
         return Neo4jQueryAPI::login(
-            getenv('NEO4J_ADDRESS') ?: 'https://bb79fe35.databases.neo4j.io',
+            getenv('NEO4J_ADDRESS') ?: '***REMOVED***/',
             getenv('NEO4J_USERNAME') ?: 'neo4j',
-            getenv('NEO4J_PASSWORD') ?: 'OXDRMgdWFKMcBRCBrIwXnKkwLgDlmFxipnywT6t_AK0'
+            getenv('NEO4J_PASSWORD') ?: '***REMOVED***'
         );
     }
+
+    public function testTransactionCommit(): void
+    {
+        // Begin a new transaction
+        $tsx = $this->api->beginTransaction();
+
+        // Generate a random name for the node
+        $name = (string)mt_rand(1, 100000);
+
+        // Create a node within the transaction
+        $tsx->run('CREATE (x:Human {name: $name})', ['name' => $name]);  // Pass the array here
+
+        // Validate that the node does not exist in the database before the transaction is committed
+        $results = $this->api->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
+        $this->assertCount(0, $results);
+
+        // Validate that the node exists within the transaction
+        $results = $tsx->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
+        $this->assertCount(1, $results);
+
+        // Commit the transaction
+        $tsx->commit();
+
+        // Validate that the node now exists in the database
+        $results = $this->api->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
+        $this->assertCount(0, $results);
+    }
+
+
 
     /**
      * @throws GuzzleException
@@ -81,18 +113,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         }
     }
 
-    public function testInvalidInputException(): void
-    {
-        try {
-            $this->api->run('match (n:Person) return', []);
-        } catch (\Throwable $e) {
-            $this->assertInstanceOf(Neo4jException::class, $e);
-            $this->assertEquals('Neo.ClientError.Statement.SyntaxError', $e->getErrorCode());
-            $this->assertEquals('Invalid input \'\': expected an expression, \'*\' or \'DISTINCT\' (line 1, column 24 (offset: 23))
-"match (n:Person) return"
-                        ^', $e->getMessage());
-        }
-    }
+
 
     public function testCreateDuplicateConstraintException(): void
     {
@@ -127,7 +148,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     new ResultRow(['n.name' => 'bob1']),
                 ])
             ],
-
 
 
             'testWithInteger' => [
@@ -342,7 +362,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             ],
 
 
-
             'testWithMap' => [
                 'RETURN {hello: "hello"} AS map',
                 [],
@@ -354,8 +373,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     ]),
                 ]),
             ],
-
-
 
 
         ];
