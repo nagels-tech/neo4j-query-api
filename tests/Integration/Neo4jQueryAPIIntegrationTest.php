@@ -7,7 +7,6 @@ use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
-use Neo4j\QueryAPI\Transaction;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -36,6 +35,13 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             getenv('NEO4J_USERNAME') ?: 'neo4j',
             getenv('NEO4J_PASSWORD') ?: '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0'
         );
+    }
+
+    public function testCounters(): void
+    {
+        $result = $this->api->run('CREATE (x:Node {hello: "world"})');
+
+        $this->assertEquals(1, $result->getQueryCounters()->getNodesCreated());
     }
 
     public function testTransactionCommit(): void

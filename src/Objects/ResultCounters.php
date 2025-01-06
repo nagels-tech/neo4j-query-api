@@ -18,10 +18,8 @@ class ResultCounters
         private readonly int  $constraintsAdded,
         private readonly int $constraintsRemoved,
         private readonly bool $containsSystemUpdates,
-        private readonly int $systemUpdates,
-//        array $bookmarks = []
+        private readonly int $systemUpdates
     ) {
-        $this->bookmarks = $bookmarks;
     }
 
 

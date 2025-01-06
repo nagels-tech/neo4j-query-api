@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\Exception\Neo4jException;
@@ -42,13 +43,14 @@ class Neo4jQueryAPI
      * @throws Neo4jException
      * @throws RequestExceptionInterface
      */
-    public function run(string $cypher, array $parameters, string $database = 'neo4j'): ResultSet
+    public function run(string $cypher, array $parameters = [], string $database = 'neo4j'): ResultSet
     {
         try {
             // Prepare the payload for the request
             $payload = [
                 'statement' => $cypher,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
+                'includeCounters' => true
             ];
 
             // Execute the request to the Neo4j server
@@ -71,7 +73,22 @@ class Neo4jQueryAPI
                 return new ResultRow($data);
             }, $values);
 
-            return new ResultSet($rows);
+            return new ResultSet($rows, new ResultCounters(
+                containsUpdates: $data['counters']['containsUpdates'],
+                nodesCreated: $data['counters']['nodesCreated'],
+                nodesDeleted: $data['counters']['nodesDeleted'],
+                propertiesSet: $data['counters']['propertiesSet'],
+                relationshipsCreated: $data['counters']['relationshipsCreated'],
+                relationshipsDeleted: $data['counters']['relationshipsDeleted'],
+                labelsAdded: $data['counters']['labelsAdded'],
+                labelsRemoved: $data['counters']['labelsRemoved'],
+                indexesAdded: $data['counters']['indexesAdded'],
+                indexesRemoved: $data['counters']['indexesRemoved'],
+                constraintsAdded: $data['counters']['constraintsAdded'],
+                constraintsRemoved: $data['counters']['constraintsRemoved'],
+                containsSystemUpdates: $data['counters']['containsSystemUpdates'],
+                systemUpdates: $data['counters']['systemUpdates']
+            ));
         } catch (RequestExceptionInterface $e) {
             $response = $e->getResponse();
             if ($response !== null) {
