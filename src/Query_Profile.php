@@ -1,45 +1,29 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
 
-use GuzzleHttp\Client;
+// Include the necessary namespaces
 
-$neo4jUrl = '***REMOVED***/db/neo4j/query/v2';
-$username = 'neo4j';
-$password = '***REMOVED***';
+use Neo4j\QueryAPI\Objects\ProfileQueryResults;
 
-$client = new Client();
+// Initialize the QueryAPI class with Neo4j URL and authentication header
+$neo4jUrl = "http://localhost:7474";
+$authHeader = "Basic bmVvNGo6dmVyeXNlY3JldA=="; // Replace with your actual auth credentials
+$queryAPI = new Neo4j\QueryAPI\Objects\Api($neo4jUrl, $authHeader);  // Correct class name to QueryAPIQueryAPI
 
-$query = "PROFILE MATCH (n:Person) RETURN n";
+// Prepare the query and parameters
+$query = "MATCH (n:Person {name: \$name}) RETURN n.name";  // Use escaped $ for the parameter
+$parameters = ["name" => "Alice"];  // Use "Alice" as the parameter
 
-$response = $client->post($neo4jUrl, [
-    'auth' => [$username, $password],
-    'json' => [
-        'statement' => $query
-    ]
-]);
+    $result = $queryAPI->executeProfileQuery($query, $parameters);
 
-$body = $response->getBody();
-$data = json_decode($body, true);
-
-$output = [
-    "data" => [
-        "fields" => [],
-        "values" => []
-    ],
-    "profiledQueryPlan" => [],
-    "bookmarks" => $data['bookmarks'] ?? []
-];
-
-if (isset($data['result']['columns']) && isset($data['result']['rows'])) {
-    $output["data"]["fields"] = $data['result']['columns'];
-    foreach ($data['result']['rows'] as $row) {
-        $output["data"]["values"][] = $row;
-    }
-}
-
-if (isset($data['profiledQueryPlan'])) {
-    $output["profiledQueryPlan"] = $data['profiledQueryPlan'];
-}
-
-echo json_encode($output, JSON_PRETTY_PRINT);
+    // Output the profiling results
+    echo "DB Hits: " . $result->getDbHits() . "\n";
+    echo "Page Cache Hits: " . $result->getPageCacheHits() . "\n";
+    echo "Page Cache Misses: " . $result->getPageCacheMisses() . "\n";
+    echo "Page Cache Hit Ratio: " . $result->getPageCacheHitRatio() . "\n";
+    echo "Time: " . $result->getTime() . " ms\n";
+    echo "Operator Type: " . $result->getOperatorType() . "\n";
+    echo "Arguments: " . json_encode($result->getArguments()) . "\n";
+   // echo "String Representation: " . $result->getStringRepresentation() . "\n";
+    echo "Identifiers: " . json_encode($result->getIdentifiers()) . "\n";
+    echo "Children: " . json_encode($result->getChildren()) . "\n";
 
