@@ -44,6 +44,13 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertEquals(1, $result->getQueryCounters()->getNodesCreated());
     }
 
+    public function testProfileExistence(): void
+    {
+        $result = $this->api->run('PROFILE MATCH (x) RETURN x');
+
+        $this->assertNotNull($result->getProfiledQueryPlan());
+    }
+
     public function testTransactionCommit(): void
     {
         // Begin a new transaction
