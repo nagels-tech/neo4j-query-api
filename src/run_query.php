@@ -6,7 +6,6 @@ use GuzzleHttp\Exception\RequestException;
 require __DIR__ . '/../vendor/autoload.php';
 
 try {
-    // Login to the Neo4j instance
     $api = Neo4jQueryAPI::login(
         'https://f2455ee6.databases.neo4j.io', // Replace with your Neo4j instance URL
         'neo4j',                               // Replace with your Neo4j username
@@ -14,7 +13,6 @@ try {
 
     );
 
-    // Define a Cypher query
     $query = "MATCH (n:Person) RETURN n LIMIT 10";
 
     // Fetch results in plain JSON format

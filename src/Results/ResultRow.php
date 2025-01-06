@@ -1,26 +1,5 @@
 <?php
 
-//namespace Neo4j\QueryAPI\Results;
-//
-//use Neo4j\QueryAPI\OGM;
-//
-//class ResultRow
-//{
-//    public function __construct(private array $keys, private array $resultRow, private OGM $ogm)
-//    {
-//        $this->values = [];
-//        foreach ($this->resultRow as $index => $value) {
-//            $this->values[$this->keys[$index]] = $value['_value'];
-//        }
-//    }
-//
-//    public function get(string $column): mixed
-//    {
-//        return $this->values[$column] ?? null;
-//    }
-//}
-
-
 
 
 namespace Neo4j\QueryAPI\Results;
