@@ -10,9 +10,13 @@ $password = '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0';
 
 $client = new Profile($neo4jUrl, $username, $password);
 
-$query = "PROFILE MATCH (n:Person) RETURN n";
-$data = $client->executeQuery($query);
+$params = ['name' => 'Alice'];
+
+$query = "PROFILE MATCH (n:Person {name: \$name}) RETURN n.name";
+
+$data = $client->executeQuery($query, $params);
+
+
 $formattedResponse = $client->formatResponse($data);
 
 echo json_encode($formattedResponse, JSON_PRETTY_PRINT);
-

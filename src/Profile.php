@@ -21,12 +21,13 @@ class Profile
         $this->client = new Client();
     }
 
-    public function executeQuery($query)
+    public function executeQuery($query ,$parameters=[])
     {
         $response = $this->client->post($this->neo4jUrl, [
             'auth' => [$this->username, $this->password],
             'json' => [
-                'statement' => $query
+                'statement' => $query,
+                'parameters'=>$parameters
             ]
         ]);
 
