@@ -44,6 +44,21 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertEquals(1, $result->getQueryCounters()->getNodesCreated());
     }
 
+    public function testCreateBookmarks(): void
+    {
+        $result = $this->api->run(cypher: 'CREATE (x:Node {hello: "world"})');
+
+        $bookmarks = $result->getBookmarks();
+
+        $result = $this->api->run('CREATE (x:Node {hello: "world2"})');
+
+        $bookmarks->addBookmarks($result->getBookmarks());
+
+        $result = $this->api->run(cypher: 'MATCH (x:Node {hello: "world2"}) RETURN x', bookmarks: $bookmarks);
+
+        $this->assertCount(1, $result);
+    }
+
     public function testTransactionCommit(): void
     {
         // Begin a new transaction
