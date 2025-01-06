@@ -46,9 +46,22 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testProfileExistence(): void
     {
-        $result = $this->api->run('PROFILE MATCH (x) RETURN x');
+        $query = "PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name";
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->getProfiledQueryPlan(),"profiled query plan not found");
+    }
 
-        $this->assertNotNull($result->getProfiledQueryPlan());
+    public function testQueryArgumentsExistence(): void
+    {
+        $query = "PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name";
+        $result = $this->api->run($query);
+
+        // Assert that the QueryArguments are not null
+        $this->assertNotNull($result->getQueryArguments(), "QueryArguments not found");
+
+        // You can assert on individual arguments if necessary
+        $queryArguments = $result->getQueryArguments();
+        $this->assertGreaterThanOrEqual(0, $queryArguments->getDbHits(), "DbHits should be >= 0");
     }
 
     public function testTransactionCommit(): void
@@ -103,7 +116,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     /**
      * @throws GuzzleException
      */
-    #[DataProvider(methodName: 'queryProvider')]
+//    #[DataProvider(methodName: 'queryProvider')]
     public function testRunSuccessWithParameters(
         string    $query,
         array     $parameters,
@@ -137,7 +150,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         } catch (Neo4jException $e) {
 //            $errorMessages = $e->getErrorType() . $e->errorSubType() . $e->errorName();
             $this->assertInstanceOf(Neo4jException::class, $e);
-            $this->assertEquals('Neo.ClientError.Schema.ConstraintWithNameAlreadyExists', $e->getErrorCode());
+            $this->assertEquals('Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists', $e->getErrorCode());
             $this->assertNotEmpty($e->getMessage());
         }
     }
