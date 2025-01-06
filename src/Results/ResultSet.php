@@ -1,44 +1,34 @@
 <?php
 namespace Neo4j\QueryAPI\Results;
 
+use ArrayIterator;
+use Countable;
 use IteratorAggregate;
 use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\OGM;
-use queryCounters;
 use Traversable;
 
-class ResultSet implements IteratorAggregate
+class ResultSet implements IteratorAggregate, Countable
 {
     /**
-     * @var list<ResultRow>
+     * @param list<ResultRow> $rows
      */
-    private array $rows = [];
-
-    /**
-     * @param OGM $ogm
-     */
-    public function __construct(private OGM $ogm, private ResultCounters $counters)
+    public function __construct(private readonly array $rows,private ResultCounters $counters)
     {
-    }
-
-    /**
-     *
-     * @param array $keys
-     * @param array $dataRows
-     */
-    public function initialize(array $dataRows): void
-    {
-        foreach ($dataRows as $dataRow) {
-            $this->rows[] = new ResultRow($this->ogm->map($dataRow));
-        }
     }
 
     public function getIterator(): Traversable
     {
-        return new \ArrayIterator($this->rows);
+        return new ArrayIterator($this->rows);
     }
-    public function getqueryCounters(): ?QueryCounters
+    public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
     }
+
+    public function count(): int
+    {
+        return count($this->rows);
+    }
+
+
 }
