@@ -4,6 +4,7 @@ namespace Neo4j\QueryAPI\Results;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use Neo4j\QueryAPI\Objects\ChildQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\QueryArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
@@ -14,7 +15,7 @@ class ResultSet implements IteratorAggregate, Countable
     /**
      * @param list<ResultRow> $rows
      */
-    public function __construct(private readonly array $rows, private ResultCounters $counters, private ?ProfiledQueryPlan $profiledQueryPlan = null , private ?QueryArguments $queryArguments = null)
+    public function __construct(private readonly array $rows, private ResultCounters $counters, private ?ProfiledQueryPlan $profiledQueryPlan = null)
     {
     }
 
@@ -36,6 +37,11 @@ class ResultSet implements IteratorAggregate, Countable
     public function getQueryArguments(): ?QueryArguments
     {
         return $this->queryArguments;
+    }
+
+    public function getChildQueryPlan(): ?ChildQueryPlan
+    {
+         return $this->childQueryPlan;
     }
 
     public function count(): int

@@ -12,7 +12,12 @@ class ProfiledQueryPlan
     private float $pageCacheHitRatio;
     private int $time;
     private string $operatorType;
-    private array $arguments;
+    private QueryArguments $arguments;
+
+    /**
+     * @var list<ProfiledQueryPlan>
+     */
+    private array $children;
 
     public function __construct(
         ?int $dbHits = 0, // Default to 0 if null
@@ -23,7 +28,7 @@ class ProfiledQueryPlan
         ?float $pageCacheHitRatio = 0.0,
         ?int $time = 0,
         ?string $operatorType = '',
-        ?array $arguments = []
+        QueryArguments $arguments
     ) {
         $this->dbHits = $dbHits ?? 0;
         $this->records = $records ?? 0;
@@ -33,7 +38,7 @@ class ProfiledQueryPlan
         $this->pageCacheHitRatio = $pageCacheHitRatio ?? 0.0;
         $this->time = $time ?? 0;
         $this->operatorType = $operatorType ?? '';
-        $this->arguments = $arguments ?? [];
+        $this->arguments = $arguments;
     }
 
     public function getDbHits(): int
@@ -76,8 +81,21 @@ class ProfiledQueryPlan
         return $this->operatorType;
     }
 
-    public function getArguments(): array
+    public function getArguments(): QueryArguments
     {
         return $this->arguments;
+    }
+
+    /**
+     * @return list<ProfiledQueryPlan>
+     */
+    public  function getChildren(): array
+    {
+        return $this->children;
+    }
+
+    public function addChild(ProfiledQueryPlan $child): void
+    {
+        $this->children[] = $child;
     }
 }

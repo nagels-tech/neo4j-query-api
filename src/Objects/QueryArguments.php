@@ -26,7 +26,7 @@ class QueryArguments
         ?string $plannerImpl = '',
         ?int $memory = 0,
         ?string $stringRepresentation = '',
-        ?string $runtime = '',
+        $runtime = '',
         ?string $runtimeImpl = '',
         ?int $dbHits = 0,
         ?int $batchSize = 0,
@@ -43,7 +43,7 @@ class QueryArguments
         $this->plannerImpl = $plannerImpl ?? '';
         $this->memory = $memory ?? 0;
         $this->stringRepresentation = $stringRepresentation ?? '';
-        $this->runtime = $runtime ?? '';
+        $this->runtime = is_string($runtime) ? $runtime : json_encode($runtime);
         $this->runtimeImpl = $runtimeImpl ?? '';
         $this->dbHits = $dbHits ?? 0;
         $this->batchSize = $batchSize ?? 0;
