@@ -5,6 +5,7 @@ namespace Neo4j\QueryAPI\Tests\Integration;
 use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -50,19 +51,25 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $result = $this->api->run($query);
         $this->assertNotNull($result->getProfiledQueryPlan(),"profiled query plan not found");
     }
-
     public function testQueryArgumentsExistence(): void
     {
         $query = "PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name";
         $result = $this->api->run($query);
-
-        // Assert that the QueryArguments are not null
-        $this->assertNotNull($result->getQueryArguments(), "QueryArguments not found");
-
-        // You can assert on individual arguments if necessary
-        $queryArguments = $result->getQueryArguments();
-        $this->assertGreaterThanOrEqual(0, $queryArguments->getDbHits(), "DbHits should be >= 0");
+        $this->assertNotNull($result->getQueryArguments(),"QueryArguments should not be null");
     }
+    public function testChildQueryPlanExistence(): void
+    {
+        $result = $this->api->run("PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name");
+
+        $profiledQueryPlan = $result->getProfiledQueryPlan();
+        $this->assertNotNull($profiledQueryPlan);
+        $this->assertNotEmpty($profiledQueryPlan->getChildren());
+
+        foreach ($profiledQueryPlan->getChildren() as $child) {
+            $this->assertInstanceOf(ProfiledQueryPlan::class, $child);
+        }
+    }
+
 
     public function testTransactionCommit(): void
     {

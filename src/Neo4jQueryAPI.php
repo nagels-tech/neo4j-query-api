@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Neo4j\QueryAPI\Objects\ChildQueryPlan;
 use Neo4j\QueryAPI\Objects\QueryArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
@@ -16,6 +17,9 @@ use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
 use stdClass;
 
+/**
+ * @method parseChildren(mixed $children)
+ */
 class Neo4jQueryAPI
 {
     private Client $client;
@@ -75,42 +79,11 @@ class Neo4jQueryAPI
                 return new ResultRow($data);
             }, $values);
 
-            // Extract profile data, if available
-            $profiledQueryPlan = null;
+
             if (isset($data['profiledQueryPlan'])) {
-                $profiledQueryPlan = new ProfiledQueryPlan(
-                    $data['profile']['dbHits'],
-                    $data['profile']['records'],
-                    $data['profile']['hasPageCacheStats'],
-                    $data['profile']['pageCacheHits'],
-                    $data['profile']['pageCacheMisses'],
-                    $data['profile']['pageCacheHitRatio'],
-                    $data['profile']['time'],
-                    $data['profile']['operatorType'],
-                    $data['profile']['arguments']
-                );
+                $profile = $this->createProfileData($data['profiledQueryPlan']);
             }
-            $queryArguments = null;
-            if (isset($data['profiledQueryPlan']['arguments'])) {
-                $queryArguments = new QueryArguments(
-                    $data['profile']['globalMemory'] ?? 0,
-                    $data['profile']['plannerImpl'] ?? '',
-                    $data['profile']['memory'] ?? 0,
-                    $data['profile']['stringRepresentation'] ?? '',
-                    $data['profile']['runtime'] ?? '',
-                    $data['profile']['runtimeImpl'] ?? '',
-                    $data['profile']['dbHits'] ?? 0,
-                    $data['profile']['batchSize'] ?? 0,
-                    $data['profile']['details'] ?? '',
-                    $data['profile']['plannerVersion'] ?? '',
-                    $data['profile']['pipelineInfo'] ?? '',
-                    $data['profile']['runtimeVersion'] ?? '',
-                    $data['profile']['id'] ?? 0,
-                    $data['profile']['estimatedRows'] ?? 0.0,
-                    $data['profile']['planner'] ?? '',
-                    $data['profile']['rows'] ?? 0
-                );
-            }
+
 
             // Return a ResultSet containing rows, counters, and the profiled query plan
             return new ResultSet(
@@ -131,7 +104,7 @@ class Neo4jQueryAPI
                     containsSystemUpdates: $data['counters']['containsSystemUpdates'],
                     systemUpdates: $data['counters']['systemUpdates']
                 ),
-                $profiledQueryPlan // Pass the profiled query plan here
+                $profile
             );
         } catch (RequestExceptionInterface $e) {
             $response = $e->getResponse();
@@ -156,4 +129,50 @@ class Neo4jQueryAPI
 
         return new Transaction($this->client, $clusterAffinity, $transactionId);
     }
+
+    private function createProfileData(array $data): ProfiledQueryPlan
+    {
+        $arguments = $data['arguments'];
+
+        $queryArguments = new QueryArguments(
+            $arguments['globalMemory'] ?? 0,
+            $arguments['plannerImpl'] ?? '',
+            $arguments['memory'] ?? 0,
+            $arguments['stringRepresentation'] ?? '',
+            is_string($arguments['runtime'] ?? '') ? $arguments['runtime'] : json_encode($arguments['runtime']),
+            $arguments['runtimeImpl'] ?? '',
+            $arguments['dbHits'] ?? 0,
+            $arguments['batchSize'] ?? 0,
+            $arguments['details'] ?? '',
+            $arguments['plannerVersion'] ?? '',
+            $arguments['pipelineInfo'] ?? '',
+            $arguments['runtimeVersion'] ?? '',
+            $arguments['id'] ?? 0,
+            $arguments['estimatedRows'] ?? 0.0,
+            is_string($arguments['planner'] ?? '') ? $arguments['planner'] : json_encode($arguments['planner']),
+            $arguments['rows'] ?? 0
+        );
+
+        $profiledQueryPlan = new ProfiledQueryPlan(
+            $data['dbHits'],
+            $data['records'],
+            $data['hasPageCacheStats'],
+            $data['pageCacheHits'],
+            $data['pageCacheMisses'],
+            $data['pageCacheHitRatio'],
+            $data['time'],
+            $data['operatorType'],
+            $queryArguments
+        );
+
+        foreach($data['children'] as $child) {
+            $childQueryPlan = $this->createProfileData($child);
+
+            $profiledQueryPlan->addChild($childQueryPlan);
+        }
+
+        return $profiledQueryPlan;
+    }
+
+
 }
