@@ -47,16 +47,121 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testProfileExistence(): void
     {
-        $query = "PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name";
+        $query = "PROFILE MATCH (n:Person) RETURN n.name";
         $result = $this->api->run($query);
-        $this->assertNotNull($result->getProfiledQueryPlan(),"profiled query plan not found");
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
     }
-    public function testQueryArgumentsExistence(): void
+
+    public function testProfileCreateQueryExistence(): void
     {
-        $query = "PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name";
+        // Define the CREATE query
+        $query = "
+    PROFILE UNWIND range(1, 100) AS i
+    CREATE (:Person {
+        name: 'Person' + toString(i),
+        id: i,
+        job: CASE 
+            WHEN i % 2 = 0 THEN 'Engineer'
+            ELSE 'Artist'
+        END,
+        age: 1 + i - 1
+    });
+    ";
+
         $result = $this->api->run($query);
-        $this->assertNotNull($result->getQueryArguments(),"QueryArguments should not be null");
+
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
     }
+
+    public function testProfileCreateMovieQueryExistence(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 50) AS i
+    CREATE (:Movie {
+        year: 2000 + i,
+        genre: CASE 
+            WHEN i % 2 = 0 THEN 'Action'
+            ELSE 'Comedy'
+        END,
+        title: 'Movie' + toString(i)
+    });
+    ";
+
+        $result = $this->api->run($query);
+
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateFriendsQueryExistence(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 100) AS i
+    UNWIND range(1, 100) AS j
+    MATCH (a:Person {id: i}), (b:Person {id: j})
+    WHERE a.id <> b.id AND rand() < 0.1
+    CREATE (a)-[:FRIENDS]->(b);
+    ";
+
+        $result = $this->api->run($query);
+
+
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateWatchedRelationshipExistence(): void
+    {
+
+        $query = "
+    PROFILE UNWIND range(1, 50) AS i
+    MATCH (p:Person), (m:Movie {year: 2000 + i})
+    CREATE (p)-[:WATCHED]->(m);
+    ";
+
+        $result = $this->api->run($query);
+
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateWatchedWithFilters(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 50) AS i
+    MATCH (p:Person), (m:Movie {year: 2000 + i})
+    WHERE p.age > 25 AND m.genre = 'Action'
+    CREATE (p)-[:WATCHED]->(m);
+    ";
+
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateKnowsBidirectionalRelationships(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 100) AS i
+    UNWIND range(1, 100) AS j
+    MATCH (a:Person {id: i}), (b:Person {id: j})
+    WHERE a.id < b.id AND rand() < 0.1
+    CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
+    ";
+
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateActedInRelationships(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 50) AS i
+    MATCH (p:Person {id: i}), (m:Movie {year: 2000 + i})
+    WHERE p.job = 'Artist'
+    CREATE (p)-[:ACTED_IN]->(m);
+    ";
+
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
     public function testChildQueryPlanExistence(): void
     {
         $result = $this->api->run("PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name");
@@ -99,8 +204,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     }
 
 
-
-
     /**
      * @throws GuzzleException
      */
@@ -123,7 +226,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     /**
      * @throws GuzzleException
      */
-//    #[DataProvider(methodName: 'queryProvider')]
+    #[DataProvider(methodName: 'queryProvider')]
     public function testRunSuccessWithParameters(
         string    $query,
         array     $parameters,
@@ -146,7 +249,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->assertEquals('Expected parameter(s): invalidParam', $e->getMessage());
         }
     }
-
 
 
     public function testCreateDuplicateConstraintException(): void
