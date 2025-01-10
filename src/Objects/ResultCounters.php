@@ -5,20 +5,20 @@ namespace Neo4j\QueryAPI\Objects;
 class ResultCounters
 {
     public function __construct(
-        private readonly bool $containsUpdates,
-        private readonly int  $nodesCreated,
-        private readonly int  $nodesDeleted,
-        private readonly int  $propertiesSet,
-        private readonly int  $relationshipsCreated,
-        private readonly int  $relationshipsDeleted,
-        private readonly int  $labelsAdded,
-        private readonly int  $labelsRemoved,
-        private readonly int  $indexesAdded,
-        private readonly int  $indexesRemoved,
-        private readonly int  $constraintsAdded,
-        private readonly int $constraintsRemoved,
-        private readonly bool $containsSystemUpdates,
-        private readonly int $systemUpdates
+        private readonly bool $containsUpdates = false,
+        private readonly int  $nodesCreated = 0,
+        private readonly int  $nodesDeleted = 0,
+        private readonly int  $propertiesSet = 0,
+        private readonly int  $relationshipsCreated = 0,
+        private readonly int  $relationshipsDeleted = 0,
+        private readonly int  $labelsAdded = 0,
+        private readonly int  $labelsRemoved = 0,
+        private readonly int  $indexesAdded = 0,
+        private readonly int  $indexesRemoved = 0,
+        private readonly int  $constraintsAdded = 0,
+        private readonly int $constraintsRemoved = 0,
+        private readonly bool $containsSystemUpdates = false,
+        private readonly int $systemUpdates = 0
     ) {
     }
 
@@ -92,23 +92,6 @@ class ResultCounters
     {
         return $this->labelsRemoved;
     }
-    public function getBookmarks(): array
-    {
-        return $this->bookmarks;
-    }
-
-    public function addBookmark(string $bookmark): void
-    {
-        if (!in_array($bookmark, $this->bookmarks)) {
-            $this->bookmarks[] = $bookmark;
-        }
-    }
-
-//    public function clearBookmarks(): void
-//    {
-//        $this->bookmarks = [];
-//    }
-
 }
 
 
