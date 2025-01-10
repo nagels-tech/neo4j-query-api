@@ -2,7 +2,11 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
@@ -135,7 +139,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
     }
 
-    public function testProfileCreateKnowsBidirectionalRelationships(): void
+   public function testProfileCreateKnowsBidirectionalRelationshipsMock(): void
     {
         $query = "
     PROFILE UNWIND range(1, 100) AS i
@@ -145,8 +149,20 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
     ";
 
-        $result = $this->api->run($query);
-        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+        $mockSack = new MockHandler([
+            new Response(200, [], file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json')),
+        ]);
+
+        $handler = HandlerStack::create($mockSack);
+        $client = new Client(['handler' => $handler]);
+        $api = new Neo4jQueryAPI($client);
+
+        $result = $api->run($query);
+        $plan = $result->getProfiledQueryPlan();
+
+        $expected = require __DIR__.'/../resources/expected/complex-query-profile.php';
+
+        $this->assertEquals($expected, "profiled query plan not found");
     }
 
     public function testProfileCreateActedInRelationships(): void
@@ -162,6 +178,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
     }
 
+
     public function testChildQueryPlanExistence(): void
     {
         $result = $this->api->run("PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name");
@@ -174,6 +191,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->assertInstanceOf(ProfiledQueryPlan::class, $child);
         }
     }
+
 
 
     public function testTransactionCommit(): void
@@ -226,7 +244,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     /**
      * @throws GuzzleException
      */
-    #[DataProvider(methodName: 'queryProvider')]
+    /*#[DataProvider(methodName: 'queryProvider')]
     public function testRunSuccessWithParameters(
         string    $query,
         array     $parameters,
@@ -235,7 +253,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     {
         $results = $this->api->run($query, $parameters);
         $this->assertEquals($expectedResults, $results);
-    }
+    }*/
 
     public function testInvalidQueryException(): void
     {

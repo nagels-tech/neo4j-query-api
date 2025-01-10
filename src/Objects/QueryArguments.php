@@ -4,57 +4,26 @@ namespace Neo4j\QueryAPI\Objects;
 
 class QueryArguments
 {
-    private int $globalMemory;
-    private string $plannerImpl;
-    private int $memory;
-    private string $stringRepresentation;
-    private string $runtime;
-    private string $runtimeImpl;
-    private int $dbHits;
-    private int $batchSize;
-    private string $details;
-    private string $plannerVersion;
-    private string $pipelineInfo;
-    private string $runtimeVersion;
-    private int $id;
-    private float $estimatedRows;
-    private string $planner;
-    private int $rows;
-
     public function __construct(
-        ?int $globalMemory = 0,
-        ?string $plannerImpl = '',
-        ?int $memory = 0,
-        ?string $stringRepresentation = '',
-        $runtime = '',
-        ?string $runtimeImpl = '',
-        ?int $dbHits = 0,
-        ?int $batchSize = 0,
-        ?string $details = '',
-        ?string $plannerVersion = '',
-        ?string $pipelineInfo = '',
-        ?string $runtimeVersion = '',
-        ?int $id = 0,
-        ?float $estimatedRows = 0.0,
-        ?string $planner = '',
-        ?int $rows = 0
-    ) {
-        $this->globalMemory = $globalMemory ?? 0;
-        $this->plannerImpl = $plannerImpl ?? '';
-        $this->memory = $memory ?? 0;
-        $this->stringRepresentation = $stringRepresentation ?? '';
-        $this->runtime = is_string($runtime) ? $runtime : json_encode($runtime);
-        $this->runtimeImpl = $runtimeImpl ?? '';
-        $this->dbHits = $dbHits ?? 0;
-        $this->batchSize = $batchSize ?? 0;
-        $this->details = $details ?? '';
-        $this->plannerVersion = $plannerVersion ?? '';
-        $this->pipelineInfo = $pipelineInfo ?? '';
-        $this->runtimeVersion = $runtimeVersion ?? '';
-        $this->id = $id ?? 0;
-        $this->estimatedRows = $estimatedRows ?? 0.0;
-        $this->planner = $planner ?? '';
-        $this->rows = $rows ?? 0;
+        private readonly ?int    $globalMemory = null,
+        private readonly ?string $plannerImpl = null,
+        private readonly ?int    $memory = null,
+        private readonly ?string $stringRepresentation = null,
+        private readonly ?string $runtime = null,
+        private readonly ?int    $time = null,
+        private readonly ?string $runtimeImpl = null,
+        private readonly ?int    $dbHits = null,
+        private readonly ?int    $batchSize = null,
+        private readonly ?string $details = null,
+        private readonly ?string $plannerVersion = null,
+        private readonly ?string $pipelineInfo = null,
+        private readonly ?string $runtimeVersion = null,
+        private readonly ?int    $id = null,
+        private readonly ?float  $estimatedRows = null,
+        private readonly ?string $planner = null,
+        private readonly ?int    $rows = null
+    )
+    {
     }
 
     public function getGlobalMemory(): int
@@ -80,6 +49,11 @@ class QueryArguments
     public function getRuntime(): string
     {
         return $this->runtime;
+    }
+
+    public function getTime(): int
+    {
+        return $this->time;
     }
 
     public function getRuntimeImpl(): string
