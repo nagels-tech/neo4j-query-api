@@ -2,7 +2,7 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-class ProfiledQueryPlan
+class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
 {
     private int $dbHits;
     private int $records;
@@ -12,7 +12,7 @@ class ProfiledQueryPlan
     private float $pageCacheHitRatio;
     private int $time;
     private string $operatorType;
-    private QueryArguments $arguments;
+    private ProfiledQueryPlanArguments $arguments;
 
     /**
      * @var list<ProfiledQueryPlan>
@@ -28,7 +28,8 @@ class ProfiledQueryPlan
         ?float $pageCacheHitRatio = 0.0,
         ?int $time = 0,
         ?string $operatorType = '',
-        QueryArguments $arguments
+        ProfiledQueryPlanArguments $arguments,
+
     ) {
         $this->dbHits = $dbHits ?? 0;
         $this->records = $records ?? 0;
@@ -81,7 +82,7 @@ class ProfiledQueryPlan
         return $this->operatorType;
     }
 
-    public function getArguments(): QueryArguments
+    public function getArguments(): ProfiledQueryPlanArguments
     {
         return $this->arguments;
     }

@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Neo4j\QueryAPI\Objects\ChildQueryPlan;
-use Neo4j\QueryAPI\Objects\QueryArguments;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Results\ResultRow;
@@ -136,13 +136,14 @@ class Neo4jQueryAPI
             $mappedArguments[$key] = $ogm->map($value);
         }
 
-        $queryArguments = new QueryArguments(
+        $queryArguments = new ProfiledQueryPlanArguments(
             $mappedArguments['globalMemory'],
             $mappedArguments['plannerImpl'],
             $mappedArguments['memory'],
             $mappedArguments['stringRepresentation'],
             is_string($mappedArguments['runtime'] ? $mappedArguments['runtime'] : json_encode($mappedArguments['runtime'])),
             $mappedArguments['time'],
+            $mappedArguments['pageCacheMisses'],
             $mappedArguments['runtimeImpl'],
             $mappedArguments['dbHits'],
             $mappedArguments['batchSize'],

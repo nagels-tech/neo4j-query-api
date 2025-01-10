@@ -7,7 +7,7 @@ use Countable;
 use IteratorAggregate;
 use Neo4j\QueryAPI\Objects\ChildQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
-use Neo4j\QueryAPI\Objects\QueryArguments;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\Bookmarks;  // Make sure to include the Bookmarks class
 use Traversable;
