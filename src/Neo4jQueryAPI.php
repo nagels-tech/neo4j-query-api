@@ -51,23 +51,19 @@ class Neo4jQueryAPI
     public function run(string $cypher, array $parameters = [], string $database = 'neo4j'): ResultSet
     {
         try {
-            // Prepare the payload for the request
             $payload = [
                 'statement' => $cypher,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
                 'includeCounters' => true
             ];
 
-            // Execute the request to the Neo4j server
             $response = $this->client->post('/db/' . $database . '/query/v2', [
                 'json' => $payload,
             ]);
 
-            // Decode the response body
             $data = json_decode($response->getBody()->getContents(), true);
             $ogm = new OGM();
 
-            // Extract result rows
             $keys = $data['data']['fields'];
             $values = $data['data']['values'];
             $rows = array_map(function ($resultRow) use ($ogm, $keys) {
@@ -79,30 +75,25 @@ class Neo4jQueryAPI
                 return new ResultRow($data);
             }, $values);
 
+            $profile = isset($data['profiledQueryPlan']) ? $this->createProfileData($data['profiledQueryPlan']) : null;
 
-            if (isset($data['profiledQueryPlan'])) {
-                $profile = $this->createProfileData($data['profiledQueryPlan']);
-            }
-
-
-            // Return a ResultSet containing rows, counters, and the profiled query plan
             return new ResultSet(
                 $rows,
                 new ResultCounters(
-                    containsUpdates: $data['counters']['containsUpdates'],
-                    nodesCreated: $data['counters']['nodesCreated'],
-                    nodesDeleted: $data['counters']['nodesDeleted'],
-                    propertiesSet: $data['counters']['propertiesSet'],
-                    relationshipsCreated: $data['counters']['relationshipsCreated'],
-                    relationshipsDeleted: $data['counters']['relationshipsDeleted'],
-                    labelsAdded: $data['counters']['labelsAdded'],
-                    labelsRemoved: $data['counters']['labelsRemoved'],
-                    indexesAdded: $data['counters']['indexesAdded'],
-                    indexesRemoved: $data['counters']['indexesRemoved'],
-                    constraintsAdded: $data['counters']['constraintsAdded'],
-                    constraintsRemoved: $data['counters']['constraintsRemoved'],
-                    containsSystemUpdates: $data['counters']['containsSystemUpdates'],
-                    systemUpdates: $data['counters']['systemUpdates']
+                    containsUpdates: $data['counters']['containsUpdates'] ?? false,
+                    nodesCreated: $data['counters']['nodesCreated'] ?? 0,
+                    nodesDeleted: $data['counters']['nodesDeleted'] ?? 0,
+                    propertiesSet: $data['counters']['propertiesSet'] ?? 0,
+                    relationshipsCreated: $data['counters']['relationshipsCreated'] ?? 0,
+                    relationshipsDeleted: $data['counters']['relationshipsDeleted'] ?? 0,
+                    labelsAdded: $data['counters']['labelsAdded'] ?? 0,
+                    labelsRemoved: $data['counters']['labelsRemoved'] ?? 0,
+                    indexesAdded: $data['counters']['indexesAdded'] ?? 0,
+                    indexesRemoved: $data['counters']['indexesRemoved'] ?? 0,
+                    constraintsAdded: $data['counters']['constraintsAdded'] ?? 0,
+                    constraintsRemoved: $data['counters']['constraintsRemoved'] ?? 0,
+                    containsSystemUpdates: $data['counters']['containsSystemUpdates'] ?? false,
+                    systemUpdates: $data['counters']['systemUpdates'] ?? 0
                 ),
                 $profile
             );
@@ -111,10 +102,8 @@ class Neo4jQueryAPI
             if ($response !== null) {
                 $contents = $response->getBody()->getContents();
                 $errorResponse = json_decode($contents, true);
-
                 throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
             }
-
             throw $e;
         }
     }
@@ -132,26 +121,35 @@ class Neo4jQueryAPI
 
     private function createProfileData(array $data): ProfiledQueryPlan
     {
+        $ogm = new OGM();
+
+        // Map arguments using OGM
         $arguments = $data['arguments'];
+        $mappedArguments = [];
+        foreach ($arguments as $key => $value) {
+            $mappedArguments[$key] = $ogm->map($value);
+        }
 
         $queryArguments = new QueryArguments(
-            $arguments['globalMemory'] ?? 0,
-            $arguments['plannerImpl'] ?? '',
-            $arguments['memory'] ?? 0,
-            $arguments['stringRepresentation'] ?? '',
-            is_string($arguments['runtime'] ?? '') ? $arguments['runtime'] : json_encode($arguments['runtime']),
-            $arguments['runtimeImpl'] ?? '',
-            $arguments['dbHits'] ?? 0,
-            $arguments['batchSize'] ?? 0,
-            $arguments['details'] ?? '',
-            $arguments['plannerVersion'] ?? '',
-            $arguments['pipelineInfo'] ?? '',
-            $arguments['runtimeVersion'] ?? '',
-            $arguments['id'] ?? 0,
-            $arguments['estimatedRows'] ?? 0.0,
-            is_string($arguments['planner'] ?? '') ? $arguments['planner'] : json_encode($arguments['planner']),
-            $arguments['rows'] ?? 0
+            $mappedArguments['globalMemory'],
+            $mappedArguments['plannerImpl'],
+            $mappedArguments['memory'],
+            $mappedArguments['stringRepresentation'],
+            is_string($mappedArguments['runtime'] ? $mappedArguments['runtime'] : json_encode($mappedArguments['runtime'])),
+            $mappedArguments['time'],
+            $mappedArguments['runtimeImpl'],
+            $mappedArguments['dbHits'],
+            $mappedArguments['batchSize'],
+            $mappedArguments['details'],
+            $mappedArguments['plannerVersion'],
+            $mappedArguments['pipelineInfo'],
+            $mappedArguments['runtimeVersion'],
+            $mappedArguments['id'],
+            (float)($mappedArguments['estimatedRows'] ?? 0.0),
+            is_string($mappedArguments['planner'] ? $mappedArguments['planner'] : json_encode($mappedArguments['planner'])),
+            $mappedArguments['rows']
         );
+
 
         $profiledQueryPlan = new ProfiledQueryPlan(
             $data['dbHits'],
@@ -165,14 +163,13 @@ class Neo4jQueryAPI
             $queryArguments
         );
 
-        foreach($data['children'] as $child) {
+        // Process children recursively
+        foreach ($data['children'] as $child) {
             $childQueryPlan = $this->createProfileData($child);
-
             $profiledQueryPlan->addChild($childQueryPlan);
         }
 
         return $profiledQueryPlan;
     }
-
 
 }
