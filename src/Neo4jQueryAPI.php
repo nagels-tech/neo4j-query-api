@@ -6,7 +6,10 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use Neo4j\QueryAPI\Objects\ChildQueryPlan;
+use Neo4j\QueryAPI\Objects\QueryArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\Exception\Neo4jException;
@@ -27,18 +30,13 @@ class Neo4jQueryAPI
 
     public static function login(string $address, string $username, string $password): self
     {
-        $username = 'neo4j';
-        $password = '***REMOVED***';
-        $connectionUrl = '***REMOVED***/db/neo4j/query/v2';
-
-
         $client = new Client([
             'base_uri' => rtrim($address, '/'),
             'timeout' => 10.0,
             'headers' => [
                 'Authorization' => 'Basic ' . base64_encode("$username:$password"),
                 'Content-Type' => 'application/vnd.neo4j.query',
-                'Accept'=>'application/vnd.neo4j.query',
+                'Accept' => 'application/vnd.neo4j.query',
             ],
         ]);
 
@@ -80,6 +78,10 @@ class Neo4jQueryAPI
                 return new ResultRow($data);
             }, $values);
 
+            if (isset($data['profiledQueryPlan'])) {
+                $profile = $this->createProfileData($data['profiledQueryPlan']);
+            }
+
             $resultCounters = new ResultCounters(
                 containsUpdates: $data['counters']['containsUpdates'] ?? false,
                 nodesCreated: $data['counters']['nodesCreated'] ?? 0,
@@ -97,29 +99,24 @@ class Neo4jQueryAPI
                 systemUpdates: $data['counters']['systemUpdates'] ?? 0
             );
 
-            $resultSet = new ResultSet($rows, $resultCounters, new Bookmarks($data['bookmarks'] ?? []));
-
-
-            return $resultSet;
-
-        } catch (RequestException $e) {
-        {
-                $response = $e->getResponse();
-                if ($response !== null) {
-                    $contents = $response->getBody()->getContents();
-                    $errorResponse = json_decode($contents, true);
+            return new ResultSet(
+                $rows,
+                $resultCounters,
+                new Bookmarks($data['bookmarks'] ?? []),
+                $profile
+            );
+        } catch (RequestExceptionInterface $e) {
+            $response = $e->getResponse();
+            if ($response !== null) {
+                $contents = $response->getBody()->getContents();
+                $errorResponse = json_decode($contents, true);
 
                     throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
-                }
-
-                throw $e;
             }
-            throw new RuntimeException('Error executing query: ' . $e->getMessage(), 0, $e);
+
+            throw $e;
         }
     }
-
-
-
 
     public function beginTransaction(string $database = 'neo4j'): Transaction
     {
@@ -129,8 +126,52 @@ class Neo4jQueryAPI
         $responseData = json_decode($response->getBody(), true);
         $transactionId = $responseData['transaction']['id'];
 
-
-
         return new Transaction($this->client, $clusterAffinity, $transactionId);
     }
+
+    private function createProfileData(array $data): ProfiledQueryPlan
+    {
+        $arguments = $data['arguments'];
+
+        $queryArguments = new QueryArguments(
+            $arguments['globalMemory'] ?? 0,
+            $arguments['plannerImpl'] ?? '',
+            $arguments['memory'] ?? 0,
+            $arguments['stringRepresentation'] ?? '',
+            is_string($arguments['runtime'] ?? '') ? $arguments['runtime'] : json_encode($arguments['runtime']),
+            $arguments['runtimeImpl'] ?? '',
+            $arguments['dbHits'] ?? 0,
+            $arguments['batchSize'] ?? 0,
+            $arguments['details'] ?? '',
+            $arguments['plannerVersion'] ?? '',
+            $arguments['pipelineInfo'] ?? '',
+            $arguments['runtimeVersion'] ?? '',
+            $arguments['id'] ?? 0,
+            $arguments['estimatedRows'] ?? 0.0,
+            is_string($arguments['planner'] ?? '') ? $arguments['planner'] : json_encode($arguments['planner']),
+            $arguments['rows'] ?? 0
+        );
+
+        $profiledQueryPlan = new ProfiledQueryPlan(
+            $data['dbHits'],
+            $data['records'],
+            $data['hasPageCacheStats'],
+            $data['pageCacheHits'],
+            $data['pageCacheMisses'],
+            $data['pageCacheHitRatio'],
+            $data['time'],
+            $data['operatorType'],
+            $queryArguments
+        );
+
+        foreach($data['children'] as $child) {
+            $childQueryPlan = $this->createProfileData($child);
+
+            $profiledQueryPlan->addChild($childQueryPlan);
+        }
+
+        return $profiledQueryPlan;
+    }
+
+
 }
