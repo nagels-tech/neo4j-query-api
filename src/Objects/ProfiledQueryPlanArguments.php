@@ -2,7 +2,7 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-class QueryArguments
+class ProfiledQueryPlanArguments
 {
     public function __construct(
         private readonly ?int    $globalMemory = null,
@@ -11,6 +11,8 @@ class QueryArguments
         private readonly ?string $stringRepresentation = null,
         private readonly ?string $runtime = null,
         private readonly ?int    $time = null,
+        private readonly ?int    $pageCacheMisses = null,
+        private readonly ?int    $pageCacheHits = null,
         private readonly ?string $runtimeImpl = null,
         private readonly ?int    $dbHits = null,
         private readonly ?int    $batchSize = null,
@@ -55,7 +57,15 @@ class QueryArguments
     {
         return $this->time;
     }
+    public function getPageCacheMisses(): int
+    {
+        return $this->pageCacheMisses;
+    }
 
+     private function getPageCacheHits():int
+     {
+         return $this->pageCacheHits;
+     }
     public function getRuntimeImpl(): string
     {
         return $this->runtimeImpl;
