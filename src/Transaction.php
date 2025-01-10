@@ -3,6 +3,7 @@
 namespace Neo4j\QueryAPI;
 
 use Neo4j\QueryAPI\Exception\Neo4jException;
+use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
@@ -53,7 +54,41 @@ class Transaction
         $values = $data['data']['values'];
 
         if (empty($values)) {
-            return new ResultSet([], new ResultCounters(
+            return new ResultSet(
+                rows: [],
+                counters: new ResultCounters(
+                    containsUpdates: $data['counters']['containsUpdates'],
+                    nodesCreated: $data['counters']['nodesCreated'],
+                    nodesDeleted: $data['counters']['nodesDeleted'],
+                    propertiesSet: $data['counters']['propertiesSet'],
+                    relationshipsCreated: $data['counters']['relationshipsCreated'],
+                    relationshipsDeleted: $data['counters']['relationshipsDeleted'],
+                    labelsAdded: $data['counters']['labelsAdded'],
+                    labelsRemoved: $data['counters']['labelsRemoved'],
+                    indexesAdded: $data['counters']['indexesAdded'],
+                    indexesRemoved: $data['counters']['indexesRemoved'],
+                    constraintsAdded: $data['counters']['constraintsAdded'],
+                    constraintsRemoved: $data['counters']['constraintsRemoved'],
+                    containsSystemUpdates: $data['counters']['containsSystemUpdates'],
+                    systemUpdates: $data['counters']['systemUpdates']
+                ),
+                bookmarks: new Bookmarks($data['bookmarks'] ?? [])
+            );
+        }
+
+        $ogm = new OGM();
+        $rows = array_map(function ($resultRow) use ($ogm, $keys) {
+            $data = [];
+            foreach ($keys as $index => $key) {
+                $fieldData = $resultRow[$index] ?? null;
+                $data[$key] = $ogm->map($fieldData);
+            }
+            return new ResultRow($data);
+        }, $values);
+
+        return new ResultSet(
+            rows: $rows,
+            counters: new ResultCounters(
                 containsUpdates: $data['counters']['containsUpdates'],
                 nodesCreated: $data['counters']['nodesCreated'],
                 nodesDeleted: $data['counters']['nodesDeleted'],
@@ -68,35 +103,9 @@ class Transaction
                 constraintsRemoved: $data['counters']['constraintsRemoved'],
                 containsSystemUpdates: $data['counters']['containsSystemUpdates'],
                 systemUpdates: $data['counters']['systemUpdates']
-            ));
-        }
-
-        $ogm = new OGM();
-        $rows = array_map(function ($resultRow) use ($ogm, $keys) {
-            $data = [];
-            foreach ($keys as $index => $key) {
-                $fieldData = $resultRow[$index] ?? null;
-                $data[$key] = $ogm->map($fieldData);
-            }
-            return new ResultRow($data);
-        }, $values);
-
-        return new ResultSet($rows,  new ResultCounters(
-            containsUpdates: $data['counters']['containsUpdates'],
-            nodesCreated: $data['counters']['nodesCreated'],
-            nodesDeleted: $data['counters']['nodesDeleted'],
-            propertiesSet: $data['counters']['propertiesSet'],
-            relationshipsCreated: $data['counters']['relationshipsCreated'],
-            relationshipsDeleted: $data['counters']['relationshipsDeleted'],
-            labelsAdded: $data['counters']['labelsAdded'],
-            labelsRemoved: $data['counters']['labelsRemoved'],
-            indexesAdded: $data['counters']['indexesAdded'],
-            indexesRemoved: $data['counters']['indexesRemoved'],
-            constraintsAdded: $data['counters']['constraintsAdded'],
-            constraintsRemoved: $data['counters']['constraintsRemoved'],
-            containsSystemUpdates: $data['counters']['containsSystemUpdates'],
-            systemUpdates: $data['counters']['systemUpdates']
-        ));
+            ),
+            bookmarks: new Bookmarks($data['bookmarks'] ?? [])
+        );
     }
 
     public function commit(): void

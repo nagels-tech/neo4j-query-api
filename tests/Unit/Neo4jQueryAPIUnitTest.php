@@ -8,6 +8,10 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Objects\Bookmarks;
+use Neo4j\QueryAPI\Objects\ResultCounters;
+use Neo4j\QueryAPI\Results\ResultRow;
+use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\TestCase;
 
 class Neo4jQueryAPIUnitTest extends TestCase
@@ -31,7 +35,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
         $this->assertInstanceOf(Neo4jQueryAPI::class, $neo4jQueryAPI);
 
-        $clientReflection = new \ReflectionClass(Neo4jQueryAPIs::class);
+        $clientReflection = new \ReflectionClass(Neo4jQueryAPI::class);
         $clientProperty = $clientReflection->getProperty('client');
         $client = $clientProperty->getValue($neo4jQueryAPI);
 
@@ -49,7 +53,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
     public function testRunSuccess(): void
     {
         $mock = new MockHandler([
-            new Response(200, ['X-Foo' => 'Bar'], '{"hello":"world"}'),
+            new Response(200, ['X-Foo' => 'Bar'], '{"data": {"fields": ["hello"], "values": [[{"$type": "String", "_value": "world"}]]}}'),
         ]);
 
         $handlerStack = HandlerStack::create($mock);
@@ -59,10 +63,8 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
         $cypherQuery = 'MATCH (n:Person) RETURN n LIMIT 5';
 
+        $result = $neo4jQueryAPI->run($cypherQuery);
 
-        $result = $neo4jQueryAPI->run($cypherQuery, []);
-
-
-        $this->assertEquals(['hello' => 'world'], $result);
+        $this->assertEquals(new ResultSet([new ResultRow(['hello' => 'world'])], new ResultCounters(), new Bookmarks([])), $result);
     }
 }
