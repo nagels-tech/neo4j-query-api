@@ -1,4 +1,5 @@
 <?php
+
 namespace Neo4j\QueryAPI\Results;
 
 use ArrayIterator;
@@ -8,6 +9,7 @@ use Neo4j\QueryAPI\Objects\ChildQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\QueryArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
+use Neo4j\QueryAPI\Objects\Bookmarks;  // Make sure to include the Bookmarks class
 use Traversable;
 
 class ResultSet implements IteratorAggregate, Countable
@@ -15,7 +17,12 @@ class ResultSet implements IteratorAggregate, Countable
     /**
      * @param list<ResultRow> $rows
      */
-    public function __construct(private readonly array $rows, private ResultCounters $counters, private ?ProfiledQueryPlan $profiledQueryPlan = null)
+    public function __construct(
+        private readonly array $rows,
+        private ResultCounters $counters,
+        private Bookmarks $bookmarks,
+        private ?ProfiledQueryPlan $profiledQueryPlan = null
+    )
     {
     }
 
@@ -23,7 +30,6 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return new ArrayIterator($this->rows);
     }
-
     public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
@@ -32,11 +38,6 @@ class ResultSet implements IteratorAggregate, Countable
     public function getProfiledQueryPlan(): ?ProfiledQueryPlan
     {
         return $this->profiledQueryPlan;
-    }
-
-    public function getQueryArguments(): ?QueryArguments
-    {
-        return $this->queryArguments;
     }
 
     public function getChildQueryPlan(): ?ChildQueryPlan
@@ -48,5 +49,9 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return count($this->rows);
     }
-}
 
+    public function getBookmarks(): ?Bookmarks
+    {
+        return $this->bookmarks;
+    }
+}
