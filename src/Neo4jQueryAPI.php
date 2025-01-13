@@ -6,7 +6,6 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-use Neo4j\QueryAPI\Objects\ChildQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
