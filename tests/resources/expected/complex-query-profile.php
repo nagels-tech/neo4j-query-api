@@ -199,7 +199,7 @@ return new ResultSet(
                                         null,
                                         0,
                                         null,
-                                        "range($autoint_2, $autoint_3) AS j",
+                                        "range(\$autoint_2, \$autoint_3) AS j",
                                         null,
                                         "Fused in Pipeline 0",
                                         null,
@@ -231,7 +231,7 @@ return new ResultSet(
                                             null,
                                             0,
                                             null,
-                                            "range($autoint_0, $autoint_1) AS i",
+                                            "range(\$autoint_0, \$autoint_1) AS i",
                                             null,
                                             "Fused in Pipeline 0",
                                             null,
@@ -273,7 +273,164 @@ return new ResultSet(
                                                     null,
                                                     0
                                                 )
-                                            )
+                                            ),
+
+                                            [
+                                                new ProfiledQueryPlan(
+                                                    0,
+                                                    0,
+                                                    false,
+                                                    0,
+                                                    0,
+                                                    0.0,
+                                                    0,
+                                                    "CartesianProduct@neo4j",
+                                                    new ProfiledQueryPlanArguments(
+                                                        null,
+                                                        null,
+                                                        1392,
+                                                        null,
+                                                        null,
+                                                        0,
+                                                        0,
+                                                        0,
+                                                        null,
+                                                        0,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        "In Pipeline 3",
+                                                        null,
+                                                        5,
+                                                        7.5,
+                                                        null,
+                                                        0
+                                                    )
+                                                ),
+                                                new ProfiledQueryPlan(
+                                                    2027,
+                                                    0,
+                                                    false,
+                                                    0,
+                                                    0,
+                                                    0.0,
+                                                    0,
+                                                    "Filter@neo4j",
+                                                    new ProfiledQueryPlanArguments(
+                                                        "rand() < \$autodouble_4 AND cache[a.id] = i",
+                                                        "Fused in Pipeline 1",
+                                                        8,
+                                                        null,
+                                                        null,
+                                                        2027,
+                                                        0,
+                                                        0,
+                                                        null,
+                                                        0,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        15.0,
+                                                        null,
+                                                        0
+                                                    )
+                                                ),
+                                                new ProfiledQueryPlan(
+                                                    30000,
+                                                    20000,
+                                                    true,
+                                                    10002,
+                                                    0,
+                                                    1.0,
+                                                    6157670,
+                                                    "NodeByLabelScan@neo4j",
+                                                    new ProfiledQueryPlanArguments(
+                                                        "a:Person",
+                                                        "Fused in Pipeline 1",
+                                                        9,
+                                                        null,
+                                                        null,
+                                                        30000,
+                                                        20000,
+                                                        0,
+                                                        null,
+                                                        10002,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        1000.0,
+                                                        null,
+                                                        6157670
+                                                    )
+                                                ),
+                                                new ProfiledQueryPlan(
+                                                    0,
+                                                    0,
+                                                    false,
+                                                    0,
+                                                    0,
+                                                    0.0,
+                                                    0,
+                                                    "Filter@neo4j",
+                                                    new ProfiledQueryPlanArguments(
+                                                        "cache[b.id] = j",
+                                                        "Fused in Pipeline 2",
+                                                        6,
+                                                        null,
+                                                        null,
+                                                        0,
+                                                        0,
+                                                        0,
+                                                        null,
+                                                        0,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        50.0,
+                                                        null,
+                                                        0
+                                                    )
+                                                ),
+
+                                                new ProfiledQueryPlan(
+                                                    0,
+                                                    0,
+                                                    false,
+                                                    0,
+                                                    0,
+                                                    0.0,
+                                                    0,
+                                                    "NodeByLabelScan@neo4j",
+                                                    new ProfiledQueryPlanArguments(
+                                                        "b:Person",
+                                                        "Fused in Pipeline 2",
+                                                        7,
+                                                        null,
+                                                        null,
+                                                        0,
+                                                        0,
+                                                        0,
+                                                        null,
+                                                        0,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        null,
+                                                        1000.0,
+                                                        null,
+                                                        0
+                                                    )
+                                                )
+
+                                            ]
+
                                         ]
 
                                     ]
@@ -289,9 +446,6 @@ return new ResultSet(
                 ]
             )
         ]
-
-
-
 
     )
 

@@ -15,7 +15,7 @@ class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
     private ProfiledQueryPlanArguments $arguments;
 
     /**
-     * @var list<ProfiledQueryPlan>
+     * @var list<ProfiledQueryPlan|ProfiledQueryPlanArguments>
      */
     private array $children;
 
@@ -28,8 +28,8 @@ class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
         ?float $pageCacheHitRatio = 0.0,
         ?int $time = 0,
         ?string $operatorType = '',
-        ProfiledQueryPlanArguments $arguments,
-
+        ProfiledQueryPlanArguments $arguments ,
+        array $children = [] // Accept an array of children, default to empty array
     ) {
         $this->dbHits = $dbHits ?? 0;
         $this->records = $records ?? 0;
@@ -40,6 +40,7 @@ class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
         $this->time = $time ?? 0;
         $this->operatorType = $operatorType ?? '';
         $this->arguments = $arguments;
+        $this->children = $children ?? [];
     }
 
     public function getDbHits(): int
@@ -88,14 +89,14 @@ class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
     }
 
     /**
-     * @return list<ProfiledQueryPlan>
+     * @return list<ProfiledQueryPlan|ProfiledQueryPlanArguments>
      */
-    public  function getChildren(): array
+    public function getChildren(): array
     {
         return $this->children;
     }
 
-    public function addChild(ProfiledQueryPlan $child): void
+    public function addChild(ProfiledQueryPlan|ProfiledQueryPlanArguments $child): void
     {
         $this->children[] = $child;
     }
