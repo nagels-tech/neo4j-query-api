@@ -17,6 +17,7 @@ use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
+use Psr\Http\Client\RequestExceptionInterface;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
@@ -158,18 +159,23 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
     }
 
-   public function testProfileCreateKnowsBidirectionalRelationshipsMock(): void
+    /**
+     * @throws Neo4jException
+     * @throws RequestExceptionInterface
+     */
+    public function testProfileCreateKnowsBidirectionalRelationshipsMock(): void
     {
         $query = "
-    PROFILE UNWIND range(1, 100) AS i
-    UNWIND range(1, 100) AS j
-    MATCH (a:Person {id: i}), (b:Person {id: j})
-    WHERE a.id < b.id AND rand() < 0.1
-    CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
+        PROFILE UNWIND range(1, 100) AS i
+        UNWIND range(1, 100) AS j
+        MATCH (a:Person {id: i}), (b:Person {id: j})
+        WHERE a.id < b.id AND rand() < 0.1
+        CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
     ";
 
+        $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
         $mockSack = new MockHandler([
-            new Response(200, [], file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json')),
+            new Response(200, [], $body),
         ]);
 
         $handler = HandlerStack::create($mockSack);
@@ -177,11 +183,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $api = new Neo4jQueryAPI($client);
 
         $result = $api->run($query);
+
         $plan = $result->getProfiledQueryPlan();
+        $this->assertNotNull($plan, "The result of the query should not be null.");
 
-        $expected = require __DIR__.'/../resources/expected/complex-query-profile.php';
+        // Load expected data
+        $expected = require __DIR__ . '/../resources/expected/complex-query-profile.php';
 
-        $this->assertEquals($expected, "profiled query plan not found");
+        // Assert the profiled query plan matches the expected result
+        $this->assertEquals($expected->getProfiledQueryPlan(), $plan, "Profiled query plan does not match the expected value.");
     }
 
     public function testProfileCreateActedInRelationships(): void

@@ -59,15 +59,21 @@ class Neo4jQueryAPI
                 $payload['bookmarks'] = $bookmark->getBookmarks();
             }
 
-            $response = $this->client->post('/db/' . $database . '/query/v2', [
+            $response = $this->client->request('POST', '/db/' . $database . '/query/v2', [
                 'json' => $payload,
             ]);
 
-            $data = json_decode($response->getBody()->getContents(), true);
+            $contents = $response->getBody()->getContents();
+       $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
             $ogm = new OGM();
 
-            $keys = $data['data']['fields'];
-            $values = $data['data']['values'];
+            $keys = $data['data']['fields'] ?? [];
+            $values = $data['data']['values'] ?? []; // Ensure $values is an array
+
+            if (!is_array($values)) {
+                throw new RuntimeException('Unexpected response format: values is not an array.');
+            }
+
             $rows = array_map(function ($resultRow) use ($ogm, $keys) {
                 $data = [];
                 foreach ($keys as $index => $key) {
@@ -76,7 +82,6 @@ class Neo4jQueryAPI
                 }
                 return new ResultRow($data);
             }, $values);
-
             $profile = isset($data['profiledQueryPlan']) ? $this->createProfileData($data['profiledQueryPlan']) : null;
 
             $resultCounters = new ResultCounters(
@@ -132,28 +137,34 @@ class Neo4jQueryAPI
         $arguments = $data['arguments'];
         $mappedArguments = [];
         foreach ($arguments as $key => $value) {
-            $mappedArguments[$key] = $ogm->map($value);
+            if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
+                $mappedArguments[$key] = $ogm->map($value);
+            } else {
+                $mappedArguments[$key] = $value;
+            }
         }
 
         $queryArguments = new ProfiledQueryPlanArguments(
-            $mappedArguments['globalMemory'],
-            $mappedArguments['plannerImpl'],
+            $mappedArguments['GlobalMemory'],
+            $mappedArguments['planner-impl'],
             $mappedArguments['memory'],
-            $mappedArguments['stringRepresentation'],
-            is_string($mappedArguments['runtime'] ? $mappedArguments['runtime'] : json_encode($mappedArguments['runtime'])),
-            $mappedArguments['time'],
-            $mappedArguments['pageCacheMisses'],
-            $mappedArguments['runtimeImpl'],
-            $mappedArguments['dbHits'],
-            $mappedArguments['batchSize'],
-            $mappedArguments['details'],
-            $mappedArguments['plannerVersion'],
-            $mappedArguments['pipelineInfo'],
-            $mappedArguments['runtimeVersion'],
-            $mappedArguments['id'],
-            (float)($mappedArguments['estimatedRows'] ?? 0.0),
+            $mappedArguments['string-representation'],
+            $mappedArguments['runtime'] ?? null,
+            $mappedArguments['Time'],
+            is_int($mappedArguments['PageCacheMisses']),
+            is_int($mappedArguments['PageCacheHits']),
+            $mappedArguments['runtime-impl'],
+            $mappedArguments['version'],
+            is_int($mappedArguments['DbHits']),
+            $mappedArguments['batch-size'],
+            is_string($mappedArguments['Details']),
+            $mappedArguments['planner-version'],
+            is_string($mappedArguments['PipelineInfo']),
+            $mappedArguments['runtime-version'],
+            is_int($mappedArguments['Id']),
+            (float)($mappedArguments['EstimatedRows'] ?? 0.0),
             is_string($mappedArguments['planner'] ? $mappedArguments['planner'] : json_encode($mappedArguments['planner'])),
-            $mappedArguments['rows']
+            is_int($mappedArguments['Rows'])
         );
 
 
@@ -161,7 +172,7 @@ class Neo4jQueryAPI
             $data['dbHits'],
             $data['records'],
             $data['hasPageCacheStats'],
-            $data['pageCacheHits'],
+            $data['PageCacheHits'],
             $data['pageCacheMisses'],
             $data['pageCacheHitRatio'],
             $data['time'],
