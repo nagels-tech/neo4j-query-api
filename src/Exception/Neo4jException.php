@@ -29,23 +29,31 @@ class Neo4jException extends Exception
     }
 
     /**
-     * Get the Neo4j error code associated with this exception.
+     * @api
      */
+
     public function getErrorCode(): string
     {
         return $this->errorCode;
     }
+    /**
+     * @api
+     */
 
     public function getType(): ?string
     {
         return $this->errorType;
     }
-
+    /**
+     * @api
+     */
     public function getSubType(): ?string
     {
         return $this->errorSubType;
     }
-
+    /**
+     * @api
+     */
     public function getName(): ?string
     {
         return $this->errorName;

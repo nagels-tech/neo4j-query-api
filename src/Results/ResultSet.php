@@ -6,9 +6,14 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\Bookmarks;  // Make sure to include the Bookmarks class
+use Neo4j\QueryAPI\Objects\Bookmarks;
 use Traversable;
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ * @implements IteratorAggregate<TKey, TValue>
+ */
 class ResultSet implements IteratorAggregate, Countable
 {
     /**
@@ -18,25 +23,36 @@ class ResultSet implements IteratorAggregate, Countable
         private readonly array $rows,
         private ResultCounters $counters,
         private Bookmarks $bookmarks
-    )
-    {
+    ) {
     }
 
+    /**
+     * @return Traversable<int, ResultRow>
+     */
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->rows);
     }
 
+    /**
+     * @api
+     */
     public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
     }
 
+    /**
+     * @api
+     */
     public function count(): int
     {
         return count($this->rows);
     }
 
+    /**
+     * @api
+     */
     public function getBookmarks(): ?Bookmarks
     {
         return $this->bookmarks;
