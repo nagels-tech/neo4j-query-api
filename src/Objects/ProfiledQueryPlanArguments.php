@@ -14,6 +14,7 @@ class ProfiledQueryPlanArguments
         private readonly ?int    $pageCacheMisses = null,
         private readonly ?int    $pageCacheHits = null,
         private readonly ?string $runtimeImpl = null,
+        private readonly ?int    $version = null,
         private readonly ?int    $dbHits = null,
         private readonly ?int    $batchSize = null,
         private readonly ?string $details = null,
@@ -69,6 +70,10 @@ class ProfiledQueryPlanArguments
     public function getRuntimeImpl(): string
     {
         return $this->runtimeImpl;
+    }
+    public function getVersion(): string
+    {
+        return $this->version;
     }
 
     public function getDbHits(): int

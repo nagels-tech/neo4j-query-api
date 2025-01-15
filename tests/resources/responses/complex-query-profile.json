@@ -71,16 +71,16 @@
       "pageCacheHitRatio" : 0.0,
       "time" : 0,
       "operatorType" : "EmptyResult@neo4j",
-      "arguments" : {
-        "PipelineInfo" : "In Pipeline 3",
-        "Time" : 0,
-        "Id" : 1,
-        "PageCacheMisses" : 0,
-        "EstimatedRows" : 2.25,
-        "DbHits" : 0,
-        "Rows" :0,
-        "PageCacheHits" :0
-      },
+        "arguments" : {
+          "PipelineInfo" : "In Pipeline 3",
+          "Time" : 0,
+          "Id" : 1,
+          "PageCacheMisses" : 0,
+          "EstimatedRows" : 2.25,
+          "DbHits" : 0,
+          "Rows" :0,
+          "PageCacheHits" :0
+        },
       "identifiers" : [ "j", "a", "i", "b", "anon_0", "anon_1" ],
       "children" : [ {
         "dbHits" : 0,
@@ -298,7 +298,7 @@
                   }
                 },
                 "identifiers" : [ "i" ],
-                "children" : [ ]  /*till here */
+                "children" : [ ]
               } ]
             }, {
               "dbHits" : 0,
