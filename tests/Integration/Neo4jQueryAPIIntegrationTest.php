@@ -5,6 +5,7 @@ namespace Neo4j\QueryAPI\Tests\Integration;
 use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Results\ResultRow;
@@ -63,34 +64,162 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     }
 
 
-//
-//    public function testTransactionCommit(): void
-//    {
-//        // Begin a new transaction
-//        $tsx = $this->api->beginTransaction();
-//
-//        // Generate a random name for the node
-//        $name = (string)mt_rand(1, 100000);
-//
-//        // Create a node within the transaction
-//        $tsx->run('CREATE (x:Human {name: $name})', ['name' => $name]);  // Pass the array here
-//
-//        // Validate that the node does not exist in the database before the transaction is committed
-//        $results = $this->api->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
-//        $this->assertCount(0, $results);
-//
-//        // Validate that the node exists within the transaction
-//        $results = $tsx->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
-//        $this->assertCount(1, $results);
-//
-//        // Commit the transaction
-//        $tsx->commit();
-//
-//        // Validate that the node now exists in the database
-//        $results = $this->api->run('MATCH (x:Human {name: $name}) RETURN x', ['name' => $name]);
-//        $this->assertCount(0, $results);
-//    }
-//
+    public function testProfileExistence(): void
+    {
+        $query = "PROFILE MATCH (n:Person) RETURN n.name";
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateQueryExistence(): void
+    {
+        // Define the CREATE query
+        $query = "
+    PROFILE UNWIND range(1, 100) AS i
+    CREATE (:Person {
+        name: 'Person' + toString(i),
+        id: i,
+        job: CASE 
+            WHEN i % 2 = 0 THEN 'Engineer'
+            ELSE 'Artist'
+        END,
+        age: 1 + i - 1
+    });
+    ";
+
+        $result = $this->api->run($query);
+
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateMovieQueryExistence(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 50) AS i
+    CREATE (:Movie {
+        year: 2000 + i,
+        genre: CASE 
+            WHEN i % 2 = 0 THEN 'Action'
+            ELSE 'Comedy'
+        END,
+        title: 'Movie' + toString(i)
+    });
+    ";
+
+        $result = $this->api->run($query);
+
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateFriendsQueryExistence(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 100) AS i
+    UNWIND range(1, 100) AS j
+    MATCH (a:Person {id: i}), (b:Person {id: j})
+    WHERE a.id <> b.id AND rand() < 0.1
+    CREATE (a)-[:FRIENDS]->(b);
+    ";
+
+        $result = $this->api->run($query);
+
+
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateWatchedRelationshipExistence(): void
+    {
+
+        $query = "
+    PROFILE UNWIND range(1, 50) AS i
+    MATCH (p:Person), (m:Movie {year: 2000 + i})
+    CREATE (p)-[:WATCHED]->(m);
+    ";
+
+        $result = $this->api->run($query);
+
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateWatchedWithFilters(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 50) AS i
+    MATCH (p:Person), (m:Movie {year: 2000 + i})
+    WHERE p.age > 25 AND m.genre = 'Action'
+    CREATE (p)-[:WATCHED]->(m);
+    ";
+
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateKnowsBidirectionalRelationships(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 100) AS i
+    UNWIND range(1, 100) AS j
+    MATCH (a:Person {id: i}), (b:Person {id: j})
+    WHERE a.id < b.id AND rand() < 0.1
+    CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
+    ";
+
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testProfileCreateActedInRelationships(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 50) AS i
+    MATCH (p:Person {id: i}), (m:Movie {year: 2000 + i})
+    WHERE p.job = 'Artist'
+    CREATE (p)-[:ACTED_IN]->(m);
+    ";
+
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+    }
+
+    public function testChildQueryPlanExistence(): void
+    {
+        $result = $this->api->run("PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name");
+
+        $profiledQueryPlan = $result->getProfiledQueryPlan();
+        $this->assertNotNull($profiledQueryPlan);
+        $this->assertNotEmpty($profiledQueryPlan->getChildren());
+
+        foreach ($profiledQueryPlan->getChildren() as $child) {
+            $this->assertInstanceOf(ProfiledQueryPlan::class, $child);
+        }
+    }
+
+    public function testTransactionCommit(): void
+    {
+        // Begin a new transaction
+        $tsx = $this->api->beginTransaction();
+
+        // Generate a random name for the node
+        $name = (string)mt_rand(1, 100000);
+
+        // Create a node within the transaction
+        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
+
+        // Validate that the node does not exist in the database before the transaction is committed
+        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+
+        // Validate that the node exists within the transaction
+        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results);
+
+        // Commit the transaction
+        $tsx->commit();
+
+        // Validate that the node now exists in the database
+        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results); // Updated to expect 1 result
+    }
 
 
     /**
@@ -112,11 +241,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         }
     }
 
-    /**
-     * @throws GuzzleException
-     */
-
-
     public function testInvalidQueryException(): void
     {
         try {
@@ -129,9 +253,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->assertEquals('Expected parameter(s): invalidParam', $e->getMessage());
         }
     }
-//
-//
-//
+
     public function testCreateDuplicateConstraintException(): void
     {
         try {
