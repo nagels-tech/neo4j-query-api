@@ -24,12 +24,14 @@ class Neo4jQueryAPI
     {
         $this->client = $client;
     }
-
+    /**
+     * @api
+     */
     public static function login(string $address, string $username, string $password): self
     {
-        $username = 'neo4j';
-        $password = '***REMOVED***';
-        $connectionUrl = '***REMOVED***/db/neo4j/query/v2';
+//        $username = 'neo4j';
+//        $password = '***REMOVED***';
+////        $connectionUrl = '***REMOVED***/db/neo4j/query/v2';
 
 
         $client = new Client([
@@ -48,6 +50,7 @@ class Neo4jQueryAPI
     /**
      * @throws Neo4jException
      * @throws RequestExceptionInterface
+     * @api
      */
     public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null): ResultSet
     {
@@ -111,26 +114,8 @@ class Neo4jQueryAPI
 
                     throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
                 }
-
-                throw $e;
             }
             throw new RuntimeException('Error executing query: ' . $e->getMessage(), 0, $e);
         }
-    }
-
-
-
-
-    public function beginTransaction(string $database = 'neo4j'): Transaction
-    {
-        $response = $this->client->post("/db/neo4j/query/v2/tx");
-
-        $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
-        $responseData = json_decode($response->getBody(), true);
-        $transactionId = $responseData['transaction']['id'];
-
-
-
-        return new Transaction($this->client, $clusterAffinity, $transactionId);
     }
 }

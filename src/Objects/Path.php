@@ -31,7 +31,7 @@ class Path
 
     /**
      * Get the nodes in the path.
-     *
+     * @api
      * @return Node[] Array of nodes.
      */
     public function getNodes(): array
@@ -41,7 +41,7 @@ class Path
 
     /**
      * Get the relationships in the path.
-     *
+     * @api
      * @return Relationship[] Array of relationships.
      */
     public function getRelationships(): array
