@@ -54,10 +54,7 @@ class ResultRow implements ArrayAccess
         return $this->offsetGet($row);
     }
 
-//    public function toArray(): array
-//    {
-//        return $this->data;
-//    }
+
 }
 
 

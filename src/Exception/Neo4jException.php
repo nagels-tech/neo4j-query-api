@@ -4,6 +4,11 @@ namespace Neo4j\QueryAPI\Exception;
 
 use Exception;
 
+
+/**
+ * @api
+ */
+
 class Neo4jException extends Exception
 {
     private readonly string $errorCode;
@@ -28,32 +33,22 @@ class Neo4jException extends Exception
         parent::__construct($message, $statusCode, $previous);
     }
 
-    /**
-     * @api
-     */
-
     public function getErrorCode(): string
     {
         return $this->errorCode;
     }
-    /**
-     * @api
-     */
+
 
     public function getType(): ?string
     {
         return $this->errorType;
     }
-    /**
-     * @api
-     */
+
     public function getSubType(): ?string
     {
         return $this->errorSubType;
     }
-    /**
-     * @api
-     */
+
     public function getName(): ?string
     {
         return $this->errorName;

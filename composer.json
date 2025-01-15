@@ -6,8 +6,7 @@
         "guzzlehttp/guzzle": "^7.9",
         "psr/http-client": "^1.0",
       "ext-json": "*",
-        "php": "^8.1",
-        "symfony/finder": "^7.2"
+        "php": "^8.1"
     },
 
     "require-dev": {
@@ -31,6 +30,7 @@
             "email": "pratikshazalte83@gmail.com"
         }
     ],
+    "symfony/finder": "^7.2",
     "config": {
         "allow-plugins": {
             "php-http/discovery": true

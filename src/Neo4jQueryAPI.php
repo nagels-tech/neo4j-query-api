@@ -29,9 +29,6 @@ class Neo4jQueryAPI
      */
     public static function login(string $address, string $username, string $password): self
     {
-//        $username = 'neo4j';
-//        $password = '***REMOVED***';
-////        $connectionUrl = '***REMOVED***/db/neo4j/query/v2';
 
 
         $client = new Client([
