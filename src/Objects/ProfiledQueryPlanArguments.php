@@ -25,8 +25,7 @@ class ProfiledQueryPlanArguments
         private readonly ?float  $estimatedRows = null,
         private readonly ?string $planner = null,
         private readonly ?int    $rows = null
-    )
-    {
+    ) {
     }
 
     public function getGlobalMemory(): int
@@ -63,10 +62,10 @@ class ProfiledQueryPlanArguments
         return $this->pageCacheMisses;
     }
 
-     private function getPageCacheHits():int
-     {
-         return $this->pageCacheHits;
-     }
+    private function getPageCacheHits(): int
+    {
+        return $this->pageCacheHits;
+    }
     public function getRuntimeImpl(): string
     {
         return $this->runtimeImpl;

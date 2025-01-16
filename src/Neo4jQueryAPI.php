@@ -19,7 +19,6 @@ use Neo4j\QueryAPI\Objects\Bookmarks;
 
 class Neo4jQueryAPI
 {
-
     private Client $client;
 
     public function __construct(Client $client)
@@ -64,7 +63,7 @@ class Neo4jQueryAPI
             ]);
 
             $contents = $response->getBody()->getContents();
-       $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
+            $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
             $ogm = new OGM();
 
             $keys = $data['data']['fields'] ?? [];

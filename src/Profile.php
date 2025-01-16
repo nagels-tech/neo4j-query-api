@@ -1,6 +1,7 @@
 <?php
 
 namespace Neo4j\QueryAPI;
+
 require __DIR__ . '/../vendor/autoload.php';
 
 
@@ -21,13 +22,13 @@ class Profile
         $this->client = new Client();
     }
 
-    public function executeQuery($query ,$parameters=[])
+    public function executeQuery($query, $parameters = [])
     {
         $response = $this->client->post($this->neo4jUrl, [
             'auth' => [$this->username, $this->password],
             'json' => [
                 'statement' => $query,
-                'parameters'=>$parameters
+                'parameters' => $parameters
             ]
         ]);
 
@@ -59,4 +60,3 @@ class Profile
         return $output;
     }
 }
-

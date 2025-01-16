@@ -1,5 +1,14 @@
+#IDE
 .idea/
+
+#COMPOSER
 vendor
+
+#PHPUNIT
 phpunit.xml
 test
 .phpunit.result.cache
+
+#PHPCSFIXER
+.php-cs-fixer.dist.php
+.php-cs-fixer.cache

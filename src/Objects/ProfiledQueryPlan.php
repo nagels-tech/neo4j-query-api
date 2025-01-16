@@ -28,7 +28,7 @@ class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
         ?float $pageCacheHitRatio = 0.0,
         ?int $time = 0,
         ?string $operatorType = '',
-        ProfiledQueryPlanArguments $arguments ,
+        ProfiledQueryPlanArguments $arguments,
         array $children = [] // Accept an array of children, default to empty array
     ) {
         $this->dbHits = $dbHits ?? 0;

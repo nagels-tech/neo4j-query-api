@@ -32,5 +32,10 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
-    }
+    },
+
+     "scripts": {
+         "cs": "vendor/bin/php-cs-fixer check",
+         "cd-fix": "vendor/bin/php-cs-fixer fix"
+     }
 }
