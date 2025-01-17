@@ -465,7 +465,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertCount(count($expectedRows), $actualRows);
 
-        // Compare each row
+        // Ensure all expected rows are present in actual results
         foreach ($expectedRows as $expectedRow) {
             $found = false;
             foreach ($actualRows as $actualRow) {
@@ -480,6 +480,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         // Check bookmarks count
         $this->assertCount(1, $results->getBookmarks());
     }
+
 
 
 
