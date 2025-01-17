@@ -31,6 +31,12 @@ class Neo4jQueryAPI
      */
     public static function login(string $address, string $username, string $password): self
     {
+        if (empty($address)) {
+            throw new RuntimeException('Address cannot be empty');
+        }
+        if (empty($username) || empty($password)) {
+            throw new RuntimeException('Missing username or password');
+        }
 
         $client = new Client([
             'base_uri' => rtrim($address, '/'),
