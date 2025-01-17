@@ -122,9 +122,12 @@ class Neo4jQueryAPI
             throw new RuntimeException('Error executing query: ' . $e->getMessage(), 0, $e);
         }
 
-
+    /**
+     * @api
+     */
     public function beginTransaction(string $database = 'neo4j'): Transaction
     {
+        unset($database);
         $response = $this->client->post("/db/neo4j/query/v2/tx");
 
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');

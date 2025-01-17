@@ -21,7 +21,7 @@ class Transaction
 
     /**
      * Execute a Cypher query within the transaction.
-     *
+     * @api
      * @param string $query The Cypher query to be executed.
      * @param array $parameters Parameters for the query.
      * @return ResultSet The result rows in ResultSet format.
@@ -108,6 +108,9 @@ class Transaction
         );
     }
 
+    /**
+     * @api
+     */
     public function commit(): void
     {
         $this->client->post("/db/neo4j/query/v2/tx/{$this->transactionId}/commit", [
@@ -117,6 +120,9 @@ class Transaction
         ]);
     }
 
+    /**
+     * @api
+     */
     public function rollback(): void
     {
         $this->client->delete("/db/neo4j/query/v2/tx/{$this->transactionId}", [
