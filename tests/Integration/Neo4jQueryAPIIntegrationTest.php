@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Neo4j\QueryAPI\Tests\Integration;
 
 use GuzzleHttp\Exception\GuzzleException;
@@ -18,16 +19,14 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
 
-
     /**
      * @throws GuzzleException
      */
     public function setUp(): void
     {
-
-
         $this->api = $this->initializeApi();
 
+        // Clear database and populate test data
         $this->clearDatabase();
         $this->populateTestData();
     }
@@ -35,9 +34,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     private function initializeApi(): Neo4jQueryAPI
     {
         return Neo4jQueryAPI::login(
-            getenv('NEO4J_ADDRESS') ?: '***REMOVED***/',
-            getenv('NEO4J_USERNAME') ?: 'neo4j',
-            getenv('NEO4J_PASSWORD') ?: '***REMOVED***'
+            getenv('NEO4J_ADDRESS'),
+            getenv('NEO4J_USERNAME'),
+            getenv('NEO4J_PASSWORD')
         );
     }
 
@@ -636,11 +635,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                         'properties' => [
                             'name' => 'Ayush',
                             'location' => 'New York',
-                             'age' => '30'
+                            'age' => '30'
                         ],
-                'labels' => [
-                    0 => 'Person'
-                ]
+                        'labels' => [
+                            0 => 'Person'
+                        ]
 
                     ]
                 ]),
