@@ -35,7 +35,7 @@ jobs:
 
       - name: DEBUG
         env:
-          NEO4J_ADDRESS: ${secrets.NEO4J_ADDRESS}
+          NEO4J_ADDRESS: ${{ secrets.NEO4J_ADDRESS }}
         run: 'echo "Address: $NEO4J_ADDRESS"'
 
       - name: Run Tests without phpunit.xml
