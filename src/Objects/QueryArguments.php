@@ -2,6 +2,9 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
+/**
+ * @api
+ */
 class QueryArguments
 {
     private int $globalMemory;
@@ -56,82 +59,129 @@ class QueryArguments
         $this->planner = $planner ?? '';
         $this->rows = $rows ?? 0;
     }
+    /**
+     * @api
+     */
 
     public function getGlobalMemory(): int
     {
         return $this->globalMemory;
     }
+    /**
+     * @api
+     */
 
     public function getPlannerImpl(): string
     {
         return $this->plannerImpl;
     }
+    /**
+     * @api
+     */
 
     public function getMemory(): int
     {
         return $this->memory;
     }
+    /**
+     * @api
+     */
 
     public function getStringRepresentation(): string
     {
         return $this->stringRepresentation;
     }
+    /**
+     * @api
+     */
 
     public function getRuntime(): string
     {
         return $this->runtime;
     }
+    /**
+     * @api
+     */
 
     public function getRuntimeImpl(): string
     {
         return $this->runtimeImpl;
     }
+    /**
+     * @api
+     */
 
     public function getDbHits(): int
     {
         return $this->dbHits;
     }
+    /**
+     * @api
+     */
 
     public function getBatchSize(): int
     {
         return $this->batchSize;
     }
+    /**
+     * @api
+     */
 
     public function getDetails(): string
     {
         return $this->details;
     }
+    /**
+     * @api
+     */
 
     public function getPlannerVersion(): string
     {
         return $this->plannerVersion;
     }
+    /**
+     * @api
+     */
 
     public function getPipelineInfo(): string
     {
         return $this->pipelineInfo;
     }
+    /**
+     * @api
+     */
 
     public function getRuntimeVersion(): string
     {
         return $this->runtimeVersion;
     }
+    /**
+     * @api
+     */
 
     public function getId(): int
     {
         return $this->id;
     }
+    /**
+     * @api
+     */
 
     public function getEstimatedRows(): float
     {
         return $this->estimatedRows;
     }
+    /**
+     * @api
+     */
 
     public function getPlanner(): string
     {
         return $this->planner;
     }
-
+    /**
+     * @api
+     */
     public function getRows(): int
     {
         return $this->rows;

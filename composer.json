@@ -8,8 +8,11 @@
         "ext-json": "*",
         "php": "^8.1"
     },
+
     "require-dev": {
-        "phpunit/phpunit": "^11.0"
+        "phpunit/phpunit": "^10.0",
+        "vimeo/psalm": "^5.26",
+        "friendsofphp/php-cs-fixer": "^3.67"
     },
     "autoload": {
         "psr-4": {
@@ -27,6 +30,7 @@
             "email": "pratikshazalte83@gmail.com"
         }
     ],
+    "symfony/finder": "^7.2",
     "config": {
         "allow-plugins": {
             "php-http/discovery": true

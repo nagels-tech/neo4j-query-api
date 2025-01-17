@@ -2,6 +2,9 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
+/**
+ * @api
+ */
 class ResultCounters
 {
     public function __construct(
@@ -23,10 +26,13 @@ class ResultCounters
     }
 
 
+
+
     public function ContainsSystemUpdates(): bool
     {
         return $this->containsSystemUpdates;
     }
+
 
     public function containsUpdates(): bool
     {
@@ -38,10 +44,12 @@ class ResultCounters
         return $this->nodesCreated;
     }
 
+
     public function getNodesDeleted(): int
     {
         return $this->nodesDeleted;
     }
+
 
     public function getPropertiesSet(): int
     {

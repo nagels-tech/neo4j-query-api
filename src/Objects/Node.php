@@ -30,7 +30,7 @@ class Node
 
     /**
      * Get the labels of the node.
-     *
+     * @api
      * @return string[] Array of labels.
      */
     public function getLabels(): array
@@ -40,7 +40,7 @@ class Node
 
     /**
      * Get the properties of the node.
-     *
+     * @api
      * @return array<string, mixed> Associative array of properties.
      */
     public function getProperties(): array
@@ -50,7 +50,7 @@ class Node
 
     /**
      * Convert the Node object to an array representation.
-     *
+     * @api
      * @return array Node data as an array.
      */
     public function toArray(): array

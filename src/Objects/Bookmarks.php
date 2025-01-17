@@ -1,7 +1,9 @@
 <?php
 
 namespace Neo4j\QueryAPI\Objects;
-
+/**
+ * @api
+ */
 class Bookmarks implements \Countable
 {
     public function __construct(private array $bookmarks)
