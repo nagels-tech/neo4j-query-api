@@ -47,7 +47,7 @@ class Neo4jOGMTest extends TestCase
             ];
     }
 
-    public static function booleanDataProvider():array
+    public static function booleanDataProvider(): array
     {
         return [
             ['query1', ['_value' => true], true],
@@ -56,7 +56,7 @@ class Neo4jOGMTest extends TestCase
         ];
     }
 
-    public static function stringDataProvider():array
+    public static function stringDataProvider(): array
     {
         return [
             ['query1', ['_value' => 'Hello, world!'], 'Hello, world!'],

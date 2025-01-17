@@ -101,5 +101,3 @@ class ResultCounters
         return $this->labelsRemoved;
     }
 }
-
-

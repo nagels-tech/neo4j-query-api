@@ -1,9 +1,6 @@
 <?php
 
-
-
 namespace Neo4j\QueryAPI\Results;
-
 
 use BadMethodCallException;
 use Neo4j\QueryAPI\OGM;
@@ -42,7 +39,7 @@ class ResultRow implements ArrayAccess
     }
     public function offsetUnset($offset): void
     {
-            throw new BadMethodCallException("You can't Unset {$offset}.");
+        throw new BadMethodCallException("You can't Unset {$offset}.");
 
     }
     /**
@@ -56,5 +53,3 @@ class ResultRow implements ArrayAccess
 
 
 }
-
-

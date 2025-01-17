@@ -20,7 +20,6 @@ use Neo4j\QueryAPI\Objects\Bookmarks;
 
 class Neo4jQueryAPI
 {
-
     private Client $client;
 
     public function __construct(Client $client)
@@ -116,11 +115,11 @@ class Neo4jQueryAPI
                 $contents = $response->getBody()->getContents();
                 $errorResponse = json_decode($contents, true);
 
-                    throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
-                }
+                throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
             }
-            throw new RuntimeException('Error executing query: ' . $e->getMessage(), 0, $e);
         }
+        throw new RuntimeException('Error executing query: ' . $e->getMessage(), 0, $e);
+    }
 
     /**
      * @api
@@ -172,7 +171,7 @@ class Neo4jQueryAPI
             $queryArguments
         );
 
-        foreach($data['children'] as $child) {
+        foreach ($data['children'] as $child) {
             $childQueryPlan = $this->createProfileData($child);
 
             $profiledQueryPlan->addChild($childQueryPlan);

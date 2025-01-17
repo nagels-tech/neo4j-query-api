@@ -1,6 +1,7 @@
 <?php
 
 namespace Neo4j\QueryAPI\Objects;
+
 /**
  * @api
  */
