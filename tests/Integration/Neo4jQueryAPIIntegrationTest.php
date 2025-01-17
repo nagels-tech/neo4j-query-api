@@ -444,7 +444,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $results = $this->api->run(
             'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
-            ['names' => ['bob1', 'alicy']]
+            ['names' => ['alicy', 'bob1']]
         );
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
