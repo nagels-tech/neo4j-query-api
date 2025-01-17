@@ -32,7 +32,6 @@ class Neo4jQueryAPI
     public static function login(string $address, string $username, string $password): self
     {
 
-
         $client = new Client([
             'base_uri' => rtrim($address, '/'),
             'timeout' => 10.0,
