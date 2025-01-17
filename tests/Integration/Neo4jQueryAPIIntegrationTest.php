@@ -435,8 +435,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     {
         $expected = new ResultSet(
             [
-                new ResultRow(['n.name' => 'bob1']),
-                new ResultRow(['n.name' => 'alicy'])
+                new ResultRow(['n.name' => 'alicy']),
+                new ResultRow(['n.name' => 'bob1'])
             ],
             new ResultCounters(
                 containsUpdates: false,
