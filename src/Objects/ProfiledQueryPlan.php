@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
+
 class ProfiledQueryPlan
 {
     private int $dbHits;
@@ -40,46 +41,73 @@ class ProfiledQueryPlan
         $this->operatorType = $operatorType ?? '';
         $this->arguments = $arguments;
     }
+    /**
+     * @api
+     */
 
     public function getDbHits(): int
     {
         return $this->dbHits;
     }
+    /**
+     * @api
+     */
 
     public function getRecords(): int
     {
         return $this->records;
     }
+    /**
+     * @api
+     */
 
     public function hasPageCacheStats(): bool
     {
         return $this->hasPageCacheStats;
     }
+    /**
+     * @api
+     */
 
     public function getPageCacheHits(): int
     {
         return $this->pageCacheHits;
     }
+    /**
+     * @api
+     */
 
     public function getPageCacheMisses(): int
     {
         return $this->pageCacheMisses;
     }
+    /**
+     * @api
+     */
 
     public function getPageCacheHitRatio(): float
     {
         return $this->pageCacheHitRatio;
     }
+    /**
+     * @api
+     */
 
     public function getTime(): int
     {
         return $this->time;
     }
+    /**
+     * @api
+     */
 
     public function getOperatorType(): string
     {
         return $this->operatorType;
     }
+    /**
+     * @api
+     */
 
     public function getArguments(): QueryArguments
     {
@@ -87,12 +115,16 @@ class ProfiledQueryPlan
     }
 
     /**
+     * @api
      * @return list<ProfiledQueryPlan>
      */
     public  function getChildren(): array
     {
         return $this->children;
     }
+    /**
+     * @api
+     */
 
     public function addChild(ProfiledQueryPlan $child): void
     {

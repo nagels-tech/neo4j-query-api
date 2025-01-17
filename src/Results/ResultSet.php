@@ -11,6 +11,7 @@ use Neo4j\QueryAPI\Objects\Bookmarks;
 use Traversable;
 
 /**
+ * @api
  * @template TKey of array-key
  * @template TValue
  * @implements IteratorAggregate<TKey, TValue>
@@ -27,6 +28,8 @@ class ResultSet implements IteratorAggregate, Countable
         private ?ProfiledQueryPlan $profiledQueryPlan = null
     )
     {
+
+
     }
 
     /**
@@ -44,6 +47,9 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return $this->counters;
     }
+    /**
+     * @api
+     */
 
     public function getProfiledQueryPlan(): ?ProfiledQueryPlan
     {
