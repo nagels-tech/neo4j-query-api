@@ -13,7 +13,6 @@ use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
-use Psr\Http\Client\RequestExceptionInterface;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
@@ -427,13 +426,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertCount(1, $results->getBookmarks());
     }
 
-    /**
-     * @throws Neo4jException
-     * @throws RequestExceptionInterface
-     */
     public function testWithArray(): void
     {
-        // Expected result
         $expected = new ResultSet(
             [
                 new ResultRow(['n.name' => 'bob1']),
@@ -448,31 +442,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        // Actual results from API
         $results = $this->api->run(
             'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
             ['names' => ['bob1', 'alicy']]
         );
 
-        // Assert counters
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-
-        // Assert the number of ResultRows
-        $this->assertCount(count(iterator_to_array($expected)), iterator_to_array($results));
-
-        // Convert to arrays for comparison
-        $expectedRows = iterator_to_array($expected);
-        $actualRows = iterator_to_array($results);
-
-        // Ensure all expected rows are present in actual results
-        foreach ($expectedRows as $expectedRow) {
-            $this->assertContains($expectedRow, $actualRows, "Expected row not found: " . json_encode($expectedRow));
-        }
-
-        // Check bookmarks count
+        $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
         $this->assertCount(1, $results->getBookmarks());
     }
-
 
     public function testWithDate(): void
     {
