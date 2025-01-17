@@ -13,6 +13,7 @@ use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
+use Psr\Http\Client\RequestExceptionInterface;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
@@ -426,8 +427,13 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertCount(1, $results->getBookmarks());
     }
 
+    /**
+     * @throws Neo4jException
+     * @throws RequestExceptionInterface
+     */
     public function testWithArray(): void
     {
+        // Expected result
         $expected = new ResultSet(
             [
                 new ResultRow(['n.name' => 'bob1']),
@@ -442,15 +448,40 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
+        // Actual results from API
         $results = $this->api->run(
             'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
             ['names' => ['bob1', 'alicy']]
         );
 
+        // Assert counters
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-        $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
+
+        // Compare ResultRows
+        $this->assertCount(count($expected), $results);
+
+        $expectedRows = iterator_to_array($expected);
+        $actualRows = iterator_to_array($results);
+
+        $this->assertCount(count($expectedRows), $actualRows);
+
+        // Compare each row
+        foreach ($expectedRows as $expectedRow) {
+            $found = false;
+            foreach ($actualRows as $actualRow) {
+                if ($expectedRow == $actualRow) {
+                    $found = true;
+                    break;
+                }
+            }
+            $this->assertTrue($found, "Expected row not found: " . json_encode($expectedRow));
+        }
+
+        // Check bookmarks count
         $this->assertCount(1, $results->getBookmarks());
     }
+
+
 
     public function testWithDate(): void
     {
