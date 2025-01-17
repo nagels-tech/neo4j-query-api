@@ -260,7 +260,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->api->run('CREATE CONSTRAINT person_name FOR (n:Person1) REQUIRE n.name IS UNIQUE', []);
             $this->fail('Expected a Neo4jException to be thrown.');
         } catch (Neo4jException $e) {
-//           $errorMessages = $e->getErrorType() . $e->errorSubType() . $e->errorName();
+            //           $errorMessages = $e->getErrorType() . $e->errorSubType() . $e->errorName();
             $this->assertInstanceOf(Neo4jException::class, $e);
             $this->assertEquals('Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists', $e->getErrorCode());
             $this->assertNotEmpty($e->getMessage());
@@ -442,7 +442,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        $results = $this->api->run('MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
+        $results = $this->api->run(
+            'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
             ['names' => ['bob1', 'alicy']]
         );
 
@@ -467,7 +468,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        $results = $this->api->run('CREATE (n:Person {date: datetime($date)}) RETURN n.date',
+        $results = $this->api->run(
+            'CREATE (n:Person {date: datetime($date)}) RETURN n.date',
             ['date' => "2024-12-11T11:00:00Z"]
         );
 
@@ -492,7 +494,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        $results = $this->api->run('CREATE (n:Person {duration: duration($duration)}) RETURN n.duration',
+        $results = $this->api->run(
+            'CREATE (n:Person {duration: duration($duration)}) RETURN n.duration',
             ['duration' => 'P14DT16H12M'],
         );
 
@@ -516,13 +519,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        $results = $this->api->run('CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
+        $results = $this->api->run(
+            'CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
             [
                 'Point' => [
                     'longitude' => 1.2,
                     'latitude' => 3.4,
                     'crs' => 'wgs-84',
-                ]]);
+                ]]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
@@ -545,13 +550,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        $results = $this->api->run('CREATE (n:Person {Point: point({longitude: $longitude, latitude: $latitude, height: $height, srid: $srid})}) RETURN n.Point',
+        $results = $this->api->run(
+            'CREATE (n:Person {Point: point({longitude: $longitude, latitude: $latitude, height: $height, srid: $srid})}) RETURN n.Point',
             [
                 'longitude' => 1.2,
                 'latitude' => 3.4,
                 'height' => 4.2,
                 'srid' => 4979,
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
@@ -574,12 +581,14 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        $results = $this->api->run('CREATE (n:Person {Point: point({x: $x, y: $y, srid: $srid})}) RETURN n.Point',
+        $results = $this->api->run(
+            'CREATE (n:Person {Point: point({x: $x, y: $y, srid: $srid})}) RETURN n.Point',
             [
                 'x' => 10.5,
                 'y' => 20.7,
                 'srid' => 7203,
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
@@ -602,13 +611,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        $results = $this->api->run('CREATE (n:Person {Point: point({x: $x, y: $y, z: $z, srid: $srid})}) RETURN n.Point',
+        $results = $this->api->run(
+            'CREATE (n:Person {Point: point({x: $x, y: $y, z: $z, srid: $srid})}) RETURN n.Point',
             [
                 'x' => 10.5,
                 'y' => 20.7,
                 'z' => 30.9,
                 'srid' => 9157,
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
@@ -643,12 +654,14 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        $results = $this->api->run('CREATE (n:Person {name: $name, age: $age, location: $location}) RETURN {labels: labels(n), properties: properties(n)} AS node',
+        $results = $this->api->run(
+            'CREATE (n:Person {name: $name, age: $age, location: $location}) RETURN {labels: labels(n), properties: properties(n)} AS node',
             [
                 'name' => 'Ayush',
                 'age' => 30,
                 'location' => 'New York',
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
@@ -675,7 +688,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     'relationshipTypes' => ['FRIENDS'],
                 ]),
             ],
-
             new ResultCounters(
                 containsUpdates: true,
                 nodesCreated: 2,
@@ -683,11 +695,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 relationshipsCreated: 1,
                 labelsAdded: 2,
             ),
-
             new Bookmarks([])
         );
 
-        $results = $this->api->run('CREATE (a:Person {name: $name1}), (b:Person {name: $name2}),
+        $results = $this->api->run(
+            'CREATE (a:Person {name: $name1}), (b:Person {name: $name2}),
      (a)-[r:FRIENDS]->(b)
      RETURN {labels: labels(a), properties: properties(a)} AS node1,
             {labels: labels(b), properties: properties(b)} AS node2,
@@ -695,7 +707,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             [
                 'name1' => 'A',
                 'name2' => 'B',
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
@@ -719,12 +732,13 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 0,
                 labelsAdded: 0,
             ),
-
             new Bookmarks([])
         );
 
-        $results = $this->api->run('RETURN {hello: "hello"} AS map',
-            []);
+        $results = $this->api->run(
+            'RETURN {hello: "hello"} AS map',
+            []
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
@@ -766,7 +780,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Bookmarks([])
         );
 
-        $results = $this->api->run('CREATE (p1:Person {name: $name1, age: $age1, location: $location1}),
+        $results = $this->api->run(
+            'CREATE (p1:Person {name: $name1, age: $age1, location: $location1}),
              (p2:Person {name: $name2, age: $age2, location: $location2}),
              (p1)-[r:FRIEND_OF]->(p2)
      RETURN {labels: labels(p1), properties: properties(p1)} AS node1,
@@ -779,7 +794,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 'name2' => 'John',
                 'age2' => 25,
                 'location2' => 'Los Angeles'
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());

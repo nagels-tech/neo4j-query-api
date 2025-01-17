@@ -4,7 +4,6 @@ namespace Neo4j\QueryAPI\Exception;
 
 use Exception;
 
-
 /**
  * @api
  */
@@ -20,8 +19,7 @@ class Neo4jException extends Exception
         array       $errorDetails = [],
         int         $statusCode = 0,
         ?\Throwable $previous = null
-    )
-    {
+    ) {
         $this->errorCode = $errorDetails['code'] ?? 'Neo.UnknownError';
         $errorParts = explode('.', $this->errorCode);
         $this->errorType = $errorParts[1] ?? null;

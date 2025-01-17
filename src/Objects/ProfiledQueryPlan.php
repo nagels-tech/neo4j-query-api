@@ -2,7 +2,6 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-
 class ProfiledQueryPlan
 {
     private int $dbHits;
@@ -118,7 +117,7 @@ class ProfiledQueryPlan
      * @api
      * @return list<ProfiledQueryPlan>
      */
-    public  function getChildren(): array
+    public function getChildren(): array
     {
         return $this->children;
     }
