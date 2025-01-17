@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Neo4j\QueryAPI\Tests\Integration;
 
 use GuzzleHttp\Exception\GuzzleException;
