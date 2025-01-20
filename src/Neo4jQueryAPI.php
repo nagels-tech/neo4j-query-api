@@ -164,7 +164,7 @@ class Neo4jQueryAPI
             rows: $mappedArguments['Rows' ?? null]
         );
 
-
+        $identifiers = $data['identifiers'] ?? [];
         $profiledQueryPlan = new ProfiledQueryPlan(
             $data['dbHits'],
             $data['records'],
@@ -174,9 +174,11 @@ class Neo4jQueryAPI
             $data['pageCacheHitRatio'],
             $data['time'],
             $data['operatorType'],
-            $queryArguments
-        );
+            $queryArguments,
+            children: [],
+            identifiers: $identifiers
 
+        );
         // Process children recursively
         foreach ($data['children'] as $child) {
             $childQueryPlan = $this->createProfileData($child);
