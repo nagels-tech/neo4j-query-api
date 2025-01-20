@@ -62,7 +62,8 @@
       "PageCacheHits" : 0
     },
     "identifiers" : [ "j", "a", "i", "b", "anon_0", "anon_1" ],
-    "children" : [ {
+    "children" : [
+      {
       "dbHits" : 0,
       "records" : 0,
       "hasPageCacheStats" : false,
