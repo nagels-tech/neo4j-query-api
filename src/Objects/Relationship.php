@@ -31,7 +31,7 @@ class Relationship
 
     /**
      * Get the type of the relationship.
-     *
+     * @api
      * @return string The type of the relationship.
      */
     public function getType(): string
@@ -41,7 +41,7 @@ class Relationship
 
     /**
      * Get the properties of the relationship.
-     *
+     * @api
      * @return array<string, mixed> Associative array of properties.
      */
     public function getProperties(): array
