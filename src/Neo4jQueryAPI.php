@@ -4,8 +4,6 @@ namespace Neo4j\QueryAPI;
 
 use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
@@ -145,26 +143,26 @@ class Neo4jQueryAPI
         }
 
         $queryArguments = new ProfiledQueryPlanArguments(
-            $mappedArguments['GlobalMemory'],
-            $mappedArguments['planner-impl'],
-            $mappedArguments['memory'],
-            $mappedArguments['string-representation'],
-            $mappedArguments['runtime'] ?? null,
-            $mappedArguments['Time'],
-            is_int($mappedArguments['PageCacheMisses']),
-            is_int($mappedArguments['PageCacheHits']),
-            $mappedArguments['runtime-impl'],
-            $mappedArguments['version'],
-            is_int($mappedArguments['DbHits']),
-            $mappedArguments['batch-size'],
-            is_string($mappedArguments['Details']),
-            $mappedArguments['planner-version'],
-            is_string($mappedArguments['PipelineInfo']),
-            $mappedArguments['runtime-version'],
-            is_int($mappedArguments['Id']),
-            (float)($mappedArguments['EstimatedRows'] ?? 0.0),
-            is_string($mappedArguments['planner'] ? $mappedArguments['planner'] : json_encode($mappedArguments['planner'])),
-            is_int($mappedArguments['Rows'])
+            globalMemory: $mappedArguments['GlobalMemory'] ?? null,
+            plannerImpl: $mappedArguments['planner-impl'] ?? null,
+            memory: $mappedArguments['Memory'] ?? null,
+            stringRepresentation: $mappedArguments['string-representation'] ?? null,
+            runtime: $mappedArguments['runtime'] ?? null,
+            time: $mappedArguments['Time'] ?? null,
+            pageCacheMisses: $mappedArguments['PageCacheMisses'] ?? null,
+            pageCacheHits: $mappedArguments['PageCacheHits'] ?? null,
+            runtimeImpl: $mappedArguments['runtime-impl'] ?? null,
+            version: $mappedArguments['version'] ?? null,
+            dbHits: $mappedArguments['DbHits'] ?? null,
+            batchSize: $mappedArguments['batch-size'] ?? null,
+            details: $mappedArguments['Details'] ?? null,
+            plannerVersion: $mappedArguments['planner-version'] ?? null,
+            pipelineInfo: $mappedArguments['PipelineInfo'] ?? null,
+            runtimeVersion: $mappedArguments['runtime-version'] ?? null,
+            id: $mappedArguments['Id'] ?? null,
+            estimatedRows: $mappedArguments['EstimatedRows'] ?? null,
+            planner: $mappedArguments['planner'] ?? null,
+            rows: $mappedArguments['Rows' ?? null]
         );
 
 
@@ -172,7 +170,7 @@ class Neo4jQueryAPI
             $data['dbHits'],
             $data['records'],
             $data['hasPageCacheStats'],
-            $data['PageCacheHits'],
+            $data['pageCacheHits'],
             $data['pageCacheMisses'],
             $data['pageCacheHitRatio'],
             $data['time'],
