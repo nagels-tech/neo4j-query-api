@@ -32,5 +32,11 @@
         "allow-plugins": {
             "php-http/discovery": true
         }
+    },
+
+    "scripts": {
+        "cs": "vendor/bin/php-cs-fixer fix --dry-run --diff --allow-risky=yes",
+        "cs:fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes"
     }
+
 }
