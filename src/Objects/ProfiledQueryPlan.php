@@ -25,17 +25,17 @@ class ProfiledQueryPlan
     private array $identifiers;
 
     public function __construct(
-        ?int $dbHits ,
-        ?int $records ,
-        ?bool $hasPageCacheStats ,
-        ?int $pageCacheHits ,
-        ?int $pageCacheMisses ,
-        ?float $pageCacheHitRatio ,
-        ?int $time ,
+        ?int $dbHits,
+        ?int $records,
+        ?bool $hasPageCacheStats,
+        ?int $pageCacheHits,
+        ?int $pageCacheMisses,
+        ?float $pageCacheHitRatio,
+        ?int $time,
         ?string $operatorType,
-        ProfiledQueryPlanArguments $arguments ,
-        ?array $children=[],
-        array $identifiers=[] // Default to an empty array
+        ProfiledQueryPlanArguments $arguments,
+        ?array $children = [],
+        array $identifiers = [] // Default to an empty array
     ) {
         $this->dbHits = $dbHits ?? 0;
         $this->records = $records ?? 0;

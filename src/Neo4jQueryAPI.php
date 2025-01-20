@@ -177,7 +177,6 @@ class Neo4jQueryAPI
             $queryArguments,
             children: [],
             identifiers: $identifiers
-
         );
         // Process children recursively
         foreach ($data['children'] as $child) {
