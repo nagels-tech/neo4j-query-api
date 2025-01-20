@@ -122,4 +122,3 @@ class Neo4jExceptionUnitTest extends TestCase
         $this->assertSame('Unauthorized', $exception->getName());
     }
 }
-
