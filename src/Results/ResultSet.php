@@ -23,8 +23,7 @@ class ResultSet implements IteratorAggregate, Countable
         private Bookmarks $bookmarks,
         private ?ProfiledQueryPlan $profiledQueryPlan = null,
         private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
-    )
-    {
+    ) {
     }
 
     public function getIterator(): Traversable
@@ -43,7 +42,7 @@ class ResultSet implements IteratorAggregate, Countable
 
     public function getChildQueryPlan(): ?ChildQueryPlan
     {
-         return $this->childQueryPlan;
+        return $this->childQueryPlan;
     }
 
     public function count(): int
