@@ -10,6 +10,11 @@ use Neo4j\QueryAPI\OGM;
 use OutOfBoundsException;
 use ArrayAccess;
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ * @implements ArrayAccess<TKey, TValue>
+ */
 class ResultRow implements ArrayAccess
 {
     public function __construct(private array $data)
@@ -40,17 +45,16 @@ class ResultRow implements ArrayAccess
             throw new BadMethodCallException("You can't Unset {$offset}.");
 
     }
-
+    /**
+     * @api
+     */
 
     public function get(string $row): mixed
     {
         return $this->offsetGet($row);
     }
 
-    public function toArray(): array
-    {
-        return $this->data;
-    }
+
 }
 
 
