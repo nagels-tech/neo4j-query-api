@@ -242,9 +242,10 @@ return new ResultSet(
                                                             id: 11,
                                                             estimatedRows: 10.0,
                                                             rows: 100
-                                                        )
+                                                        ),identifiers: ["i"]
                                                     )
-                                                ]
+                                                ],identifiers: ["i","j"]
+
                                             ),
                                             // CHILD #1.1.1.1.2: CartesianProduct@neo4j (id=5)
                                             new ProfiledQueryPlan(
@@ -337,9 +338,12 @@ return new ResultSet(
                                                                     id: 9,
                                                                     estimatedRows: 1000.0,
                                                                     rows: 20000,
-                                                                )
+                                                                ),identifiers: ["i","j","a"]
+
+
                                                             )
-                                                        ]
+                                                        ],identifiers: ["i","j","a"]
+
                                                     ),
                                                     // CHILD #1.1.1.1.2.2: Filter@neo4j (id=6)
                                                     new ProfiledQueryPlan(
@@ -401,20 +405,22 @@ return new ResultSet(
                                                                     id: 7,
                                                                     estimatedRows: 1000.0,
                                                                     rows: 0
-                                                                )
+                                                                ),identifiers: ["i","j","b"]
                                                             )
-                                                        ]
+                                                        ],identifiers: ["i","j","b"]
                                                     )
-                                                ]
+                                                ],identifiers: ["i","j","a","b"]
                                             )
-                                        ]
+                                        ],identifiers: ["i","j","a","b"]
                                     )
-                                ]
+                                ],
+
+                                identifiers: ["i","j","a","b"]
                             )
-                        ]
+                        ],identifiers: ["j","a","i","b","anon_0","anon_1"]
                     )
-                ]
+                ],identifiers: ["j","a","i","b","anon_0","anon_1"]
             )
-        ]
+        ],identifiers: ["j","a","i","b","anon_0","anon_1"]
     )
 );

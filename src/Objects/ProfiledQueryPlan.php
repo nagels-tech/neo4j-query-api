@@ -2,7 +2,7 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
+class ProfiledQueryPlan
 {
     private int $dbHits;
     private int $records;
@@ -19,17 +19,23 @@ class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
      */
     private array $children;
 
+    /**
+     * @var string[]
+     */
+    private array $identifiers;
+
     public function __construct(
-        ?int $dbHits = 0, // Default to 0 if null
-        ?int $records = 0,
-        ?bool $hasPageCacheStats = false,
-        ?int $pageCacheHits = 0,
-        ?int $pageCacheMisses = 0,
-        ?float $pageCacheHitRatio = 0.0,
-        ?int $time = 0,
-        ?string $operatorType = '',
-        ProfiledQueryPlanArguments $arguments,
-        array $children = [] // Accept an array of children, default to empty array
+        ?int $dbHits ,
+        ?int $records ,
+        ?bool $hasPageCacheStats ,
+        ?int $pageCacheHits ,
+        ?int $pageCacheMisses ,
+        ?float $pageCacheHitRatio ,
+        ?int $time ,
+        ?string $operatorType,
+        ProfiledQueryPlanArguments $arguments ,
+        ?array $children=[],
+        array $identifiers=[] // Default to an empty array
     ) {
         $this->dbHits = $dbHits ?? 0;
         $this->records = $records ?? 0;
@@ -41,6 +47,7 @@ class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
         $this->operatorType = $operatorType ?? '';
         $this->arguments = $arguments;
         $this->children = $children ?? [];
+        $this->identifiers = $identifiers;
     }
 
     public function getDbHits(): int
@@ -99,5 +106,26 @@ class ProfiledQueryPlan extends \Neo4j\QueryAPI\Objects\Bookmarks
     public function addChild(ProfiledQueryPlan|ProfiledQueryPlanArguments $child): void
     {
         $this->children[] = $child;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getIdentifiers(): array
+    {
+        return $this->identifiers;
+    }
+
+    /**
+     * @param string[] $identifiers
+     */
+    public function setIdentifiers(array $identifiers): void
+    {
+        $this->identifiers = $identifiers;
+    }
+
+    public function addIdentifier(string $identifier): void
+    {
+        $this->identifiers[] = $identifier;
     }
 }
