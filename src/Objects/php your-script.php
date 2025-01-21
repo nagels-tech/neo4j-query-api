@@ -1,6 +1,7 @@
 <?php
 
 use Neo4j\QueryAPI\Objects\Authentication;
+
 require_once 'Authentication.php'; // Assuming your Authentication class is in Authentication.php
 
 // Using Bearer Token Authentication
