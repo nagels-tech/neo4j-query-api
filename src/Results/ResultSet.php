@@ -9,6 +9,7 @@ use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Traversable;
+use src\Enums\AccessMode;
 
 /**
  * @api
@@ -25,7 +26,8 @@ class ResultSet implements IteratorAggregate, Countable
         private readonly array     $rows,
         private ResultCounters     $counters,
         private Bookmarks          $bookmarks,
-        private ?ProfiledQueryPlan $profiledQueryPlan = null
+        private ?ProfiledQueryPlan $profiledQueryPlan = null,
+        private ?AccessMode $accessMode= null
     )
     {
 
@@ -77,10 +79,9 @@ class ResultSet implements IteratorAggregate, Countable
      * @api
      */
 
-    public function testAccessMode()
+    public function getAccessMode(): ?AccessMode
     {
-        $resultSet = new ResultSet([], null, 'WRITE');
-        $this->assertEquals('WRITE', $resultSet->getAccessMode());
+        return $this->accessMode;
     }
 
 
