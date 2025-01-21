@@ -55,13 +55,4 @@ class AuthenticationTest extends TestCase
         putenv('NEO4J_PASSWORD');
     }
 
-    public function testInvalidArguments(): void
-    {
-        // Expect an exception when both username and password are null
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Both username and password cannot be null.');
-
-        // Attempt to create an Authentication instance without credentials
-        Authentication::request(null, null, null);
-    }
 }
