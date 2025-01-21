@@ -14,6 +14,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Message\ResponseInterface;
+use src\Enums\AccessMode;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
@@ -230,12 +231,16 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
 //
 
-    public function testRunWithDefaultAccessMode(): void
+    public function testRunWithWriteAccessMode(): void
     {
-        $result = $this->api->run("MATCH (n) RETURN COUNT(n)");
+        $result = $this->api->run(
+            "CREATE (n:Person {name: 'Alice'}) RETURN n",
+            [],
+            null,
+            AccessMode::WRITE // why its considered as bookmark
+        );
 
-        $this->assertInstanceOf(ResultSet::class, $result);
-        // Default mode is WRITE;
+        $this->assertNotEmpty($result->getData());
     }
 
     public function testRunWithAccessMode(): void

@@ -18,6 +18,7 @@ use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
 use stdClass;
 use Neo4j\QueryAPI\Objects\Bookmarks;
+use src\Enums\AccessMode;
 
 class Neo4jQueryAPI
 {
@@ -53,19 +54,18 @@ class Neo4jQueryAPI
      * @throws RequestExceptionInterface
      * @api
      */
-    public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null, ?string $impersonatedUser = null, string $accessMode = 'WRITE' ): ResultSet
+    public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null, ?string $impersonatedUser = null, AccessMode $accessMode = AccessMode::WRITE ): ResultSet
     {
         $validAccessModes = ['READ', 'WRITE', 'ROUTE'];
-        if (!in_array(strtoupper($accessMode), $validAccessModes, true)) {
-            throw new InvalidArgumentException("Invalid access mode: $accessMode. Allowed values are 'READ', 'WRITE', or 'ROUTE'.");
-        }
+
         try {
             $payload = [
                 'statement' => $cypher,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
                 'includeCounters' => true,
-                'routing' => strtoupper($accessMode)
+                'accessMode' => $accessMode->value,
             ];
+
             error_log("Request Payload: " . json_encode($payload));
 
             if ($bookmark !== null) {
@@ -74,8 +74,12 @@ class Neo4jQueryAPI
             if ($impersonatedUser !== null) {
                 $payload['impersonatedUser'] = $impersonatedUser;
             }
-
-//
+            if ($accessMode) {
+                $payload['accessMode'] = $accessMode->value;
+            }
+            if (!in_array($accessMode, AccessMode::cases(), true)) {
+                throw new RuntimeException("Invalid AccessMode: " . print_r($accessMode, true));
+            }
 
 
             $response = $this->client->post('/db/' . $database . '/query/v2', [
@@ -126,7 +130,8 @@ class Neo4jQueryAPI
                 $rows,
                 $resultCounters,
                 new Bookmarks($data['bookmarks'] ?? []),
-                $profile
+                $profile,
+                $accessMode
             );
         } catch (RequestExceptionInterface $e) {
             error_log("Request Exception: " . $e->getMessage());
