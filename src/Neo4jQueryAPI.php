@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use InvalidArgumentException;
 use Neo4j\QueryAPI\Objects\ChildQueryPlan;
 use Neo4j\QueryAPI\Objects\QueryArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
@@ -52,22 +53,39 @@ class Neo4jQueryAPI
      * @throws RequestExceptionInterface
      * @api
      */
-    public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null): ResultSet
+    public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null, ?string $impersonatedUser = null, string $accessMode = 'WRITE' ): ResultSet
     {
+        $validAccessModes = ['READ', 'WRITE', 'ROUTE'];
+        if (!in_array(strtoupper($accessMode), $validAccessModes, true)) {
+            throw new InvalidArgumentException("Invalid access mode: $accessMode. Allowed values are 'READ', 'WRITE', or 'ROUTE'.");
+        }
         try {
             $payload = [
                 'statement' => $cypher,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
                 'includeCounters' => true,
+                'routing' => strtoupper($accessMode)
             ];
+            error_log("Request Payload: " . json_encode($payload));
 
             if ($bookmark !== null) {
                 $payload['bookmarks'] = $bookmark->getBookmarks();
             }
+            if ($impersonatedUser !== null) {
+                $payload['impersonatedUser'] = $impersonatedUser;
+            }
+
+//
+
 
             $response = $this->client->post('/db/' . $database . '/query/v2', [
                 'json' => $payload,
+
             ]);
+
+//            if ($response->getStatusCode() !== 200) {
+//                throw new Neo4jException("Failed to run query: " . $response->getReasonPhrase());
+//            }
 
             $data = json_decode($response->getBody()->getContents(), true);
             $ogm = new OGM();
@@ -111,16 +129,21 @@ class Neo4jQueryAPI
                 $profile
             );
         } catch (RequestExceptionInterface $e) {
+            error_log("Request Exception: " . $e->getMessage());
+
             $response = $e->getResponse();
             if ($response !== null) {
                 $contents = $response->getBody()->getContents();
-                $errorResponse = json_decode($contents, true);
+                error_log("Error Response: " . $contents);
 
-                    throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
-                }
+                $errorResponse = json_decode($contents, true);
+                throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
             }
-            throw new RuntimeException('Error executing query: ' . $e->getMessage(), 0, $e);
+
+            throw $e;
         }
+    }
+
 
     /**
      * @api

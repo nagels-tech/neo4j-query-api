@@ -22,9 +22,9 @@ class ResultSet implements IteratorAggregate, Countable
      * @param list<ResultRow> $rows
      */
     public function __construct(
-        private readonly array $rows,
-        private ResultCounters $counters,
-        private Bookmarks $bookmarks,
+        private readonly array     $rows,
+        private ResultCounters     $counters,
+        private Bookmarks          $bookmarks,
         private ?ProfiledQueryPlan $profiledQueryPlan = null
     )
     {
@@ -47,6 +47,7 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return $this->counters;
     }
+
     /**
      * @api
      */
@@ -71,4 +72,24 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return $this->bookmarks;
     }
+
+    /**
+     * @api
+     */
+
+    public function testAccessMode()
+    {
+        $resultSet = new ResultSet([], null, 'WRITE');
+        $this->assertEquals('WRITE', $resultSet->getAccessMode());
+    }
+
+
+//    public function getImpersonatedUser(): ?ImpersonatedUser
+//    {
+//
+//    }
+
+
+
+
 }
