@@ -1,0 +1,528 @@
+{
+  "data" : {
+    "fields" : [ ],
+    "values" : [ ]
+  },
+  "notifications" : [ {
+    "code" : "Neo.ClientNotification.Statement.CartesianProduct",
+    "description" : "If a part of a query contains multiple disconnected patterns, this will build a cartesian product between all those parts. This may produce a large amount of data and slow down query processing. While occasionally intended, it may often be possible to reformulate the query that avoids the use of this cross product, perhaps by adding a relationship between the different parts or by using OPTIONAL MATCH (identifier is: (b))",
+    "severity" : "INFORMATION",
+    "title" : "This query builds a cartesian product between disconnected patterns.",
+    "position" : {
+      "offset" : 73,
+      "line" : 4,
+      "column" : 5
+    },
+    "category" : "PERFORMANCE"
+  } ],
+  "counters" : {
+    "containsUpdates" : false,
+    "nodesCreated" : 0,
+    "nodesDeleted" : 0,
+    "propertiesSet" : 0,
+    "relationshipsCreated" : 0,
+    "relationshipsDeleted" : 0,
+    "labelsAdded" : 0,
+    "labelsRemoved" : 0,
+    "indexesAdded" : 0,
+    "indexesRemoved" : 0,
+    "constraintsAdded" : 0,
+    "constraintsRemoved" : 0,
+    "containsSystemUpdates" : false,
+    "systemUpdates" : 0
+  },
+  "profiledQueryPlan" : {
+    "dbHits" : 0,
+    "records" : 0,
+    "hasPageCacheStats" : false,
+    "pageCacheHits" : 0,
+    "pageCacheMisses" : 0,
+    "pageCacheHitRatio" : 0.0,
+    "time" : 0,
+    "operatorType" : "ProduceResults@neo4j",
+    "arguments" : {
+      "GlobalMemory" : 10624,
+      "planner-impl" : "IDP",
+      "string-representation" : "Cypher 5\n\nPlanner COST\n\nRuntime PIPELINED\n\nRuntime version 5.26\n\nBatch size 128\n\n+----------------------+----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+---------------------+\n| Operator             | Id | Details                                          | Estimated Rows | Rows  | DB Hits | Memory (Bytes) | Page Cache Hits/Misses | Time (ms) | Pipeline            |\n+----------------------+----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+---------------------+\n| +ProduceResults      |  0 |                                                  |              2 |     0 |       0 |                |                    0/0 |     0.000 |                     |\n| |                    +----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+                     |\n| +EmptyResult         |  1 |                                                  |              2 |     0 |       0 |                |                    0/0 |     0.000 |                     |\n| |                    +----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+                     |\n| +Create              |  2 | (a)-[anon_0:KNOWS]->(b), (b)-[anon_1:KNOWS]->(a) |              2 |     0 |       0 |                |                    0/0 |     0.000 |                     |\n| |                    +----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+                     |\n| +Filter              |  3 | cache[a.id] < cache[b.id]                        |              2 |     0 |       0 |                |                    0/0 |     0.000 | In Pipeline 3       |\n| |                    +----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+---------------------+\n| +Apply               |  4 |                                                  |              8 |     0 |       0 |                |                    0/0 |           |                     |\n| |\\                   +----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+---------------------+\n| | +CartesianProduct  |  5 |                                                  |              8 |     0 |       0 |           1392 |                        |           | In Pipeline 3       |\n| | |\\                 +----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+---------------------+\n| | | +Filter          |  6 | cache[b.id] = j                                  |             50 |     0 |       0 |                |                        |           |                     |\n| | | |                +----+--------------------------------------------------+----------------+-------+---------+----------------+                        |           |                     |\n| | | +NodeByLabelScan |  7 | b:Person                                         |           1000 |     0 |       0 |            256 |                    0/0 |     0.000 | Fused in Pipeline 2 |\n| | |                  +----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+---------------------+\n| | +Filter            |  8 | rand() < $autodouble_4 AND cache[a.id] = i       |             15 |     0 |    2027 |                |                        |           |                     |\n| | |                  +----+--------------------------------------------------+----------------+-------+---------+----------------+                        |           |                     |\n| | +NodeByLabelScan   |  9 | a:Person                                         |           1000 | 20000 |   30000 |           8488 |                10002/0 |     6.158 | Fused in Pipeline 1 |\n| |                    +----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+---------------------+\n| +Unwind              | 10 | range($autoint_2, $autoint_3) AS j               |            100 | 10000 |       0 |                |                        |           |                     |\n| |                    +----+--------------------------------------------------+----------------+-------+---------+----------------+                        |           |                     |\n| +Unwind              | 11 | range($autoint_0, $autoint_1) AS i               |             10 |   100 |       0 |                |                    0/0 |     0.000 | Fused in Pipeline 0 |\n+----------------------+----+--------------------------------------------------+----------------+-------+---------+----------------+------------------------+-----------+---------------------+\n\nTotal database accesses: 32027, total allocated memory: 10624\n",
+      "runtime" :  "PIPELINED",
+      "Time" : 0,
+      "runtime-impl" : "PIPELINED",
+      "version" : 5,
+      "DbHits" :0,
+      "batch-size" : 128,
+      "Details" : "",
+      "planner-version" : 5.26,
+      "PipelineInfo" : "In Pipeline 3",
+      "runtime-version" :5.26,
+      "Id" : 0,
+      "PageCacheMisses" : 0,
+      "EstimatedRows" : 2.25,
+      "planner" : "COST",
+      "Rows" : 0,
+      "PageCacheHits" : 0
+    },
+    "identifiers" : [ "j", "a", "i", "b", "anon_0", "anon_1" ],
+    "children" : [
+      {
+      "dbHits" : 0,
+      "records" : 0,
+      "hasPageCacheStats" : false,
+      "pageCacheHits" : 0,
+      "pageCacheMisses" : 0,
+      "pageCacheHitRatio" : 0.0,
+      "time" : 0,
+      "operatorType" : "EmptyResult@neo4j",
+        "arguments" : {
+          "PipelineInfo" : "In Pipeline 3",
+          "Time" : 0,
+          "Id" : 1,
+          "PageCacheMisses" : 0,
+          "EstimatedRows" : 2.25,
+          "DbHits" : 0,
+          "Rows" :0,
+          "PageCacheHits" :0
+        },
+      "identifiers" : [ "j", "a", "i", "b", "anon_0", "anon_1" ],
+      "children" : [ {
+        "dbHits" : 0,
+        "records" : 0,
+        "hasPageCacheStats" : false,
+        "pageCacheHits" : 0,
+        "pageCacheMisses" : 0,
+        "pageCacheHitRatio" : 0.0,
+        "time" : 0,
+        "operatorType" : "Create@neo4j",
+        "arguments" : {
+          "Details" : {
+            "$type" : "String",
+            "_value" : "(a)-[anon_0:KNOWS]->(b), (b)-[anon_1:KNOWS]->(a)"
+          },
+          "PipelineInfo" : {
+            "$type" : "String",
+            "_value" : "In Pipeline 3"
+          },
+          "Time" : {
+            "$type" : "Integer",
+            "_value" : "0"
+          },
+          "Id" : {
+            "$type" : "Integer",
+            "_value" : "2"
+          },
+          "PageCacheMisses" : {
+            "$type" : "Integer",
+            "_value" : "0"
+          },
+          "EstimatedRows" : {
+            "$type" : "Float",
+            "_value" : "2.25"
+          },
+          "DbHits" : {
+            "$type" : "Integer",
+            "_value" : "0"
+          },
+          "Rows" : {
+            "$type" : "Integer",
+            "_value" : "0"
+          },
+          "PageCacheHits" : {
+            "$type" : "Integer",
+            "_value" : "0"
+          }
+        },
+        "identifiers" : [ "j", "a", "i", "b", "anon_0", "anon_1" ],
+        "children" : [ {
+          "dbHits" : 0,
+          "records" : 0,
+          "hasPageCacheStats" : false,
+          "pageCacheHits" : 0,
+          "pageCacheMisses" : 0,
+          "pageCacheHitRatio" : 0.0,
+          "time" : 0,
+          "operatorType" : "Filter@neo4j",
+          "arguments" : {
+            "Details" : {
+              "$type" : "String",
+              "_value" : "cache[a.id] < cache[b.id]"
+            },
+            "PipelineInfo" : {
+              "$type" : "String",
+              "_value" : "In Pipeline 3"
+            },
+            "Time" : {
+              "$type" : "Integer",
+              "_value" : "0"
+            },
+            "Id" : {
+              "$type" : "Integer",
+              "_value" : "3"
+            },
+            "PageCacheMisses" : {
+              "$type" : "Integer",
+              "_value" : "0"
+            },
+            "EstimatedRows" : {
+              "$type" : "Float",
+              "_value" : "2.25"
+            },
+            "DbHits" : {
+              "$type" : "Integer",
+              "_value" : "0"
+            },
+            "Rows" : {
+              "$type" : "Integer",
+              "_value" : "0"
+            },
+            "PageCacheHits" : {
+              "$type" : "Integer",
+              "_value" : "0"
+            }
+          },
+          "identifiers" : [ "i", "j", "a", "b" ],
+          "children" : [ {
+            "dbHits" : 0,
+            "records" : 0,
+            "hasPageCacheStats" : false,
+            "pageCacheHits" : 0,
+            "pageCacheMisses" : 0,
+            "pageCacheHitRatio" : 0.0,
+            "time" : 0,
+            "operatorType" : "Apply@neo4j",
+            "arguments" : {
+              "Id" : {
+                "$type" : "Integer",
+                "_value" : "4"
+              },
+              "PageCacheMisses" : {
+                "$type" : "Integer",
+                "_value" : "0"
+              },
+              "EstimatedRows" : {
+                "$type" : "Float",
+                "_value" : "7.5"
+              },
+              "DbHits" : {
+                "$type" : "Integer",
+                "_value" : "0"
+              },
+              "Rows" : {
+                "$type" : "Integer",
+                "_value" : "0"
+              },
+              "PageCacheHits" : {
+                "$type" : "Integer",
+                "_value" : "0"
+              }
+            },
+            "identifiers" : [ "i", "j", "a", "b" ],
+            "children" : [ {
+              "dbHits" : 0,
+              "records" : 10000,
+              "hasPageCacheStats" : false,
+              "pageCacheHits" : 0,
+              "pageCacheMisses" : 0,
+              "pageCacheHitRatio" : 0.0,
+              "time" : 0,
+              "operatorType" : "Unwind@neo4j",
+              "arguments" : {
+                "Details" : {
+                  "$type" : "String",
+                  "_value" : "range($autoint_2, $autoint_3) AS j"
+                },
+                "PipelineInfo" : {
+                  "$type" : "String",
+                  "_value" : "Fused in Pipeline 0"
+                },
+                "Id" : {
+                  "$type" : "Integer",
+                  "_value" : "10"
+                },
+                "EstimatedRows" : {
+                  "$type" : "Float",
+                  "_value" : "100.0"
+                },
+                "DbHits" : {
+                  "$type" : "Integer",
+                  "_value" : "0"
+                },
+                "Rows" : {
+                  "$type" : "Integer",
+                  "_value" : "10000"
+                }
+              },
+              "identifiers" : [ "i", "j" ],
+              "children" : [ {
+                "dbHits" : 0,
+                "records" : 100,
+                "hasPageCacheStats" : false,
+                "pageCacheHits" : 0,
+                "pageCacheMisses" : 0,
+                "pageCacheHitRatio" : 0.0,
+                "time" : 0,
+                "operatorType" : "Unwind@neo4j",
+                "arguments" : {
+                  "Details" : {
+                    "$type" : "String",
+                    "_value" : "range($autoint_0, $autoint_1) AS i"
+                  },
+                  "PipelineInfo" : {
+                    "$type" : "String",
+                    "_value" : "Fused in Pipeline 0"
+                  },
+                  "Time" : {
+                    "$type" : "Integer",
+                    "_value" : "0"
+                  },
+                  "Id" : {
+                    "$type" : "Integer",
+                    "_value" : "11"
+                  },
+                  "PageCacheMisses" : {
+                    "$type" : "Integer",
+                    "_value" : "0"
+                  },
+                  "EstimatedRows" : {
+                    "$type" : "Float",
+                    "_value" : "10.0"
+                  },
+                  "DbHits" : {
+                    "$type" : "Integer",
+                    "_value" : "0"
+                  },
+                  "Rows" : {
+                    "$type" : "Integer",
+                    "_value" : "100"
+                  },
+                  "PageCacheHits" : {
+                    "$type" : "Integer",
+                    "_value" : "0"
+                  }
+                },
+                "identifiers" : [ "i" ],
+                "children" : [ ]
+              } ]
+            }, {
+              "dbHits" : 0,
+              "records" : 0,
+              "hasPageCacheStats" : false,
+              "pageCacheHits" : 0,
+              "pageCacheMisses" : 0,
+              "pageCacheHitRatio" : 0.0,
+              "time" : 0,
+              "operatorType" : "CartesianProduct@neo4j",
+              "arguments" : {
+                "Memory" : {
+                  "$type" : "Integer",
+                  "_value" : "1392"
+                },
+                "PipelineInfo" : {
+                  "$type" : "String",
+                  "_value" : "In Pipeline 3"
+                },
+                "Id" : {
+                  "$type" : "Integer",
+                  "_value" : "5"
+                },
+                "EstimatedRows" : {
+                  "$type" : "Float",
+                  "_value" : "7.5"
+                },
+                "DbHits" : {
+                  "$type" : "Integer",
+                  "_value" : "0"
+                },
+                "Rows" : {
+                  "$type" : "Integer",
+                  "_value" : "0"
+                }
+              },
+              "identifiers" : [ "i", "j", "a", "b" ],
+              "children" : [ {
+                "dbHits" : 2027,
+                "records" : 0,
+                "hasPageCacheStats" : false,
+                "pageCacheHits" : 0,
+                "pageCacheMisses" : 0,
+                "pageCacheHitRatio" : 0.0,
+                "time" : 0,
+                "operatorType" : "Filter@neo4j",
+                "arguments" : {
+                  "Details" : {
+                    "$type" : "String",
+                    "_value" : "rand() < $autodouble_4 AND cache[a.id] = i"
+                  },
+                  "PipelineInfo" : {
+                    "$type" : "String",
+                    "_value" : "Fused in Pipeline 1"
+                  },
+                  "Id" : {
+                    "$type" : "Integer",
+                    "_value" : "8"
+                  },
+                  "EstimatedRows" : {
+                    "$type" : "Float",
+                    "_value" : "15.0"
+                  },
+                  "DbHits" : {
+                    "$type" : "Integer",
+                    "_value" : "2027"
+                  },
+                  "Rows" : {
+                    "$type" : "Integer",
+                    "_value" : "0"
+                  }
+                },
+                "identifiers" : [ "i", "j", "a" ],
+                "children" : [ {
+                  "dbHits" : 30000,
+                  "records" : 20000,
+                  "hasPageCacheStats" : true,
+                  "pageCacheHits" : 10002,
+                  "pageCacheMisses" : 0,
+                  "pageCacheHitRatio" : 1.0,
+                  "time" : 6157670,
+                  "operatorType" : "NodeByLabelScan@neo4j",
+                  "arguments" : {
+                    "Details" : {
+                      "$type" : "String",
+                      "_value" : "a:Person"
+                    },
+                    "PipelineInfo" : {
+                      "$type" : "String",
+                      "_value" : "Fused in Pipeline 1"
+                    },
+                    "Memory" : {
+                      "$type" : "Integer",
+                      "_value" : "8488"
+                    },
+                    "Time" : {
+                      "$type" : "Integer",
+                      "_value" : "6157670"
+                    },
+                    "Id" : {
+                      "$type" : "Integer",
+                      "_value" : "9"
+                    },
+                    "EstimatedRows" : {
+                      "$type" : "Float",
+                      "_value" : "1000.0"
+                    },
+                    "PageCacheMisses" : {
+                      "$type" : "Integer",
+                      "_value" : "0"
+                    },
+                    "DbHits" : {
+                      "$type" : "Integer",
+                      "_value" : "30000"
+                    },
+                    "Rows" : {
+                      "$type" : "Integer",
+                      "_value" : "20000"
+                    },
+                    "PageCacheHits" : {
+                      "$type" : "Integer",
+                      "_value" : "10002"
+                    }
+                  },
+                  "identifiers" : [ "i", "j", "a" ],
+                  "children" : [ ]
+                } ]
+              }, {
+                "dbHits" : 0,
+                "records" : 0,
+                "hasPageCacheStats" : false,
+                "pageCacheHits" : 0,
+                "pageCacheMisses" : 0,
+                "pageCacheHitRatio" : 0.0,
+                "time" : 0,
+                "operatorType" : "Filter@neo4j",
+                "arguments" : {
+                  "Details" : {
+                    "$type" : "String",
+                    "_value" : "cache[b.id] = j"
+                  },
+                  "PipelineInfo" : {
+                    "$type" : "String",
+                    "_value" : "Fused in Pipeline 2"
+                  },
+                  "Id" : {
+                    "$type" : "Integer",
+                    "_value" : "6"
+                  },
+                  "EstimatedRows" : {
+                    "$type" : "Float",
+                    "_value" : "50.0"
+                  },
+                  "DbHits" : {
+                    "$type" : "Integer",
+                    "_value" : "0"
+                  },
+                  "Rows" : {
+                    "$type" : "Integer",
+                    "_value" : "0"
+                  }
+                },
+                "identifiers" : [ "i", "j", "b" ],
+                "children" : [ {
+                  "dbHits" : 0,
+                  "records" : 0,
+                  "hasPageCacheStats" : false,
+                  "pageCacheHits" : 0,
+                  "pageCacheMisses" : 0,
+                  "pageCacheHitRatio" : 0.0,
+                  "time" : 0,
+                  "operatorType" : "NodeByLabelScan@neo4j",
+                  "arguments" : {
+                    "Details" : {
+                      "$type" : "String",
+                      "_value" : "b:Person"
+                    },
+                    "PipelineInfo" : {
+                      "$type" : "String",
+                      "_value" : "Fused in Pipeline 2"
+                    },
+                    "Memory" : {
+                      "$type" : "Integer",
+                      "_value" : "256"
+                    },
+                    "Time" : {
+                      "$type" : "Integer",
+                      "_value" : "0"
+                    },
+                    "Id" : {
+                      "$type" : "Integer",
+                      "_value" : "7"
+                    },
+                    "EstimatedRows" : {
+                      "$type" : "Float",
+                      "_value" : "1000.0"
+                    },
+                    "PageCacheMisses" : {
+                      "$type" : "Integer",
+                      "_value" : "0"
+                    },
+                    "DbHits" : {
+                      "$type" : "Integer",
+                      "_value" : "0"
+                    },
+                    "Rows" : {
+                      "$type" : "Integer",
+                      "_value" : "0"
+                    },
+                    "PageCacheHits" : {
+                      "$type" : "Integer",
+                      "_value" : "0"
+                    }
+                  },
+                  "identifiers" : [ "i", "j", "b" ],
+                  "children" : [ ]
+                } ]
+              } ]
+            } ]
+          } ]
+        } ]
+      } ]
+    } ]
+  },
+  "bookmarks" : [ "FB:kcwQMSScZToiRKKW8P2Tlr362soAAQWHkA==" ]
+}

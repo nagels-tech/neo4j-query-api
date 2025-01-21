@@ -4,10 +4,7 @@ namespace Neo4j\QueryAPI;
 
 use Exception;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
-use Neo4j\QueryAPI\Objects\ChildQueryPlan;
-use Neo4j\QueryAPI\Objects\QueryArguments;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Results\ResultRow;
@@ -26,18 +23,9 @@ class Neo4jQueryAPI
     {
         $this->client = $client;
     }
-    /**
-     * @api
-     */
+
     public static function login(string $address, string $username, string $password): self
     {
-        if (empty($address)) {
-            throw new RuntimeException('Address cannot be empty');
-        }
-        if (empty($username) || empty($password)) {
-            throw new RuntimeException('Missing username or password');
-        }
-
         $client = new Client([
             'base_uri' => rtrim($address, '/'),
             'timeout' => 10.0,
@@ -54,7 +42,6 @@ class Neo4jQueryAPI
     /**
      * @throws Neo4jException
      * @throws RequestExceptionInterface
-     * @api
      */
     public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null): ResultSet
     {
@@ -69,15 +56,21 @@ class Neo4jQueryAPI
                 $payload['bookmarks'] = $bookmark->getBookmarks();
             }
 
-            $response = $this->client->post('/db/' . $database . '/query/v2', [
+            $response = $this->client->request('POST', '/db/' . $database . '/query/v2', [
                 'json' => $payload,
             ]);
 
-            $data = json_decode($response->getBody()->getContents(), true);
+            $contents = $response->getBody()->getContents();
+            $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
             $ogm = new OGM();
 
-            $keys = $data['data']['fields'];
-            $values = $data['data']['values'];
+            $keys = $data['data']['fields'] ?? [];
+            $values = $data['data']['values'] ?? []; // Ensure $values is an array
+
+            if (!is_array($values)) {
+                throw new RuntimeException('Unexpected response format: values is not an array.');
+            }
+
             $rows = array_map(function ($resultRow) use ($ogm, $keys) {
                 $data = [];
                 foreach ($keys as $index => $key) {
@@ -86,10 +79,7 @@ class Neo4jQueryAPI
                 }
                 return new ResultRow($data);
             }, $values);
-
-            if (isset($data['profiledQueryPlan'])) {
-                $profile = $this->createProfileData($data['profiledQueryPlan']);
-            }
+            $profile = isset($data['profiledQueryPlan']) ? $this->createProfileData($data['profiledQueryPlan']) : null;
 
             $resultCounters = new ResultCounters(
                 containsUpdates: $data['counters']['containsUpdates'] ?? false,
@@ -119,19 +109,14 @@ class Neo4jQueryAPI
             if ($response !== null) {
                 $contents = $response->getBody()->getContents();
                 $errorResponse = json_decode($contents, true);
-
                 throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
             }
+            throw $e;
         }
-        throw new RuntimeException('Error executing query: ' . $e->getMessage(), 0, $e);
     }
 
-    /**
-     * @api
-     */
     public function beginTransaction(string $database = 'neo4j'): Transaction
     {
-        unset($database);
         $response = $this->client->post("/db/neo4j/query/v2/tx");
 
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
@@ -143,27 +128,43 @@ class Neo4jQueryAPI
 
     private function createProfileData(array $data): ProfiledQueryPlan
     {
-        $arguments = $data['arguments'];
+        $ogm = new OGM();
 
-        $queryArguments = new QueryArguments(
-            $arguments['globalMemory'] ?? 0,
-            $arguments['plannerImpl'] ?? '',
-            $arguments['memory'] ?? 0,
-            $arguments['stringRepresentation'] ?? '',
-            is_string($arguments['runtime'] ?? '') ? $arguments['runtime'] : json_encode($arguments['runtime']),
-            $arguments['runtimeImpl'] ?? '',
-            $arguments['dbHits'] ?? 0,
-            $arguments['batchSize'] ?? 0,
-            $arguments['details'] ?? '',
-            $arguments['plannerVersion'] ?? '',
-            $arguments['pipelineInfo'] ?? '',
-            $arguments['runtimeVersion'] ?? '',
-            $arguments['id'] ?? 0,
-            $arguments['estimatedRows'] ?? 0.0,
-            is_string($arguments['planner'] ?? '') ? $arguments['planner'] : json_encode($arguments['planner']),
-            $arguments['rows'] ?? 0
+        // Map arguments using OGM
+        $arguments = $data['arguments'];
+        $mappedArguments = [];
+        foreach ($arguments as $key => $value) {
+            if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
+                $mappedArguments[$key] = $ogm->map($value);
+            } else {
+                $mappedArguments[$key] = $value;
+            }
+        }
+
+        $queryArguments = new ProfiledQueryPlanArguments(
+            globalMemory: $mappedArguments['GlobalMemory'] ?? null,
+            plannerImpl: $mappedArguments['planner-impl'] ?? null,
+            memory: $mappedArguments['Memory'] ?? null,
+            stringRepresentation: $mappedArguments['string-representation'] ?? null,
+            runtime: $mappedArguments['runtime'] ?? null,
+            time: $mappedArguments['Time'] ?? null,
+            pageCacheMisses: $mappedArguments['PageCacheMisses'] ?? null,
+            pageCacheHits: $mappedArguments['PageCacheHits'] ?? null,
+            runtimeImpl: $mappedArguments['runtime-impl'] ?? null,
+            version: $mappedArguments['version'] ?? null,
+            dbHits: $mappedArguments['DbHits'] ?? null,
+            batchSize: $mappedArguments['batch-size'] ?? null,
+            details: $mappedArguments['Details'] ?? null,
+            plannerVersion: $mappedArguments['planner-version'] ?? null,
+            pipelineInfo: $mappedArguments['PipelineInfo'] ?? null,
+            runtimeVersion: $mappedArguments['runtime-version'] ?? null,
+            id: $mappedArguments['Id'] ?? null,
+            estimatedRows: $mappedArguments['EstimatedRows'] ?? null,
+            planner: $mappedArguments['planner'] ?? null,
+            rows: $mappedArguments['Rows' ?? null]
         );
 
+        $identifiers = $data['identifiers'] ?? [];
         $profiledQueryPlan = new ProfiledQueryPlan(
             $data['dbHits'],
             $data['records'],
@@ -173,17 +174,17 @@ class Neo4jQueryAPI
             $data['pageCacheHitRatio'],
             $data['time'],
             $data['operatorType'],
-            $queryArguments
+            $queryArguments,
+            children: [],
+            identifiers: $identifiers
         );
-
+        // Process children recursively
         foreach ($data['children'] as $child) {
             $childQueryPlan = $this->createProfileData($child);
-
             $profiledQueryPlan->addChild($childQueryPlan);
         }
 
         return $profiledQueryPlan;
     }
-
 
 }
