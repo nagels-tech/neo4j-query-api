@@ -18,7 +18,8 @@ use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
 use stdClass;
 use Neo4j\QueryAPI\Objects\Bookmarks;
-use src\Enums\AccessMode;
+use Neo4j\QueryAPI\Enums\AccessMode;
+
 
 class Neo4jQueryAPI
 {

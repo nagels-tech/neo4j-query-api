@@ -14,7 +14,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Message\ResponseInterface;
-use src\Enums\AccessMode;
+use Neo4j\QueryAPI\Enums\AccessMode;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
@@ -236,8 +236,10 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $result = $this->api->run(
             "CREATE (n:Person {name: 'Alice'}) RETURN n",
             [],
+            'neo4j',
             null,
-            AccessMode::WRITE // why its considered as bookmark
+            null,
+            AccessMode::WRITE
         );
 
         $this->assertNotEmpty($result->getData());

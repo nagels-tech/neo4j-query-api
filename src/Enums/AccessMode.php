@@ -1,6 +1,6 @@
 <?php
 
-namespace src\Enums;
+namespace Neo4j\QueryAPI\Enums;
 
 enum AccessMode: string
 {
