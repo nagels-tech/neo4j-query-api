@@ -4,6 +4,8 @@ namespace Neo4j\QueryAPI;
 
 use Exception;
 use GuzzleHttp\Client;
+use Neo4j\QueryAPI\Objects\Auth;
+use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
@@ -24,13 +26,13 @@ class Neo4jQueryAPI
         $this->client = $client;
     }
 
-    public static function login(string $address, string $username, string $password): self
+    public static function login(string $address, Authentication $auth): self
     {
         $client = new Client([
             'base_uri' => rtrim($address, '/'),
             'timeout' => 10.0,
             'headers' => [
-                'Authorization' => 'Basic ' . base64_encode("$username:$password"),
+                'Authorization' => $auth->getHeader(),
                 'Content-Type' => 'application/vnd.neo4j.query',
                 'Accept' => 'application/vnd.neo4j.query',
             ],
@@ -38,6 +40,7 @@ class Neo4jQueryAPI
 
         return new self($client);
     }
+
 
     /**
      * @throws Neo4jException
