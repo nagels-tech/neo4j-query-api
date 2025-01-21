@@ -13,6 +13,7 @@ use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
+use Psr\Http\Message\ResponseInterface;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
@@ -193,6 +194,67 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->assertInstanceOf(ProfiledQueryPlan::class, $child);
         }
     }
+    public function testImpersonatedUserSuccess(): void
+    {
+
+        $result = $this->api->run(
+            "PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name",
+            [],
+            'neo4j',
+            null,
+            'HAPPYBDAY'
+        );
+
+
+        $impersonatedUser = $result->getImpersonatedUser();
+        $this->assertNotNull($impersonatedUser, "Impersonated user should not be null.");
+
+        //A user being impersonated (ImpersonatedUser) might have other users who are being impersonated through it, forming a chain or hierarchy.
+
+    }
+
+
+    public function testImpersonatedUserFailure(): void
+    {
+        $this->expectException(Neo4jException::class);
+
+
+        $this->api->run(
+            "PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name",
+            [],
+            'neo4j',
+            null,
+            'invalidUser'
+        );
+    }
+
+//
+
+    public function testRunWithDefaultAccessMode(): void
+    {
+        $result = $this->api->run("MATCH (n) RETURN COUNT(n)");
+
+        $this->assertInstanceOf(ResultSet::class, $result);
+        // Default mode is WRITE;
+    }
+
+    public function testRunWithAccessMode(): void
+    {
+        $result = $this->api->run(
+            "MATCH (n) RETURN COUNT(n)",
+            [],
+            'neo4j',
+            null,
+            'READ'
+        );
+
+    }
+
+
+
+
+
+
 
     public function testTransactionCommit(): void
     {
