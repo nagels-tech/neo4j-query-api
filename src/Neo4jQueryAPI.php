@@ -55,7 +55,7 @@ class Neo4jQueryAPI
      * @throws RequestExceptionInterface
      * @api
      */
-    public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null, ?string $impersonatedUser = null, AccessMode $accessMode = AccessMode::WRITE ): ResultSet
+    public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null, ?string $impersonatedUser = null, AccessMode $accessMode = AccessMode::READ ): ResultSet
     {
         $validAccessModes = ['READ', 'WRITE', 'ROUTE'];
 
