@@ -245,14 +245,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertNotEmpty($result->getData());
     }
 
-    public function testRunWithAccessMode(): void
+    public function testRunWithReadAccessMode(): void
     {
         $result = $this->api->run(
             "MATCH (n) RETURN COUNT(n)",
             [],
             'neo4j',
             null,
-            'READ'
+            null,
+            AccessMode::READ
         );
 
     }
