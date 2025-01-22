@@ -57,10 +57,7 @@ class Neo4jQueryAPI
      */
     public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null, ?string $impersonatedUser = null, AccessMode $accessMode = AccessMode::WRITE): ResultSet
     {
-        $validAccessModes = ['READ', 'WRITE', 'ROUTE'];
-
         try {
-            // Create the payload for the request
             $payload = [
                 'statement' => $cypher,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
@@ -68,20 +65,12 @@ class Neo4jQueryAPI
                 'accessMode' => $accessMode->value,
             ];
 
-            error_log("Request Payload: " . json_encode($payload));
 
             if ($bookmark !== null) {
                 $payload['bookmarks'] = $bookmark->getBookmarks();
             }
             if ($impersonatedUser !== null) {
                 $payload['impersonatedUser'] = $impersonatedUser;
-            }
-
-            if ($accessMode === AccessMode::READ && str_starts_with(strtoupper($cypher), 'CREATE')) {
-                throw new Neo4jException([
-                    'code' => 'Neo.ClientError.Statement.AccessMode',
-                    'message' => "Attempted write operation in READ access mode."
-                ]);
             }
 
             $response = $this->client->post('/db/' . $database . '/query/v2', [
@@ -126,7 +115,6 @@ class Neo4jQueryAPI
                 systemUpdates: $data['counters']['systemUpdates'] ?? 0
             );
 
-            // Return the result set object
             return new ResultSet(
                 $rows,
                 $resultCounters,
@@ -139,10 +127,7 @@ class Neo4jQueryAPI
 
             $response = $e->getResponse();
             if ($response !== null) {
-                // Log the error response details
                 $contents = $response->getBody()->getContents();
-                error_log("Error Response: " . $contents);
-
                 $errorResponse = json_decode($contents, true);
                 throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
             }

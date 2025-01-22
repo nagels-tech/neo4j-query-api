@@ -39,9 +39,9 @@ class Neo4jException extends Exception
     public static function fromNeo4jResponse(array $response, ?\Throwable $exception = null): self
     {
         $errorDetails = $response['errors'][0] ?? ['message' => 'Unknown error', 'code' => 'Neo.UnknownError'];
-        $statusCode = $response['statusCode'] ?? 0;
 
-        return new self($errorDetails, (int)$statusCode, $exception);
+
+        return new self($errorDetails, previous: $exception);
     }
 
     public function getErrorCode(): string
