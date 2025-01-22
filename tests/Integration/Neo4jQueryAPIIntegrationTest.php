@@ -211,8 +211,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $impersonatedUser = $result->getImpersonatedUser();
         $this->assertNotNull($impersonatedUser, "Impersonated user should not be null.");
 
-        //A user being impersonated (ImpersonatedUser) might have other users who are being impersonated through it, forming a chain or hierarchy.
-
     }
 
 
@@ -256,14 +254,13 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             null,
             AccessMode::READ
         );
-        //(unacceptance test)
     }
 
 
     public function testReadModeWithWriteQuery(): void
     {
         $this->expectException(Neo4jException::class);
-        $this->expectExceptionMessage("Attempted write operation in READ access mode.");
+        $this->expectExceptionMessage("Writing in read access mode not allowed. Attempted write to neo4j");
 
         $this->api->run(
             "CREATE (n:Test {name: 'Test Node'})",
