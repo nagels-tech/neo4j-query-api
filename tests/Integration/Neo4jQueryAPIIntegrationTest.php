@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
@@ -9,15 +10,13 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
-use Neo4j\QueryAPI\Objects\Authentication;
-use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
+
 use Neo4j\QueryAPI\Objects\Bookmarks;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ResultCounters;
+use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
-use Neo4j\QueryAPI\Results\ResultSet;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Client\RequestExceptionInterface;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
@@ -30,7 +29,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     public function setUp(): void
     {
         $this->api = $this->initializeApi();
-
         // Clear database and populate test data
         $this->clearDatabase();
         $this->populateTestData();
@@ -38,12 +36,16 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     private function initializeApi(): Neo4jQueryAPI
     {
-        $auth = Authentication::request();  // Automatically determines basic or bearer
         return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
-            $auth
+            Authentication::basic(getenv('NEO4J_PASSWORD'), getenv('NEO4J_USERNAME')),
         );
     }
+
+
+
+
+
 
 
 

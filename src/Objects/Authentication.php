@@ -2,55 +2,28 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-use InvalidArgumentException;
+use Exception;
+use Neo4j\QueryAPI\AuthenticateInterface;
+use Neo4j\QueryAPI\BasicAuthentication;
+use Neo4j\QueryAPI\BearerAuthentication;
+use Neo4j\QueryAPI\NoAuth;
+use Psr\Http\Message\RequestInterface;
 
 class Authentication
 {
-    private string $header;
-    private string $type;
-
-    private function __construct(string $header, string $type)
+    public static function basic(string $username ,string $password): AuthenticateInterface
     {
-        $this->header = $header;
-        $this->type = $type;
+       return new BasicAuthentication( getenv("NEO4J_USERNAME"),getenv("NEO4J_PASSWORD"));
     }
 
-    public static function request(string $username = null, string $password = null, string $token = null): self
+
+    public static function noAuth(): AuthenticateInterface
     {
-        if ($token !== null) {
-            return self::bearer($token);
-        }
-        if ($username === null) {
-            $username = getenv('NEO4J_USERNAME');
-        }
-
-        if ($password === null) {
-            $password = getenv('NEO4J_PASSWORD');
-        }
-        if ($username !== null && $password !== null) {
-            return self::basic($username, $password);
-        }
-
-        throw new InvalidArgumentException("Both username and password cannot be null.");
+        return new NoAuth();
     }
 
-    private static function basic(string $username, string $password): self
+    public static function bearer(string $token): AuthenticateInterface
     {
-        return new self("Basic " . base64_encode("$username:$password"), 'Basic');
-    }
-
-    private static function bearer(string $token): self
-    {
-        return new self("Bearer $token", 'Bearer');
-    }
-
-    public function getHeader(): string
-    {
-        return $this->header; // Return the header string directly
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
+        return new BearerAuthentication($token);
     }
 }

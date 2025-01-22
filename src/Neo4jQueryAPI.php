@@ -2,47 +2,54 @@
 
 namespace Neo4j\QueryAPI;
 
-use Exception;
 use GuzzleHttp\Client;
-use Neo4j\QueryAPI\Objects\Auth;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Utils;
+use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Objects\Authentication;
+use Neo4j\QueryAPI\Objects\Bookmarks;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
+use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
-use Neo4j\QueryAPI\Results\ResultSet;
-use Neo4j\QueryAPI\Exception\Neo4jException;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
+use Psr\Http\Message\RequestInterface;
 use RuntimeException;
 use stdClass;
-use Neo4j\QueryAPI\Objects\Bookmarks;
 
 class Neo4jQueryAPI
 {
-    private Client $client;
+    private ClientInterface $client;
+    private AuthenticateInterface $auth;
 
-    public function __construct(Client $client)
+    public function __construct(ClientInterface $client, AuthenticateInterface $auth)
     {
         $this->client = $client;
+        $this->auth = $auth;
     }
 
-    public static function login(string $address, Authentication $auth): self
+    /**
+     * @throws \Exception
+     */
+    public static function login(string $address, AuthenticateInterface $auth = null): self
     {
         $client = new Client([
             'base_uri' => rtrim($address, '/'),
             'timeout' => 10.0,
             'headers' => [
-                'Authorization' => $auth->getHeader(),
                 'Content-Type' => 'application/vnd.neo4j.query',
                 'Accept' => 'application/vnd.neo4j.query',
             ],
         ]);
 
-        return new self($client);
+        return new self($client, $auth ?? Authentication::fromEnvironment());
     }
 
-
     /**
+     * Executes a Cypher query on the Neo4j database.
+     *
      * @throws Neo4jException
      * @throws RequestExceptionInterface
      */
@@ -59,68 +66,88 @@ class Neo4jQueryAPI
                 $payload['bookmarks'] = $bookmark->getBookmarks();
             }
 
-            $response = $this->client->request('POST', '/db/' . $database . '/query/v2', [
-                'json' => $payload,
-            ]);
+
+            $request = new Request('POST', '/db/' . $database . '/query/v2');
+
+            $request = $this->auth->authenticate($request);
+
+            $request = $request->withHeader('Content-Type', 'application/json');
+
+            $request = $request->withBody(Utils::streamFor(json_encode($payload)));
+
+            $response = $this->client->sendRequest($request);
+
 
             $contents = $response->getBody()->getContents();
             $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
-            $ogm = new OGM();
 
-            $keys = $data['data']['fields'] ?? [];
-            $values = $data['data']['values'] ?? []; // Ensure $values is an array
-
-            if (!is_array($values)) {
-                throw new RuntimeException('Unexpected response format: values is not an array.');
-            }
-
-            $rows = array_map(function ($resultRow) use ($ogm, $keys) {
-                $data = [];
-                foreach ($keys as $index => $key) {
-                    $fieldData = $resultRow[$index] ?? null;
-                    $data[$key] = $ogm->map($fieldData);
-                }
-                return new ResultRow($data);
-            }, $values);
-            $profile = isset($data['profiledQueryPlan']) ? $this->createProfileData($data['profiledQueryPlan']) : null;
-
-            $resultCounters = new ResultCounters(
-                containsUpdates: $data['counters']['containsUpdates'] ?? false,
-                nodesCreated: $data['counters']['nodesCreated'] ?? 0,
-                nodesDeleted: $data['counters']['nodesDeleted'] ?? 0,
-                propertiesSet: $data['counters']['propertiesSet'] ?? 0,
-                relationshipsCreated: $data['counters']['relationshipsCreated'] ?? 0,
-                relationshipsDeleted: $data['counters']['relationshipsDeleted'] ?? 0,
-                labelsAdded: $data['counters']['labelsAdded'] ?? 0,
-                labelsRemoved: $data['counters']['labelsRemoved'] ?? 0,
-                indexesAdded: $data['counters']['indexesAdded'] ?? 0,
-                indexesRemoved: $data['counters']['indexesRemoved'] ?? 0,
-                constraintsAdded: $data['counters']['constraintsAdded'] ?? 0,
-                constraintsRemoved: $data['counters']['constraintsRemoved'] ?? 0,
-                containsSystemUpdates: $data['counters']['containsSystemUpdates'] ?? false,
-                systemUpdates: $data['counters']['systemUpdates'] ?? 0
-            );
-
-            return new ResultSet(
-                $rows,
-                $resultCounters,
-                new Bookmarks($data['bookmarks'] ?? []),
-                $profile
-            );
+            return $this->parseResultSet($data);
         } catch (RequestExceptionInterface $e) {
-            $response = $e->getResponse();
-            if ($response !== null) {
-                $contents = $response->getBody()->getContents();
-                $errorResponse = json_decode($contents, true);
-                throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
-            }
-            throw $e;
+            $this->handleException($e);
         }
+    }
+
+    private function parseResultSet(array $data): ResultSet
+    {
+        $ogm = new OGM();
+
+        $keys = $data['data']['fields'] ?? [];
+        $values = $data['data']['values'] ?? [];
+
+        if (!is_array($values)) {
+            throw new RuntimeException('Unexpected response format: values is not an array.');
+        }
+
+        $rows = array_map(function ($resultRow) use ($ogm, $keys) {
+            $row = [];
+            foreach ($keys as $index => $key) {
+                $fieldData = $resultRow[$index] ?? null;
+                $row[$key] = $ogm->map($fieldData);
+            }
+            return new ResultRow($row);
+        }, $values);
+
+        $resultCounters = new ResultCounters(
+            containsUpdates: $data['counters']['containsUpdates'] ?? false,
+            nodesCreated: $data['counters']['nodesCreated'] ?? 0,
+            nodesDeleted: $data['counters']['nodesDeleted'] ?? 0,
+            propertiesSet: $data['counters']['propertiesSet'] ?? 0,
+            relationshipsCreated: $data['counters']['relationshipsCreated'] ?? 0,
+            relationshipsDeleted: $data['counters']['relationshipsDeleted'] ?? 0,
+            labelsAdded: $data['counters']['labelsAdded'] ?? 0,
+            labelsRemoved: $data['counters']['labelsRemoved'] ?? 0,
+            indexesAdded: $data['counters']['indexesAdded'] ?? 0,
+            indexesRemoved: $data['counters']['indexesRemoved'] ?? 0,
+            constraintsAdded: $data['counters']['constraintsAdded'] ?? 0,
+            constraintsRemoved: $data['counters']['constraintsRemoved'] ?? 0,
+            containsSystemUpdates: $data['counters']['containsSystemUpdates'] ?? false,
+            systemUpdates: $data['counters']['systemUpdates'] ?? 0
+        );
+
+        $profile = isset($data['profiledQueryPlan']) ? $this->createProfileData($data['profiledQueryPlan']) : null;
+
+        return new ResultSet(
+            $rows,
+            $resultCounters,
+            new Bookmarks($data['bookmarks'] ?? []),
+            $profile
+        );
+    }
+
+    private function handleException(RequestExceptionInterface $e): void
+    {
+        $response = $e->getResponse();
+        if ($response !== null) {
+            $contents = $response->getBody()->getContents();
+            $errorResponse = json_decode($contents, true);
+            throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
+        }
+        throw $e;
     }
 
     public function beginTransaction(string $database = 'neo4j'): Transaction
     {
-        $response = $this->client->post("/db/neo4j/query/v2/tx");
+        $response = $this->client->sendRequest(new Request('POST', '/db/neo4j/query/v2/tx'));
 
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
         $responseData = json_decode($response->getBody(), true);
@@ -133,16 +160,12 @@ class Neo4jQueryAPI
     {
         $ogm = new OGM();
 
-        // Map arguments using OGM
-        $arguments = $data['arguments'];
-        $mappedArguments = [];
-        foreach ($arguments as $key => $value) {
+        $mappedArguments = array_map(function ($value) use ($ogm) {
             if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
-                $mappedArguments[$key] = $ogm->map($value);
-            } else {
-                $mappedArguments[$key] = $value;
+                return $ogm->map($value);
             }
-        }
+            return $value;
+        }, $data['arguments'] ?? []);
 
         $queryArguments = new ProfiledQueryPlanArguments(
             globalMemory: $mappedArguments['GlobalMemory'] ?? null,
@@ -164,10 +187,9 @@ class Neo4jQueryAPI
             id: $mappedArguments['Id'] ?? null,
             estimatedRows: $mappedArguments['EstimatedRows'] ?? null,
             planner: $mappedArguments['planner'] ?? null,
-            rows: $mappedArguments['Rows' ?? null]
+            rows: $mappedArguments['Rows'] ?? null
         );
 
-        $identifiers = $data['identifiers'] ?? [];
         $profiledQueryPlan = new ProfiledQueryPlan(
             $data['dbHits'],
             $data['records'],
@@ -179,15 +201,13 @@ class Neo4jQueryAPI
             $data['operatorType'],
             $queryArguments,
             children: [],
-            identifiers: $identifiers
+            identifiers: $data['identifiers'] ?? []
         );
-        // Process children recursively
-        foreach ($data['children'] as $child) {
-            $childQueryPlan = $this->createProfileData($child);
-            $profiledQueryPlan->addChild($childQueryPlan);
+
+        foreach ($data['children'] ?? [] as $child) {
+            $profiledQueryPlan->addChild($this->createProfileData($child));
         }
 
         return $profiledQueryPlan;
     }
-
 }

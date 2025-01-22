@@ -1,16 +1,14 @@
 <?php
 
-namespace Neo4j\QueryAPI\Results;
+namespace Neo4j\QueryAPI\Objects;
 
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Neo4j\QueryAPI\Objects\ChildQueryPlan;
-use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
-use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
-use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\Bookmarks;  // Make sure to include the Bookmarks class
+use Neo4j\QueryAPI\Results\ResultRow;
 use Traversable;
+
+// Make sure to include the Bookmarks class
 
 class ResultSet implements IteratorAggregate, Countable
 {
