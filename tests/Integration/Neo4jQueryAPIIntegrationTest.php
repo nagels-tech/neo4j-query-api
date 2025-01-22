@@ -10,7 +10,6 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
-
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ResultCounters;
@@ -38,15 +37,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     {
         return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
-            Authentication::basic(getenv('NEO4J_PASSWORD'), getenv('NEO4J_USERNAME')),
+            Authentication::basic(),
         );
     }
-
-
-
-
-
-
 
 
     public function testCounters(): void
