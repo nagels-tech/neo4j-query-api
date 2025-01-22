@@ -4,11 +4,9 @@ namespace Neo4j\QueryAPI\Exception;
 
 use Exception;
 
-
 /**
  * @api
  */
-
 class Neo4jException extends Exception
 {
     private readonly string $errorCode;
@@ -19,25 +17,37 @@ class Neo4jException extends Exception
     public function __construct(
         array       $errorDetails = [],
         int         $statusCode = 0,
-        ?\Throwable $previous = null
-    )
-    {
+        ?\Throwable $previous = null,
+    ) {
         $this->errorCode = $errorDetails['code'] ?? 'Neo.UnknownError';
         $errorParts = explode('.', $this->errorCode);
         $this->errorType = $errorParts[1] ?? null;
         $this->errorSubType = $errorParts[2] ?? null;
         $this->errorName = $errorParts[3] ?? null;
 
-
         $message = $errorDetails['message'] ?? 'An unknown error occurred.';
         parent::__construct($message, $statusCode, $previous);
+    }
+
+    /**
+     * Create a Neo4jException instance from a Neo4j error response array.
+     *
+     * @param array $response The error response from Neo4j.
+     * @param \Throwable|null $exception Optional previous exception for chaining.
+     * @return self
+     */
+    public static function fromNeo4jResponse(array $response, ?\Throwable $exception = null): self
+    {
+        $errorDetails = $response['errors'][0] ?? ['message' => 'Unknown error', 'code' => 'Neo.UnknownError'];
+        $statusCode = $response['statusCode'] ?? 0;
+
+        return new self($errorDetails, (int)$statusCode, $exception);
     }
 
     public function getErrorCode(): string
     {
         return $this->errorCode;
     }
-
 
     public function getType(): ?string
     {
@@ -52,20 +62,5 @@ class Neo4jException extends Exception
     public function getName(): ?string
     {
         return $this->errorName;
-    }
-
-    /**
-     * Create a Neo4jException instance from a Neo4j error response array.
-     *
-     * @param array $response The error response from Neo4j.
-     * @param \Throwable|null $exception Optional previous exception for chaining.
-     * @return self
-     */
-    public static function fromNeo4jResponse(array $response, ?\Throwable $exception = null): self
-    {
-        $errorDetails = $response['errors'][0] ?? [];
-        $statusCode = $errorDetails['statusCode'] ?? 0;
-
-        return new self($errorDetails, (int)$statusCode, $exception);
     }
 }

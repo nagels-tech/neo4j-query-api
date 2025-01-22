@@ -55,11 +55,12 @@ class Neo4jQueryAPI
      * @throws RequestExceptionInterface
      * @api
      */
-    public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null, ?string $impersonatedUser = null, AccessMode $accessMode = AccessMode::READ ): ResultSet
+    public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null, ?string $impersonatedUser = null, AccessMode $accessMode = AccessMode::WRITE): ResultSet
     {
         $validAccessModes = ['READ', 'WRITE', 'ROUTE'];
 
         try {
+            // Create the payload for the request
             $payload = [
                 'statement' => $cypher,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
@@ -75,28 +76,25 @@ class Neo4jQueryAPI
             if ($impersonatedUser !== null) {
                 $payload['impersonatedUser'] = $impersonatedUser;
             }
-            if ($accessMode) {
-                $payload['accessMode'] = $accessMode->value;
-            }
-            if (!in_array($accessMode, AccessMode::cases(), true)) {
-                throw new RuntimeException("Invalid AccessMode: " . print_r($accessMode, true));
-            }
 
+            if ($accessMode === AccessMode::READ && str_starts_with(strtoupper($cypher), 'CREATE')) {
+                throw new Neo4jException([
+                    'code' => 'Neo.ClientError.Statement.AccessMode',
+                    'message' => "Attempted write operation in READ access mode."
+                ]);
+            }
 
             $response = $this->client->post('/db/' . $database . '/query/v2', [
                 'json' => $payload,
-
             ]);
 
-//            if ($response->getStatusCode() !== 200) {
-//                throw new Neo4jException("Failed to run query: " . $response->getReasonPhrase());
-//            }
-
             $data = json_decode($response->getBody()->getContents(), true);
+
             $ogm = new OGM();
 
             $keys = $data['data']['fields'];
             $values = $data['data']['values'];
+
             $rows = array_map(function ($resultRow) use ($ogm, $keys) {
                 $data = [];
                 foreach ($keys as $index => $key) {
@@ -106,6 +104,7 @@ class Neo4jQueryAPI
                 return new ResultRow($data);
             }, $values);
 
+            $profile = null;
             if (isset($data['profiledQueryPlan'])) {
                 $profile = $this->createProfileData($data['profiledQueryPlan']);
             }
@@ -127,6 +126,7 @@ class Neo4jQueryAPI
                 systemUpdates: $data['counters']['systemUpdates'] ?? 0
             );
 
+            // Return the result set object
             return new ResultSet(
                 $rows,
                 $resultCounters,
@@ -139,6 +139,7 @@ class Neo4jQueryAPI
 
             $response = $e->getResponse();
             if ($response !== null) {
+                // Log the error response details
                 $contents = $response->getBody()->getContents();
                 error_log("Error Response: " . $contents);
 
@@ -146,9 +147,11 @@ class Neo4jQueryAPI
                 throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
             }
 
-            throw $e;
+
+            throw new Neo4jException(['message' => $e->getMessage()], 500, $e);
         }
     }
+
 
 
     /**

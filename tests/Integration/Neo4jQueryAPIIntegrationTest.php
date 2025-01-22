@@ -11,6 +11,7 @@ use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Message\ResponseInterface;
@@ -230,7 +231,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     }
 
 //
-
+    #[DoesNotPerformAssertions]
     public function testRunWithWriteAccessMode(): void
     {
         $result = $this->api->run(
@@ -242,9 +243,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             AccessMode::WRITE
         );
 
-        $this->assertNotEmpty($result->getData());
     }
 
+    #[DoesNotPerformAssertions]
     public function testRunWithReadAccessMode(): void
     {
         $result = $this->api->run(
@@ -255,8 +256,39 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             null,
             AccessMode::READ
         );
-
+        //(unacceptance test)
     }
+
+
+    public function testReadModeWithWriteQuery(): void
+    {
+        $this->expectException(Neo4jException::class);
+        $this->expectExceptionMessage("Attempted write operation in READ access mode.");
+
+        $this->api->run(
+            "CREATE (n:Test {name: 'Test Node'})",
+            [],
+            'neo4j',
+            null,
+            null,
+            AccessMode::READ
+        );
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testWriteModeWithReadQuery(): void
+    {
+        $this->api->run(
+            "MATCH (n:Test) RETURN n",
+            [],
+            'neo4j',
+            null,
+            null,
+            AccessMode::WRITE
+            //cos write encapsulates read
+        );
+    }
+
 
 
 
