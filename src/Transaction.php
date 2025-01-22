@@ -5,8 +5,8 @@ namespace Neo4j\QueryAPI;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
+use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
-use Neo4j\QueryAPI\Results\ResultSet;
 use Psr\Http\Client\ClientInterface;
 use stdClass;
 

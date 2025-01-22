@@ -11,8 +11,8 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
+use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
-use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\TestCase;
 
 class Neo4jQueryAPIUnitTest extends TestCase
