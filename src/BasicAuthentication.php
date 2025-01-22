@@ -8,7 +8,8 @@ use Psr\Http\Message\ResponseInterface;
 class BasicAuthentication implements AuthenticateInterface
 {
     public function __construct(private string $username, private string $password)
-    {}
+    {
+    }
 
     public function authenticate(RequestInterface $request): RequestInterface
     {
