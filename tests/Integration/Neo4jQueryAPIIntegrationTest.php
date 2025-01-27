@@ -230,7 +230,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
 
 
-    /* public function testTransactionCommit(): void
+  public function testTransactionCommit(): void
      {
          // Begin a new transaction
          $tsx = $this->api->beginTransaction();
@@ -255,7 +255,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
          // Validate that the node now exists in the database
          $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
          $this->assertCount(1, $results); // Updated to expect 1 result
-     }*/
+     }
 
 
     /**
