@@ -24,8 +24,7 @@ class Neo4jRequestFactory
         array  $parameters = [],
         bool   $includeCounters = true,
         ?array $bookmarks = null
-    ): array
-    {
+    ): array {
         $payload = [
             'statement' => $cypher,
             'parameters' => empty($parameters) ? new \stdClass() : $parameters,
