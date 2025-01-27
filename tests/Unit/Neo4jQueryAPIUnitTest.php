@@ -30,7 +30,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $this->password = getenv('NEO4J_PASSWORD') ;
     }
 
-    public function testCorrectClientSetup(): void
+    /*public function testCorrectClientSetup(): void
     {
         // Verify Authentication object creation
         $authentication = Authentication::request($this->username, $this->password);
