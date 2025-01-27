@@ -38,28 +38,73 @@ class NoAuth implements AuthenticateInterface
 
     public function getUri(): UriInterface
     {
-        return new class implements UriInterface {
+        return new class () implements UriInterface {
             public function __toString(): string
             {
                 return ''; // Default URI
             }
 
             // Implement other methods as needed for UriInterface, or leave as empty methods
-            public function getScheme(): string { return ''; }
-            public function getAuthority(): string { return ''; }
-            public function getUserInfo(): string { return ''; }
-            public function getHost(): string { return ''; }
-            public function getPort(): ?int { return null; }
-            public function getPath(): string { return ''; }
-            public function getQuery(): string { return ''; }
-            public function getFragment(): string { return ''; }
-            public function withScheme($scheme): UriInterface { return $this; }
-            public function withUserInfo($user, $password = null): UriInterface { return $this; }
-            public function withHost($host): UriInterface { return $this; }
-            public function withPort($port): UriInterface { return $this; }
-            public function withPath($path): UriInterface { return $this; }
-            public function withQuery($query): UriInterface { return $this; }
-            public function withFragment($fragment): UriInterface { return $this; }
+            public function getScheme(): string
+            {
+                return '';
+            }
+            public function getAuthority(): string
+            {
+                return '';
+            }
+            public function getUserInfo(): string
+            {
+                return '';
+            }
+            public function getHost(): string
+            {
+                return '';
+            }
+            public function getPort(): ?int
+            {
+                return null;
+            }
+            public function getPath(): string
+            {
+                return '';
+            }
+            public function getQuery(): string
+            {
+                return '';
+            }
+            public function getFragment(): string
+            {
+                return '';
+            }
+            public function withScheme($scheme): UriInterface
+            {
+                return $this;
+            }
+            public function withUserInfo($user, $password = null): UriInterface
+            {
+                return $this;
+            }
+            public function withHost($host): UriInterface
+            {
+                return $this;
+            }
+            public function withPort($port): UriInterface
+            {
+                return $this;
+            }
+            public function withPath($path): UriInterface
+            {
+                return $this;
+            }
+            public function withQuery($query): UriInterface
+            {
+                return $this;
+            }
+            public function withFragment($fragment): UriInterface
+            {
+                return $this;
+            }
         };
     }
 
@@ -105,26 +150,63 @@ class NoAuth implements AuthenticateInterface
 
     public function getBody(): StreamInterface
     {
-        return new class implements StreamInterface {
+        return new class () implements StreamInterface {
             public function __toString(): string
             {
                 return ''; // Default empty body
             }
 
-            public function close(): void {}
-            public function detach() {}
-            public function getSize(): ?int { return 0; }
-            public function tell(): int { return 0; }
-            public function eof(): bool { return true; }
-            public function isSeekable(): bool { return false; }
-            public function seek($offset, $whence = SEEK_SET): void {}
-            public function rewind(): void {}
-            public function isWritable(): bool { return false; }
-            public function write($string): int {}
-            public function isReadable(): bool { return false; }
-            public function read($length): string { return ''; }
-            public function getContents(): string { return ''; }
-            public function getMetadata($key = null) { return null; }
+            public function close(): void
+            {
+            }
+            public function detach()
+            {
+            }
+            public function getSize(): ?int
+            {
+                return 0;
+            }
+            public function tell(): int
+            {
+                return 0;
+            }
+            public function eof(): bool
+            {
+                return true;
+            }
+            public function isSeekable(): bool
+            {
+                return false;
+            }
+            public function seek($offset, $whence = SEEK_SET): void
+            {
+            }
+            public function rewind(): void
+            {
+            }
+            public function isWritable(): bool
+            {
+                return false;
+            }
+            public function write($string): int
+            {
+            }
+            public function isReadable(): bool
+            {
+                return false;
+            }
+            public function read($length): string
+            {
+                return '';
+            }
+            public function getContents(): string
+            {
+                return '';
+            }
+            public function getMetadata($key = null)
+            {
+                return null;
+            }
         };
     }
 

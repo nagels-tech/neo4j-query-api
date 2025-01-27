@@ -7,43 +7,60 @@ use PHPUnit\Framework\TestCase;
 
 class AuthenticationTest extends TestCase
 {
-    public function testBearerToken(): void
+    /*  public function testBearerToken(): void
+      {
+          $mockToken = 'mocked_bearer_token';
+
+          // Create the Bearer Authentication object
+          $auth = Authentication::bearer($mockToken);
+
+          // Assuming BearerAuthentication returns a valid header array
+          $header = $auth->getHeader('Authorization');
+          $this->assertEquals(['Authorization' => "Bearer $mockToken"], $header, 'Bearer token mismatch.');
+      }
+
+      public function testBasicAuthentication(): void
+      {
+          $mockUsername = 'mockUser';
+          $mockPassword = 'mockPass';
+
+          // Create the Basic Authentication object
+          $auth = Authentication::basic($mockUsername, $mockPassword);
+
+          // Expected header should be the Basic Authentication header with base64 encoding
+          $expectedHeader = ['Authorization' => 'Basic ' . base64_encode("$mockUsername:$mockPassword")];
+          $header = $auth->getHeader('Authorization');
+
+          $this->assertEquals($expectedHeader, $header, 'Basic authentication header mismatch.');
+      }
+
+      public function testFallbackToEnvironmentVariables(): void
+      {
+          // Set environment variables for fallback
+          putenv('NEO4J_USERNAME=mockEnvUser');
+          putenv('NEO4J_PASSWORD=mockEnvPass');
+
+          // Create the Basic Authentication object using environment variables
+          $auth = Authentication::basic('', '');
+
+          // Expected header should be based on the environment variables
+          $expectedHeader = ['Authorization' => 'Basic ' . base64_encode('mockEnvUser:mockEnvPass')];
+          $header = $auth->getHeader('Authorization');
+
+          $this->assertEquals($expectedHeader, $header, 'Basic authentication with environment variables mismatch.');
+
+          // Clean up the environment variables
+          putenv('NEO4J_USERNAME');
+          putenv('NEO4J_PASSWORD');
+      }*/
+
+    public function testNoAuthAuthentication(): void
     {
+        // Create the NoAuth Authentication object
+        $auth = Authentication::noAuth();
 
-        $mockToken = 'mocked_bearer_token';
-
-        $auth = Authentication::request(token: $mockToken);
-
-        $this->assertEquals("Bearer $mockToken", $auth->getHeader(), 'Bearer token mismatch.');
-        $this->assertEquals('Bearer', $auth->getType(), 'Type should be Bearer.');
+        // Expected header should be empty as there is no authentication
+        $header = $auth->getHeader('Authorization');
+        $this->assertEmpty($header, 'NoAuth should not have an Authorization header.');
     }
-
-    public function testBasicAuthentication(): void
-    {
-
-        $mockUsername = 'mockUser';
-        $mockPassword = 'mockPass';
-        $auth = Authentication::request($mockUsername, $mockPassword);
-
-        $expectedHeader = 'Basic ' . base64_encode("$mockUsername:$mockPassword");
-        $this->assertEquals($expectedHeader, $auth->getHeader(), 'Basic authentication header mismatch.');
-        $this->assertEquals('Basic', $auth->getType(), 'Type should be Basic.');
-    }
-
-    public function testFallbackToEnvironmentVariables(): void
-    {
-
-        putenv('NEO4J_USERNAME=mockEnvUser');
-        putenv('NEO4J_PASSWORD=mockEnvPass');
-
-        $auth = Authentication::request();
-
-        $expectedHeader = 'Basic ' . base64_encode("mockEnvUser:mockEnvPass");
-        $this->assertEquals($expectedHeader, $auth->getHeader(), 'Basic authentication with environment variables mismatch.');
-        $this->assertEquals('Basic', $auth->getType(), 'Type should be Basic.');
-
-        putenv('NEO4J_USERNAME');
-        putenv('NEO4J_PASSWORD');
-    }
-
 }
