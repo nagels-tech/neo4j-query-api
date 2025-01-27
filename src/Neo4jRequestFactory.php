@@ -2,7 +2,6 @@
 
 namespace Neo4j\QueryAPI;
 
-use InvalidArgumentException;
 
 class Neo4jRequestFactory
 {

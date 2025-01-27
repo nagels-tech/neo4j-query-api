@@ -44,7 +44,6 @@ try {
 
     echo "Transaction ID: {$transactionId}" . PHP_EOL;
 
-    // Step 2: Run the Cypher query within the transaction
     $runQueryRequest = $requestFactory->buildRunQueryRequest($database, $cypher, $parameters);
     $runQueryResponse = $client->request(
         $runQueryRequest['method'],
