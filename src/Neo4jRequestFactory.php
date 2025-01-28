@@ -2,7 +2,6 @@
 
 namespace Neo4j\QueryAPI;
 
-
 class Neo4jRequestFactory
 {
     private string $baseUri;

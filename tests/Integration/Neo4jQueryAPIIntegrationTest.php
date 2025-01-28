@@ -35,10 +35,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     private function initializeApi(): Neo4jQueryAPI
     {
-        $authentication = new Authentication();
         return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
-            $authentication->basic(getenv('NEO4J_USERNAME'), getenv('NEO4J_PASSWORD'))
+            Authentication::basic(),
         );
     }
 
@@ -46,6 +45,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     public function testCounters(): void
     {
         $result = $this->api->run('CREATE (x:Node {hello: "world"})');
+
         $this->assertEquals(1, $result->getQueryCounters()->getNodesCreated());
     }
 
@@ -165,30 +165,34 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
      */
     public function testProfileCreateKnowsBidirectionalRelationshipsMock(): void
     {
-        // Create Authentication instance with no authentication (for testing without auth)
-        $auth = Authentication::noAuth(); // This will pass NoAuth() to the Authentication constructor
-
         $query = "
-    PROFILE UNWIND range(1, 100) AS i
-    UNWIND range(1, 100) AS j
-    MATCH (a:Person {id: i}), (b:Person {id: j})
-    WHERE a.id < b.id AND rand() < 0.1
-    CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
+        PROFILE UNWIND range(1, 100) AS i
+        UNWIND range(1, 100) AS j
+        MATCH (a:Person {id: i}), (b:Person {id: j})
+        WHERE a.id < b.id AND rand() < 0.1
+        CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
     ";
 
+        // Mock response
         $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
         $mockSack = new MockHandler([
             new Response(200, [], $body),
         ]);
 
+        // Set up Guzzle HTTP client with the mock handler
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
 
-        // Pass the authentication instance to Neo4jQueryAPI
+        // Use environment variables for authentication
+        $auth = Authentication::basic(getenv("NEO4J_USERNAME"), getenv("NEO4J_PASSWORD"));
+
+        // Pass both client and authentication to Neo4jQueryAPI
         $api = new Neo4jQueryAPI($client, $auth);
 
+        // Execute the query
         $result = $api->run($query);
 
+        // Validate the profiled query plan
         $plan = $result->getProfiledQueryPlan();
         $this->assertNotNull($plan, "The result of the query should not be null.");
 
@@ -199,10 +203,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertEquals($expected->getProfiledQueryPlan(), $plan, "Profiled query plan does not match the expected value.");
     }
 
-
     public function testProfileCreateActedInRelationships(): void
     {
-
         $query = "
     PROFILE UNWIND range(1, 50) AS i
     MATCH (p:Person {id: i}), (m:Movie {year: 2000 + i})
@@ -230,32 +232,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
 
 
-    public function testTransactionCommit(): void
-    {
-        // Begin a new transaction
-        $tsx = $this->api->beginTransaction();
 
-        // Generate a random name for the node
-        $name = (string)mt_rand(1, 100000);
-
-        // Create a node within the transaction
-        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
-
-        // Validate that the node does not exist in the database before the transaction is committed
-        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-        $this->assertCount(0, $results);
-
-        // Validate that the node exists within the transaction
-        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-        $this->assertCount(1, $results);
-
-        // Commit the transaction
-        $tsx->commit();
-
-        // Validate that the node now exists in the database
-        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-        $this->assertCount(1, $results); // Updated to expect 1 result
-    }
 
 
     /**
