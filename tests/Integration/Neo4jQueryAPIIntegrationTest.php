@@ -223,7 +223,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
 
 
-/*    public function testTransactionCommit(): void
+/* public function testTransactionCommit(): void
     {
         // Begin a new transaction
         $tsx = $this->api->beginTransaction();
