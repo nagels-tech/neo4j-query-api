@@ -11,7 +11,7 @@ use Psr\Http\Message\RequestInterface;
 
 class Authentication
 {
-    public static function basic(string $username, string $password): AuthenticateInterface
+    public static function basic(): AuthenticateInterface
     {
         return new BasicAuthentication(getenv("NEO4J_USERNAME"), getenv("NEO4J_PASSWORD"));
     }

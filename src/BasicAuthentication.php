@@ -16,4 +16,13 @@ class BasicAuthentication implements AuthenticateInterface
         $authHeader = 'Basic ' . base64_encode($this->username . ':' . $this->password);
         return $request->withHeader('Authorization', $authHeader);
     }
+    public function getHeader(): string
+    {
+        return 'Basic ' . base64_encode($this->username . ':' . $this->password);
+    }
+
+    public function getType(): string
+    {
+        return 'Basic';
+    }
 }

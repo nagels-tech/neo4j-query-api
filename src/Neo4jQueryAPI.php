@@ -44,7 +44,7 @@ class Neo4jQueryAPI
             ],
         ]);
 
-        return new self($client, $auth ?? Authentication::fromEnvironment());
+        return new self($client, $auth ?? Authentication::basic());
     }
 
     /**
@@ -56,34 +56,52 @@ class Neo4jQueryAPI
     public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null): ResultSet
     {
         try {
+            // Prepare the payload
             $payload = [
                 'statement' => $cypher,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
                 'includeCounters' => true,
             ];
 
+            // Include bookmarks if provided
             if ($bookmark !== null) {
                 $payload['bookmarks'] = $bookmark->getBookmarks();
             }
 
-
+            // Create the HTTP request
             $request = new Request('POST', '/db/' . $database . '/query/v2');
-
             $request = $this->auth->authenticate($request);
-
             $request = $request->withHeader('Content-Type', 'application/json');
-
             $request = $request->withBody(Utils::streamFor(json_encode($payload)));
 
+            // Send the request and get the response
             $response = $this->client->sendRequest($request);
-
-
             $contents = $response->getBody()->getContents();
+
+            // Parse the response data
             $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
 
+            // Check for errors in the response from Neo4j
+            if (isset($data['errors']) && count($data['errors']) > 0) {
+                // If errors exist in the response, throw a Neo4jException
+                $error = $data['errors'][0];
+                throw new Neo4jException(
+                    $error, // Pass the entire error array instead of just the message
+                    0,
+                    null,
+                    $error
+                );
+            }
+
+            // Parse the result set and return it
             return $this->parseResultSet($data);
+
         } catch (RequestExceptionInterface $e) {
+            // Handle exceptions from the HTTP request
             $this->handleException($e);
+        } catch (Neo4jException $e) {
+            // Catch Neo4j specific exceptions (if thrown)
+            throw $e; // Re-throw the exception
         }
     }
 
