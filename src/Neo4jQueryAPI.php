@@ -55,59 +55,56 @@ class Neo4jQueryAPI
      */
     public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null): ResultSet
     {
-        $payload = [
-            'statement' => $cypher,
-            'parameters' => empty($parameters) ? new stdClass() : $parameters,
-            'includeCounters' => true,
-        ];
+        try {
+            // Prepare the payload
+            $payload = [
+                'statement' => $cypher,
+                'parameters' => empty($parameters) ? new stdClass() : $parameters,
+                'includeCounters' => true,
+            ];
 
-        if ($bookmark !== null) {
-            $payload['bookmarks'] = $bookmark->getBookmarks();
-        }
-
-        $request = new Request('POST', '/db/' . $database . '/query/v2');
-        $request = $this->auth->authenticate($request);
-        $request = $request->withHeader('Content-Type', 'application/json');
-        $request = $request->withBody(Utils::streamFor(json_encode($payload)));
-
-        // Send the request to Neo4j
-        $response = $this->client->sendRequest($request);
-
-        // Get the response content
-        $contents = $response->getBody()->getContents();
-        $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
-
-        // Check for Neo4j errors in the response
-        if (isset($data['errors']) && count($data['errors']) > 0) {
-            $error = $data['errors'][0];
-            $errorCode = $error['code'] ?? '';
-            $errorMessage = $error['message'] ?? '';
-
-            // Handle specific error types
-            if ($errorCode === 'Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists') {
-                // Provide error details as an array, not a string
-                $errorDetails = [
-                    'code' => $errorCode,
-                    'message' => $errorMessage,
-                ];
-                throw new Neo4jException($errorDetails); // Pass error details as an array
+            // Include bookmarks if provided
+            if ($bookmark !== null) {
+                $payload['bookmarks'] = $bookmark->getBookmarks();
             }
 
-            // You can handle other Neo4j-specific errors similarly
-            if ($errorCode) {
-                $errorDetails = [
-                    'code' => $errorCode,
-                    'message' => $errorMessage,
-                ];
-                throw new Neo4jException($errorDetails); // Pass error details as an array
-            }
-        }
+            // Create the HTTP request
+            $request = new Request('POST', '/db/' . $database . '/query/v2');
+            $request = $this->auth->authenticate($request);
+            $request = $request->withHeader('Content-Type', 'application/json');
+            $request = $request->withBody(Utils::streamFor(json_encode($payload)));
 
-        // If no error, return the result set
-        return $this->parseResultSet($data);
+            // Send the request and get the response
+            $response = $this->client->sendRequest($request);
+            $contents = $response->getBody()->getContents();
+
+            // Parse the response data
+            $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
+
+            // Check for errors in the response from Neo4j
+            if (isset($data['errors']) && count($data['errors']) > 0) {
+                // If errors exist in the response, throw a Neo4jException
+                $error = $data['errors'][0];
+                throw new Neo4jException(
+                    $error, // Pass the entire error array instead of just the message
+                    0,
+                    null,
+                    $error
+
+                );
+            }
+
+            // Parse the result set and return it
+            return $this->parseResultSet($data);
+
+        } catch (RequestExceptionInterface $e) {
+            // Handle exceptions from the HTTP request
+            $this->handleException($e);
+        } catch (Neo4jException $e) {
+            // Catch Neo4j specific exceptions (if thrown)
+            throw $e; // Re-throw the exception
+        }
     }
-
-
 
     private function parseResultSet(array $data): ResultSet
     {
@@ -169,45 +166,14 @@ class Neo4jQueryAPI
 
     public function beginTransaction(string $database = 'neo4j'): Transaction
     {
-        // Create the request to begin a transaction
-        $request = new Request('POST', '/db/' . $database . '/query/v2/tx');
+        $response = $this->client->sendRequest(new Request('POST', '/db/neo4j/query/v2/tx'));
 
-        // Authenticate the request by adding necessary headers (e.g., Authorization)
-        $request = $this->auth->authenticate($request);
+        $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
+        $responseData = json_decode($response->getBody(), true);
+        $transactionId = $responseData['transaction']['id'];
 
-        try {
-            // Send the request
-            $response = $this->client->sendRequest($request);
-
-            // Check for a successful response (status code 200 or 202)
-            if ($response->getStatusCode() !== 200 && $response->getStatusCode() !== 202) {
-                throw new \RuntimeException('Failed to begin transaction: ' . $response->getReasonPhrase());
-            }
-
-            // Extract the necessary information from the response
-            $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
-            $responseData = json_decode($response->getBody(), true);
-
-            // Ensure that the transaction ID exists and is not empty
-            if (!isset($responseData['transaction']['id']) || empty($responseData['transaction']['id'])) {
-                throw new \Exception('Transaction ID is missing or empty in the response.');
-            }
-
-            // Get the transaction ID
-            $transactionId = $responseData['transaction']['id'];
-
-            // Return the Transaction object with the necessary details
-            return new Transaction($this->client, $clusterAffinity, $transactionId);
-
-        } catch (\Exception $e) {
-            // Handle any exceptions (e.g., network, authentication issues, etc.)
-            // Optionally log the error or rethrow a more specific exception
-            throw new \RuntimeException('Error initiating transaction: ' . $e->getMessage(), 0, $e);
-        }
+        return new Transaction($this->client, $clusterAffinity, $transactionId);
     }
-
-
-
 
     private function createProfileData(array $data): ProfiledQueryPlan
     {
