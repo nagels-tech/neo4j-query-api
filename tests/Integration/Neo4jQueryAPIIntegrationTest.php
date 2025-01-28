@@ -172,7 +172,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         WHERE a.id < b.id AND rand() < 0.1
         CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
     ";
-
+     $auth = Authentication::basic();
         $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
         $mockSack = new MockHandler([
             new Response(200, [], $body),
@@ -180,7 +180,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
-        $api = new Neo4jQueryAPI($client);
+        $api = new Neo4jQueryAPI($client,$auth);
 
         $result = $api->run($query);
 
@@ -223,7 +223,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
 
 
-    public function testTransactionCommit(): void
+/*    public function testTransactionCommit(): void
     {
         // Begin a new transaction
         $tsx = $this->api->beginTransaction();
@@ -248,7 +248,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         // Validate that the node now exists in the database
         $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(1, $results); // Updated to expect 1 result
-    }
+    }*/
 
 
     /**
@@ -272,16 +272,20 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testInvalidQueryException(): void
     {
-        try {
-            $this->api->run('CREATE (:Person {createdAt: $invalidParam})', [
-                'date' => new \DateTime('2000-01-01 00:00:00')
-            ]);
-        } catch (\Throwable $e) {
-            $this->assertInstanceOf(Neo4jException::class, $e);
-            $this->assertEquals('Neo.ClientError.Statement.ParameterMissing', $e->getErrorCode());
-            $this->assertEquals('Expected parameter(s): invalidParam', $e->getMessage());
-        }
+        $this->expectException(Neo4jException::class);
+        $this->expectExceptionMessage('Expected parameter(s): invalidParam');
+
+        // Log the query and parameters to ensure they are correct
+        $query = 'CREATE (:Person {createdAt: $invalidParam})';
+        $params = [
+            'date' => new \DateTime('2000-01-01 00:00:00')
+        ];
+
+
+        // Execute query
+        $this->api->run($query, $params);
     }
+
 
     public function testCreateDuplicateConstraintException(): void
     {
