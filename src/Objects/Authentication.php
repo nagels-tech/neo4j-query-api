@@ -27,4 +27,3 @@ class Authentication
         return new BearerAuthentication($token);
     }
 }
-

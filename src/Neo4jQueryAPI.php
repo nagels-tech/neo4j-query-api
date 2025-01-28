@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
@@ -90,7 +91,6 @@ class Neo4jQueryAPI
                     0,
                     null,
                     $error
-
                 );
             }
 
@@ -164,16 +164,31 @@ class Neo4jQueryAPI
         throw $e;
     }
 
-    public function beginTransaction(string $database = 'neo4j'): Transaction
+    public function beginTransaction(): array
     {
-        $response = $this->client->sendRequest(new Request('POST', '/db/neo4j/query/v2/tx'));
+        $request = new Request('POST', '/db/neo4j/tx'); // Adjust endpoint as needed
 
-        $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
-        $responseData = json_decode($response->getBody(), true);
-        $transactionId = $responseData['transaction']['id'];
+        // Apply authentication, if provided
+        if ($this->auth instanceof AuthenticateInterface) {
+            $request = $this->auth->authenticate($request);
+        }
 
-        return new Transaction($this->client, $clusterAffinity, $transactionId);
+        try {
+            $response = $this->client->send($request);
+            $responseBody = json_decode($response->getBody()->getContents(), true);
+
+            // Validate the response for transaction ID
+            if (isset($responseBody['commit'])) {
+                return $responseBody; // Successful transaction
+            }
+
+            throw new RuntimeException('Missing transaction ID in the response.');
+        } catch (Exception $e) {
+            throw new RuntimeException("Failed to begin transaction: {$e->getMessage()}", 0, $e);
+        }
     }
+
+
 
     private function createProfileData(array $data): ProfiledQueryPlan
     {

@@ -17,7 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 class Neo4jQueryAPIUnitTest extends TestCase
 {
-
     protected string $address;
 
     protected function setUp(): void

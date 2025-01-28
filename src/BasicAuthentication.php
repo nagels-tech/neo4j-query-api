@@ -9,6 +9,8 @@ class BasicAuthentication implements AuthenticateInterface
 {
     public function __construct(private string $username, private string $password)
     {
+        $this->username = $username;
+        $this->password = $password;
     }
 
     public function authenticate(RequestInterface $request): RequestInterface
