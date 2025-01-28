@@ -10,21 +10,17 @@ use Neo4j\QueryAPI\Objects\Path;
 class OGM
 {
     /**
+     * Map Neo4j response object to corresponding PHP object.
+     *
      * @param array{'$type': string, '_value': mixed} $object
-     * @return mixed
+     * @return mixed Mapped object or primitive value.
      */
     public function map(array $object): mixed
     {
         return match ($object['$type']) {
-            'Integer' => $object['_value'],
-            'Float' => $object['_value'],
-            'String' => $object['_value'],
-            'Boolean' => $object['_value'],
-            'Null' => $object['_value'],
-            'Array' => $object['_value'], // Handle generic arrays
-            'List' => array_map([$this, 'map'], $object['_value']), // Recursively map lists
-            'Duration' => $object['_value'],
-            'OffsetDateTime' => $object['_value'],
+            'Integer', 'Float', 'String', 'Boolean', 'Null', 'Duration', 'OffsetDateTime' => $object['_value'],
+            'Array' => $object['_value'],
+            'List' => array_map([$this, 'map'], $object['_value']),
             'Node' => $this->mapNode($object['_value']),
             'Map' => $this->mapProperties($object['_value']),
             'Point' => $this->parseWKT($object['_value']),
@@ -34,73 +30,85 @@ class OGM
         };
     }
 
+    /**
+     * Parse Well-Known Text (WKT) format to a Point object.
+     *
+     * @param string $wkt Well-Known Text representation of a point.
+     * @return Point Parsed Point object.
+     */
     public static function parseWKT(string $wkt): Point
     {
+        // Extract SRID
         $sridPart = substr($wkt, 0, strpos($wkt, ';'));
         $srid = (int)str_replace('SRID=', '', $sridPart);
 
+        // Extract coordinates
         $pointPart = substr($wkt, strpos($wkt, 'POINT') + 6);
-        if (strpos($pointPart, 'Z') !== false) {
-            $pointPart = str_replace('Z', '', $pointPart);
-        }
-        $pointPart = trim($pointPart, ' ()');
+        $pointPart = str_replace('Z', '', trim($pointPart, ' ()'));
         $coordinates = explode(' ', $pointPart);
 
-        if (count($coordinates) === 2) {
-            [$x, $y] = $coordinates;
-            $z = null;
-        } elseif (count($coordinates) === 3) {
-            [$x, $y, $z] = $coordinates;
-        } else {
-            throw new \InvalidArgumentException("Invalid WKT format: unable to parse coordinates.");
-        }
+        [$x, $y, $z] = array_pad(array_map('floatval', $coordinates), 3, null);
 
-        return new Point((float)$x, (float)$y, $z !== null ? (float)$z : null, $srid);
+        return new Point($x, $y, $z, $srid);
     }
 
-
-
-
+    /**
+     * Map a raw node data array to a Node object.
+     *
+     * @param array $nodeData Raw node data.
+     * @return Node Mapped Node object.
+     */
     private function mapNode(array $nodeData): Node
     {
         return new Node(
-            $nodeData['_labels'], // Labels of the node
-            $this->mapProperties($nodeData['_properties']) // Mapped properties
+            labels: $nodeData['_labels'] ?? [],
+            properties: $this->mapProperties($nodeData['_properties'] ?? [])
         );
     }
 
-
+    /**
+     * Map a raw relationship data array to a Relationship object.
+     *
+     * @param array $relationshipData Raw relationship data.
+     * @return Relationship Mapped Relationship object.
+     */
     private function mapRelationship(array $relationshipData): Relationship
     {
         return new Relationship(
-            $relationshipData['_type'],
-            $this->mapProperties($relationshipData['_properties'])
+            type: $relationshipData['_type'] ?? '',
+            properties: $this->mapProperties($relationshipData['_properties'] ?? [])
         );
     }
 
+    /**
+     * Map a raw path data array to a Path object.
+     *
+     * @param array $pathData Raw path data.
+     * @return Path Mapped Path object.
+     */
     private function mapPath(array $pathData): Path
     {
         $nodes = [];
         $relationships = [];
 
         foreach ($pathData as $item) {
-            if ($item['$type'] === 'Node') {
-                $nodes[] = $this->mapNode($item['_value']);
-            } elseif ($item['$type'] === 'Relationship') {
-                $relationships[] = $this->mapRelationship($item['_value']);
-            }
+            match ($item['$type']) {
+                'Node' => $nodes[] = $this->mapNode($item['_value']),
+                'Relationship' => $relationships[] = $this->mapRelationship($item['_value']),
+            };
         }
 
         return new Path($nodes, $relationships);
     }
 
+    /**
+     * Recursively map properties of a node or relationship.
+     *
+     * @param array $properties Raw properties data.
+     * @return array Mapped properties.
+     */
     private function mapProperties(array $properties): array
     {
-        $mappedProperties = [];
-        foreach ($properties as $key => $value) {
-            $mappedProperties[$key] = $this->map($value);
-        }
-        return $mappedProperties;
+        return array_map([$this, 'map'], $properties);
     }
-
 }
