@@ -80,5 +80,3 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $this->assertEquals(new ResultSet([new ResultRow(['hello' => 'world'])], new ResultCounters(), new Bookmarks([])), $result);
     }
 }
-
-
