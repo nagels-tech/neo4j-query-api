@@ -15,7 +15,6 @@ use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
-use Psr\Http\Message\RequestInterface;
 use RuntimeException;
 use stdClass;
 

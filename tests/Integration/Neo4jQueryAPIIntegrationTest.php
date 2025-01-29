@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -22,6 +23,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
 
+    private Neo4jRequestFactory $request  ;
     /**
      * @throws GuzzleException
      */
@@ -40,6 +42,10 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             Authentication::basic(),
         );
     }
+
+
+
+
 
 
     public function testCounters(): void

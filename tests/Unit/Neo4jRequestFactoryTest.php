@@ -2,122 +2,233 @@
 
 namespace Neo4j\QueryAPI\Tests\Unit;
 
-namespace Neo4j\QueryAPI\Tests\Unit;
-
-use Neo4j\QueryAPI\Neo4jRequestFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\UriInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
+use Neo4j\QueryAPI\Neo4jRequestFactory;
 
 class Neo4jRequestFactoryTest extends TestCase
 {
     private $psr17Factory;
-    private $baseUri = 'http://localhost:7474';
-    private $authHeader = 'Basic dXNlcjpwYXNzd29yZA==';
+    private $streamFactory;
+    private string $baseUri = 'https://6f72daa1.databases.neo4j.io';
+    private string $authHeader = 'Basic dXNlcjpwYXNzd29yZA==';
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         $this->psr17Factory = $this->createMock(RequestFactoryInterface::class);
+        $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
     }
 
+    /**
+     * Test for buildRunQueryRequest
+     */
     public function testBuildRunQueryRequest()
     {
         $cypher = 'MATCH (n) RETURN n';
         $parameters = ['param1' => 'value1'];
         $database = 'neo4j';
 
-        $mockRequest = $this->createMock(RequestInterface::class);
-        $mockRequest->method('getMethod')->willReturn('POST');
 
-        $mockUri = $this->createMock(UriInterface::class);
-        $mockUri->method('__toString')->willReturn('/db/neo4j/query/v2');
-
-        $mockRequest->method('getUri')->willReturn($mockUri);
-
-        $mockStream = Utils::streamFor(json_encode([
+        $payload = json_encode([
             'statement' => $cypher,
             'parameters' => $parameters,
             'includeCounters' => true,
-        ]));
-        $mockRequest->method('getBody')->willReturn($mockStream);
+        ]);
+        $uri = "{$this->baseUri}/db/{$database}/query/v2";
+
+
+        $mockRequest = new Request('POST', $uri);
+
+
+        $mockStream = Utils::streamFor($payload);
+
+
+        $this->streamFactory->method('createStream')
+            ->willReturn($mockStream);
 
         $this->psr17Factory->method('createRequest')
             ->willReturn($mockRequest);
 
-        $factory = new Neo4jRequestFactory($this->baseUri, $this->authHeader);
+        $factory = new Neo4jRequestFactory(
+            $this->psr17Factory,
+            $this->streamFactory,
+            $this->baseUri,
+            $this->authHeader
+        );
         $request = $factory->buildRunQueryRequest($database, $cypher, $parameters);
 
-        $this->assertEquals('POST', $request['method']);
-        $this->assertEquals("{$this->baseUri}/db/{$database}/query/v2", (string) $request['uri']);
-        $this->assertJsonStringEqualsJsonString(
-            json_encode([
-                'statement' => $cypher,
-                'parameters' => $parameters,
-                'includeCounters' => true,
-            ]),
-            $request['body']
-        );
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals($uri, (string) $request->getUri());
+        $this->assertJsonStringEqualsJsonString($payload, (string) $request->getBody());
     }
 
+    /**
+     * Test for buildBeginTransactionRequest
+     */
     public function testBuildBeginTransactionRequest()
     {
         $database = 'neo4j';
+        $uri = "{$this->baseUri}/db/{$database}/query/v2/tx";
 
-        $mockRequest = $this->createMock(RequestInterface::class);
-        $mockRequest->method('getMethod')->willReturn('POST');
-
-        $mockUri = $this->createMock(UriInterface::class);
-        $mockUri->method('__toString')->willReturn('/db/neo4j/query/v2/tx');
-
-        $mockRequest->method('getUri')->willReturn($mockUri);
-
+        $mockRequest = new Request('POST', $uri);
         $mockStream = Utils::streamFor('');
-        $mockRequest->method('getBody')->willReturn($mockStream);
+
+        $this->streamFactory->method('createStream')
+            ->willReturn($mockStream);
 
         $this->psr17Factory->method('createRequest')
             ->willReturn($mockRequest);
 
-        $factory = new Neo4jRequestFactory($this->baseUri);
+        $factory = new Neo4jRequestFactory(
+            $this->psr17Factory,
+            $this->streamFactory,
+            $this->baseUri
+        );
         $request = $factory->buildBeginTransactionRequest($database);
 
-        $this->assertEquals('POST', $request['method']);
-        $this->assertEquals("{$this->baseUri}/db/{$database}/query/v2/tx", (string) $request['uri']);
+        // Assertions
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals($uri, (string) $request->getUri());
     }
 
-    public function testAuthorizationHeader()
-    {
-        $factory = new Neo4jRequestFactory($this->baseUri, $this->authHeader);
-        $request = $factory->buildRunQueryRequest('neo4j', 'MATCH (n) RETURN n');
-
-        $this->assertArrayHasKey('Authorization', $request['headers']);
-        $this->assertEquals($this->authHeader, $request['headers']['Authorization']);
-    }
-
+    /**
+     * Test for buildCommitRequest
+     */
     public function testBuildCommitRequest()
     {
         $database = 'neo4j';
         $transactionId = '12345';
+        $uri = "{$this->baseUri}/db/{$database}/query/v2/tx/{$transactionId}/commit";
 
-        $mockRequest = $this->createMock(RequestInterface::class);
-        $mockRequest->method('getMethod')->willReturn('POST');
-
-        $mockUri = $this->createMock(UriInterface::class);
-        $mockUri->method('__toString')->willReturn("/db/neo4j/query/v2/tx/{$transactionId}/commit");
-
-        $mockRequest->method('getUri')->willReturn($mockUri);
-
+        $mockRequest = new Request('POST', $uri);
         $mockStream = Utils::streamFor('');
-        $mockRequest->method('getBody')->willReturn($mockStream);
+
+        $this->streamFactory->method('createStream')
+            ->willReturn($mockStream);
 
         $this->psr17Factory->method('createRequest')
             ->willReturn($mockRequest);
 
-        $factory = new Neo4jRequestFactory($this->baseUri);
+        $factory = new Neo4jRequestFactory(
+            $this->psr17Factory,
+            $this->streamFactory,
+            $this->baseUri
+        );
         $request = $factory->buildCommitRequest($database, $transactionId);
 
-        $this->assertEquals('POST', $request['method']);
-        $this->assertEquals("{$this->baseUri}/db/{$database}/query/v2/tx/{$transactionId}/commit", (string) $request['uri']);
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals($uri, (string) $request->getUri());
+    }
+
+    /**
+     * Test for buildRollbackRequest
+     */
+    public function testBuildRollbackRequest()
+    {
+        $database = 'neo4j';
+        $transactionId = '12345';
+        $uri = "{$this->baseUri}/db/{$database}/query/v2/tx/{$transactionId}/rollback";
+
+        $mockRequest = new Request('POST', $uri);
+        $mockStream = Utils::streamFor('');
+
+        $this->streamFactory->method('createStream')
+            ->willReturn($mockStream);
+
+        $this->psr17Factory->method('createRequest')
+            ->willReturn($mockRequest);
+
+        $factory = new Neo4jRequestFactory(
+            $this->psr17Factory,
+            $this->streamFactory,
+            $this->baseUri
+        );
+        $request = $factory->buildRollbackRequest($database, $transactionId);
+
+        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals($uri, (string) $request->getUri());
+    }
+
+    /**
+     * Test for the createRequest method (Private method should be tested indirectly through other public methods)
+     */
+    public function testCreateRequestWithHeadersAndBody()
+    {
+        $cypher = 'MATCH (n) RETURN n';
+        $parameters = ['param1' => 'value1'];
+        $database = 'neo4j';
+        $uri = "{$this->baseUri}/db/{$database}/query/v2";
+        $payload = json_encode([
+            'statement' => $cypher,
+            'parameters' => $parameters,
+            'includeCounters' => true,
+        ]);
+
+        $mockStream = Utils::streamFor($payload);
+        $this->streamFactory->method('createStream')
+            ->willReturn($mockStream);
+
+        $mockRequest = new Request('POST', $uri);
+        $this->psr17Factory->method('createRequest')
+            ->willReturn($mockRequest);
+
+        $factory = new Neo4jRequestFactory(
+            $this->psr17Factory,
+            $this->streamFactory,
+            $this->baseUri,
+            $this->authHeader
+        );
+
+        $request = $factory->buildRunQueryRequest($database, $cypher, $parameters);
+
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals('application/json', $request->getHeaderLine('Accept'));
+        $this->assertEquals($this->authHeader, $request->getHeaderLine('Authorization'));
+
+        // Assertions for body
+        $this->assertJsonStringEqualsJsonString($payload, (string) $request->getBody());
+    }
+
+
+    public function testCreateRequestWithoutAuthorizationHeader()
+    {
+        $cypher = 'MATCH (n) RETURN n';
+        $parameters = ['param1' => 'value1'];
+        $database = 'neo4j';
+        $uri = "{$this->baseUri}/db/{$database}/query/v2";
+        $payload = json_encode([
+            'statement' => $cypher,
+            'parameters' => $parameters,
+            'includeCounters' => true,
+        ]);
+
+        $mockStream = Utils::streamFor($payload);
+        $this->streamFactory->method('createStream')
+            ->willReturn($mockStream);
+
+        $mockRequest = new Request('POST', $uri);
+        $this->psr17Factory->method('createRequest')
+            ->willReturn($mockRequest);
+
+        $factory = new Neo4jRequestFactory(
+            $this->psr17Factory,
+            $this->streamFactory,
+            $this->baseUri
+        );
+
+        $request = $factory->buildRunQueryRequest($database, $cypher, $parameters);
+
+        $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
+        $this->assertEquals('application/json', $request->getHeaderLine('Accept'));
+        $this->assertEmpty($request->getHeaderLine('Authorization'));  // No Authorization header
+
+        $this->assertJsonStringEqualsJsonString($payload, (string) $request->getBody());
     }
 }
