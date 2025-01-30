@@ -10,9 +10,9 @@ use Neo4j\QueryAPI\NoAuth;
 
 class Authentication
 {
-    public static function basic(): AuthenticateInterface
+    public static function basic(string $username, string $password): AuthenticateInterface
     {
-        return new BasicAuthentication(getenv("NEO4J_USERNAME"), getenv("NEO4J_PASSWORD"));
+        return new BasicAuthentication('neo4j', '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0');
     }
 
 

@@ -13,6 +13,7 @@ use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
@@ -38,6 +39,7 @@ class Neo4jQueryAPI
             'base_uri' => rtrim($address, '/'),
             'timeout' => 10.0,
             'headers' => [
+                'Authorization' => $auth->getHeader(),
                 'Content-Type' => 'application/vnd.neo4j.query',
                 'Accept' => 'application/vnd.neo4j.query',
             ],
@@ -162,9 +164,15 @@ class Neo4jQueryAPI
         throw $e;
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     */
     public function beginTransaction(string $database = 'neo4j'): Transaction
     {
-        $response = $this->client->sendRequest(new Request('POST', '/db/neo4j/query/v2/tx'));
+        $request = new Request('POST', '/db/neo4j/query/v2/tx');
+        $request = $this->auth->authenticate($request);
+        $request = $request->withHeader('Content-Type', 'application/json');
+        $response = $this->client->sendRequest($request);
 
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
         $responseData = json_decode($response->getBody(), true);

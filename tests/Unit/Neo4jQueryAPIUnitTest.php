@@ -27,46 +27,44 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
     private function initializeApi(): Neo4jQueryAPI
     {
-        return Neo4jQueryAPI::login($this->address, Authentication::basic());
+        // Updated to use the new authentication method with hardcoded credentials
+        return Neo4jQueryAPI::login(
+            $this->address,
+            Authentication::basic("neo4j", "9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0")
+        );
     }
 
     public function testCorrectClientSetup(): void
     {
-        // Initialize the API and get the Neo4jQueryAPI instance
         $neo4jQueryAPI = $this->initializeApi();
 
-        // Use reflection to access private `client` property
         $clientReflection = new \ReflectionClass(Neo4jQueryAPI::class);
         $clientProperty = $clientReflection->getProperty('client');
-        // Make the private property accessible
         $client = $clientProperty->getValue($neo4jQueryAPI);
 
-        // Assert that the client is of type Guzzle's Client
         $this->assertInstanceOf(Client::class, $client);
 
-        // Get the client's configuration and check headers
         $config = $client->getConfig();
-        $expectedAuthHeader = 'Basic ' . base64_encode(getenv('NEO4J_USERNAME') . ':' . getenv('NEO4J_PASSWORD'));
+        $expectedAuthHeader = 'Basic ' . base64_encode('neo4j:9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0');
 
-        // Check if the configuration matches
         $this->assertEquals(rtrim($this->address, '/'), $config['base_uri']);
-        //$this->assertArrayHasKey('Authorization', $config['headers'], 'Authorization header missing.');
-        //$this->assertEquals($expectedAuthHeader, $config['headers']['Authorization'], 'Authorization header value mismatch.');
+        $this->assertArrayHasKey('Authorization', $config['headers'], 'Authorization header missing.');
+        $this->assertEquals($expectedAuthHeader, $config['headers']['Authorization'], 'Authorization header value mismatch.');
         $this->assertEquals('application/vnd.neo4j.query', $config['headers']['Content-Type']);
         $this->assertEquals('application/vnd.neo4j.query', $config['headers']['Accept']);
     }
-
 
     /**
      * @throws GuzzleException
      */
     public function testRunSuccess(): void
     {
-        // Mock response for a successful query
+
         $mock = new MockHandler([
             new Response(200, ['X-Foo' => 'Bar'], '{"data": {"fields": ["hello"], "values": [[{"$type": "String", "_value": "world"}]]}}'),
         ]);
-        $auth = Authentication::basic();
+
+        $auth = Authentication::basic("neo4j", "9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0");
 
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
