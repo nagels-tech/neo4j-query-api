@@ -24,9 +24,9 @@ class OGM
             throw new \InvalidArgumentException('Unknown object type: ' . json_encode($object));
         }
 
-//        if (!isset($object['_value'])) {
-//            throw new \InvalidArgumentException('Missing _value key in object: ' . json_encode($object));
-//        }
+        //        if (!isset($object['_value'])) {
+        //            throw new \InvalidArgumentException('Missing _value key in object: ' . json_encode($object));
+        //        }
 
         return match ($object['$type']) {
             'Integer', 'Float', 'String', 'Boolean', 'Duration', 'OffsetDateTime' => $object['_value'],
@@ -105,10 +105,11 @@ class OGM
         $relationships = [];
 
         foreach ($pathData as $item) {
-            match ($item['$type']) {
-                'Node' => $nodes[] = $this->mapNode($item['_value']),
-                'Relationship' => $relationships[] = $this->mapRelationship($item['_value']),
-            };
+            if ($item['$type'] === 'Node') {
+                $nodes[] = $this->mapNode($item['_value']);
+            } elseif ($item['$type'] === 'Relationship') {
+                $relationships[] = $this->mapRelationship($item['_value']);
+            }
         }
 
         return new Path($nodes, $relationships);

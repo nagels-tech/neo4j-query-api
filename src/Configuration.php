@@ -12,5 +12,6 @@ class Configuration
         public readonly bool $includeCounters = true,
         public readonly Bookmarks $bookmark = new Bookmarks([]),
         public readonly AccessMode $accessMode = AccessMode::WRITE,
-    ) {}
+    ) {
+    }
 }

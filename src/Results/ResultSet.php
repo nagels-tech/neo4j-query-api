@@ -7,10 +7,9 @@ use Countable;
 use IteratorAggregate;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\Bookmarks;
+use Neo4j\QueryAPI\Objects\Bookmarks;  // Make sure to include the Bookmarks class
 use Traversable;
 use Neo4j\QueryAPI\Enums\AccessMode;
-
 
 /**
  * @api
@@ -29,8 +28,7 @@ class ResultSet implements IteratorAggregate, Countable
         private Bookmarks          $bookmarks,
         private ?ProfiledQueryPlan $profiledQueryPlan,
         private AccessMode          $accessMode
-    )
-    {
+    ) {
 
 
     }
@@ -42,18 +40,10 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return new ArrayIterator($this->rows);
     }
-
-    /**
-     * @api
-     */
     public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
     }
-
-    /**
-     * @api
-     */
 
     public function getProfiledQueryPlan(): ?ProfiledQueryPlan
     {
@@ -68,9 +58,6 @@ class ResultSet implements IteratorAggregate, Countable
         return count($this->rows);
     }
 
-    /**
-     * @api
-     */
     public function getBookmarks(): ?Bookmarks
     {
         return $this->bookmarks;
@@ -90,10 +77,10 @@ class ResultSet implements IteratorAggregate, Countable
     }
 
 
-//    public function getImpersonatedUser(): ?ImpersonatedUser
-//    {
-//
-//    }
+    //    public function getImpersonatedUser(): ?ImpersonatedUser
+    //    {
+    //
+    //    }
 
 
 

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Neo4j\QueryAPI\Tests\Unit;
 
 use Neo4j\QueryAPI\Results\ResultRow;
