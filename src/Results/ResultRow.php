@@ -6,16 +6,17 @@ namespace Neo4j\QueryAPI\Results;
 
 
 use BadMethodCallException;
-use Neo4j\QueryAPI\OGM;
+use IteratorAggregate;
 use OutOfBoundsException;
 use ArrayAccess;
+use Traversable;
 
 /**
  * @template TKey of array-key
  * @template TValue
  * @implements ArrayAccess<TKey, TValue>
  */
-class ResultRow implements ArrayAccess
+class ResultRow implements ArrayAccess, \Countable, IteratorAggregate
 {
     public function __construct(private array $data)
     {
@@ -55,6 +56,15 @@ class ResultRow implements ArrayAccess
     }
 
 
+    public function count(): int
+    {
+        return count($this->data);
+    }
+
+    public function getIterator(): Traversable
+    {
+        return new \ArrayIterator($this->data);
+    }
 }
 
 

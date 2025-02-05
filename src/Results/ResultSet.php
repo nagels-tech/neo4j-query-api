@@ -25,10 +25,10 @@ class ResultSet implements IteratorAggregate, Countable
      */
     public function __construct(
         private readonly array     $rows,
-        private ResultCounters     $counters,
+        private ?ResultCounters     $counters = null,
         private Bookmarks          $bookmarks,
-        private ?ProfiledQueryPlan $profiledQueryPlan = null,
-        private ?AccessMode $accessMode= null
+        private ?ProfiledQueryPlan $profiledQueryPlan,
+        private AccessMode          $accessMode
     )
     {
 

@@ -10,66 +10,78 @@ use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use Neo4j\QueryAPI\loginConfig;
 
 class Neo4jQueryAPI
 {
     private Client $client;
+    private LoginConfig $loginConfig;
     private Configuration $config;
     private ResponseParser $responseParser;
 
-    public function __construct(Configuration $config, ResponseParser $responseParser)
+    public function __construct(LoginConfig $loginConfig, ResponseParser $responseParser, Configuration $config)
     {
-        $this->config = $config;
+        $this->loginConfig = $loginConfig;
         $this->responseParser = $responseParser;
+        $this->config = $config;
 
         $this->client = new Client([
-            'base_uri' => rtrim($this->config->getBaseUrl(), '/'),
-            'timeout' => 10.0,
-            'headers' => $this->config->getDefaultHeaders(),
+            'base_uri' => rtrim($this->loginConfig->baseUrl, '/'),
+            'timeout'  => 10.0,
+            'headers'  => [
+                'Authorization' => 'Basic ' . $this->loginConfig->authToken,
+                'Accept'  => 'application/vnd.neo4j.query',
+            ],
         ]);
     }
+
 
     /**
      * Static method to create an instance with login details.
      */
-    public static function login(string $address, string $username, string $password): self
+    public static function login(): self
     {
-        $authToken = base64_encode("$username:$password");
-        $config = (new Configuration())
-            ->setBaseUrl($address)
-            ->setAuthToken($authToken);
+        $loginConfig = loginConfig::fromEnv();
+        $config = new Configuration();
 
-        return new self($config, new ResponseParser(new OGM()));
+        return new self($loginConfig, new ResponseParser(new OGM()), $config);
     }
+
+
 
     /**
      * Executes a Cypher query.
      *
      * @throws Neo4jException|RequestExceptionInterface
      */
-    public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null, ?string $impersonatedUser = null, AccessMode $accessMode = AccessMode::WRITE): ResultSet
+    public function run(string $cypher, array $parameters = []): ResultSet
     {
         try {
             $payload = [
-                'statement' => $cypher,
-                'parameters' => empty($parameters) ? new \stdClass() : $parameters,
-                'includeCounters' => true,
-                'accessMode' => $accessMode->value,
+                'statement'      => $cypher,
+                'parameters'     => empty($parameters) ? new \stdClass() : $parameters,
+                'includeCounters' => $this->config->includeCounters,
+                'accessMode'     => $this->config->accessMode->value,
             ];
 
-            if ($bookmark !== null) {
-                $payload['bookmarks'] = $bookmark->getBookmarks();
+            if (!empty($this->config->bookmark)) {
+                $payload['bookmarks'] = $this->config->bookmark;
             }
 
-            if ($impersonatedUser !== null) {
-                $payload['impersonatedUser'] = $impersonatedUser;
-            }
 
-            $response = $this->client->post("/db/{$database}/query/v2", ['json' => $payload]);
+
+//            if ($impersonatedUser !== null) {
+//                $payload['impersonatedUser'] = $impersonatedUser;
+//            }
+        error_log('Neo4j Payload: ' . json_encode($payload));
+
+            $response = $this->client->post("/db/{$this->config->database}/query/v2", ['json' => $payload]);
 
             return $this->responseParser->parseRunQueryResponse($response);
         } catch (RequestException $e) {
-            $this->handleRequestException($e);
+       error_log('Neo4j Request Failed: ' . $e->getMessage());
+
+           $this->handleRequestException($e);
         }
     }
 

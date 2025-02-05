@@ -17,18 +17,31 @@ class OGM
      */
     public function map(array $object): mixed
     {
+        if (!isset($object['$type'])) {
+            if (isset($object['elementId'], $object['labels'], $object['properties'])) {
+                return $this->mapNode($object); // Handle as a Node
+            }
+            throw new \InvalidArgumentException('Unknown object type: ' . json_encode($object));
+        }
+
+//        if (!isset($object['_value'])) {
+//            throw new \InvalidArgumentException('Missing _value key in object: ' . json_encode($object));
+//        }
+
         return match ($object['$type']) {
-            'Integer', 'Float', 'String', 'Boolean', 'Null', 'Duration', 'OffsetDateTime' => $object['_value'],
+            'Integer', 'Float', 'String', 'Boolean', 'Duration', 'OffsetDateTime' => $object['_value'],
             'Array' => $object['_value'],
+            'Null' => null,
             'List' => array_map([$this, 'map'], $object['_value']),
             'Node' => $this->mapNode($object['_value']),
             'Map' => $this->mapProperties($object['_value']),
             'Point' => $this->parseWKT($object['_value']),
             'Relationship' => $this->mapRelationship($object['_value']),
             'Path' => $this->mapPath($object['_value']),
-            default => throw new \InvalidArgumentException('Unknown type: ' . $object['$type']),
+            default => throw new \InvalidArgumentException('Unknown type: ' . $object['$type'] . ' in object: ' . json_encode($object)),
         };
     }
+
 
     /**
      * Parse Well-Known Text (WKT) format to a Point object.
