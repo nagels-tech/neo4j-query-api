@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace Neo4j\QueryAPI\Tests\Unit;
 
 use GuzzleHttp\Client;
@@ -24,7 +22,6 @@ use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Neo4j\QueryAPI\Configuration;
 use Neo4j\QueryAPI\loginConfig;
-
 
 class Neo4jQueryAPIUnitTest extends TestCase
 {

@@ -21,7 +21,6 @@ use Neo4j\QueryAPI\ResponseParser;
 use Neo4j\QueryAPI\Configuration;
 use GuzzleHttp\Psr7\Response;
 
-
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
@@ -54,9 +53,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             rows: [
                 new ResultRow([
                     'n' => new Node(
-                        ['TestNode'], [
+                        ['TestNode'],
+                        [
                         'name' => 'Test'
-                    ])
+                    ]
+                    )
                 ])
             ],
             counters: new ResultCounters(
@@ -271,8 +272,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertNotNull($impersonatedUser, "Impersonated user should not be null.");
     }
 
-//
-//
+    //
+    //
     public function testImpersonatedUserFailure(): void
     {
         $this->markTestSkipped("stuck");
@@ -288,7 +289,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         );
     }
 
-//
+    //
     #[DoesNotPerformAssertions]
     public function testRunWithWriteAccessMode(): void
     {
@@ -427,7 +428,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->api->run('CREATE CONSTRAINT person_name FOR (n:Person1) REQUIRE n.name IS UNIQUE', []);
             $this->fail('Expected a Neo4jException to be thrown.');
         } catch (Neo4jException $e) {
-//           $errorMessages = $e->getErrorType() . $e->errorSubType() . $e->errorName();
+            //           $errorMessages = $e->getErrorType() . $e->errorSubType() . $e->errorName();
             $this->assertInstanceOf(Neo4jException::class, $e);
             $this->assertEquals('Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists', $e->getErrorCode());
             $this->assertNotEmpty($e->getMessage());
@@ -463,7 +464,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 new ResultRow(['n.name' => 'bob1']),
             ],
             new ResultCounters(),
-             $this->config->bookmark,
+            $this->config->bookmark,
             null,
             $this->config->accessMode
         );
@@ -474,7 +475,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertCount(1, $this->config->bookmark,$results->getBookmarks());
+        //        $this->assertCount(1, $this->config->bookmark,$results->getBookmarks());
     }
 
     public function testWithInteger(): void
@@ -491,7 +492,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             ),
             $this->config->bookmark,
             null,
-            $this->config->accessMode        );
+            $this->config->accessMode
+        );
 
         $results = $this->api->run('CREATE (n:Person {age: $age}) RETURN n.age', [
             'age' => 30
@@ -499,7 +501,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertEquals($this->config->bookmark, $results->getBookmarks());
+        //        $this->assertEquals($this->config->bookmark, $results->getBookmarks());
     }
 
 
@@ -526,8 +528,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertEquals($this->config->bookmark, $results->getBookmarks());
-        }
+        //        $this->assertEquals($this->config->bookmark, $results->getBookmarks());
+    }
 
     public function testWithNull(): void
     {
@@ -578,7 +580,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertCount(1, $results->getBookmarks());
+        //        $this->assertCount(1, $results->getBookmarks());
     }
 
     public function testWithString(): void
@@ -604,7 +606,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertCount(1, $results->getBookmarks());
+        //        $this->assertCount(1, $results->getBookmarks());
     }
 
     public function testWithArray(): void
@@ -625,13 +627,14 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->config->accessMode
         );
 
-        $results = $this->api->run('MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
+        $results = $this->api->run(
+            'MATCH (n:Person) WHERE n.name IN $names RETURN n.name',
             ['names' => ['bob1', 'alicy']]
         );
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertCount(1, $results->getBookmarks());
+        //        $this->assertCount(1, $results->getBookmarks());
     }
 
     public function testWithDate(): void
@@ -652,13 +655,14 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->config->accessMode
         );
 
-        $results = $this->api->run('CREATE (n:Person {date: datetime($date)}) RETURN n.date',
+        $results = $this->api->run(
+            'CREATE (n:Person {date: datetime($date)}) RETURN n.date',
             ['date' => "2024-12-11T11:00:00Z"]
         );
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertCount(1, $results->getBookmarks());
+        //        $this->assertCount(1, $results->getBookmarks());
     }
 
     public function testWithDuration(): void
@@ -679,13 +683,14 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->config->accessMode
         );
 
-        $results = $this->api->run('CREATE (n:Person {duration: duration($duration)}) RETURN n.duration',
+        $results = $this->api->run(
+            'CREATE (n:Person {duration: duration($duration)}) RETURN n.duration',
             ['duration' => 'P14DT16H12M'],
         );
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertCount(1, $results->getBookmarks());
+        //        $this->assertCount(1, $results->getBookmarks());
     }
 
     public function testWithWGS84_2DPoint(): void
@@ -705,18 +710,20 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->config->accessMode
         );
 
-        $results = $this->api->run('CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
+        $results = $this->api->run(
+            'CREATE (n:Person {Point: point($Point)}) RETURN n.Point',
             [
                 'Point' => [
                     'longitude' => 1.2,
                     'latitude' => 3.4,
                     'crs' => 'wgs-84',
-                ]]);
+                ]]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertCount(1, $results->getBookmarks());
+        //        $this->assertCount(1, $results->getBookmarks());
     }
 
     public function testWithWGS84_3DPoint(): void
@@ -733,19 +740,22 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             ),
             $this->config->bookmark,
             null,
-            $this->config->accessMode        );
+            $this->config->accessMode
+        );
 
-        $results = $this->api->run('CREATE (n:Person {Point: point({longitude: $longitude, latitude: $latitude, height: $height, srid: $srid})}) RETURN n.Point',
+        $results = $this->api->run(
+            'CREATE (n:Person {Point: point({longitude: $longitude, latitude: $latitude, height: $height, srid: $srid})}) RETURN n.Point',
             [
                 'longitude' => 1.2,
                 'latitude' => 3.4,
                 'height' => 4.2,
                 'srid' => 4979,
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-//        $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
+        //        $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
     }
 
     public function testWithCartesian2DPoint(): void
@@ -762,19 +772,22 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             ),
             $this->config->bookmark,
             null,
-            $this->config->accessMode        );
+            $this->config->accessMode
+        );
 
-        $results = $this->api->run('CREATE (n:Person {Point: point({x: $x, y: $y, srid: $srid})}) RETURN n.Point',
+        $results = $this->api->run(
+            'CREATE (n:Person {Point: point({x: $x, y: $y, srid: $srid})}) RETURN n.Point',
             [
                 'x' => 10.5,
                 'y' => 20.7,
                 'srid' => 7203,
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertCount(1, $results->getBookmarks());
+        //        $this->assertCount(1, $results->getBookmarks());
     }
 
     public function testWithCartesian3DPoint(): void
@@ -794,17 +807,19 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->config->accessMode
         );
 
-        $results = $this->api->run('CREATE (n:Person {Point: point({x: $x, y: $y, z: $z, srid: $srid})}) RETURN n.Point',
+        $results = $this->api->run(
+            'CREATE (n:Person {Point: point({x: $x, y: $y, z: $z, srid: $srid})}) RETURN n.Point',
             [
                 'x' => 10.5,
                 'y' => 20.7,
                 'z' => 30.9,
                 'srid' => 9157,
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-//        $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
+        //        $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
     }
 
     public function testWithNode(): void
@@ -833,19 +848,22 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             ),
             $this->config->bookmark,
             null,
-            $this->config->accessMode        );
+            $this->config->accessMode
+        );
 
-        $results = $this->api->run('CREATE (n:Person {name: $name, age: $age, location: $location}) RETURN {labels: labels(n), properties: properties(n)} AS node',
+        $results = $this->api->run(
+            'CREATE (n:Person {name: $name, age: $age, location: $location}) RETURN {labels: labels(n), properties: properties(n)} AS node',
             [
                 'name' => 'Ayush',
                 'age' => 30,
                 'location' => 'New York',
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-//        $this->assertCount(1, $results->getBookmarks());
+        //        $this->assertCount(1, $results->getBookmarks());
     }
 
     public function testWithPath(): void
@@ -867,7 +885,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                     'relationshipTypes' => ['FRIENDS'],
                 ]),
             ],
-
             new ResultCounters(
                 containsUpdates: true,
                 nodesCreated: 2,
@@ -875,12 +892,13 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 relationshipsCreated: 1,
                 labelsAdded: 2,
             ),
-
             $this->config->bookmark,
             null,
-            $this->config->accessMode        );
+            $this->config->accessMode
+        );
 
-        $results = $this->api->run('CREATE (a:Person {name: $name1}), (b:Person {name: $name2}),
+        $results = $this->api->run(
+            'CREATE (a:Person {name: $name1}), (b:Person {name: $name2}),
      (a)-[r:FRIENDS]->(b)
      RETURN {labels: labels(a), properties: properties(a)} AS node1,
             {labels: labels(b), properties: properties(b)} AS node2,
@@ -888,7 +906,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             [
                 'name1' => 'A',
                 'name2' => 'B',
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
@@ -912,13 +931,15 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 0,
                 labelsAdded: 0,
             ),
-
             $this->config->bookmark,
             null,
-            $this->config->accessMode        );
+            $this->config->accessMode
+        );
 
-        $results = $this->api->run('RETURN {hello: "hello"} AS map',
-            []);
+        $results = $this->api->run(
+            'RETURN {hello: "hello"} AS map',
+            []
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
@@ -959,9 +980,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             ),
             $this->config->bookmark,
             null,
-            $this->config->accessMode        );
+            $this->config->accessMode
+        );
 
-        $results = $this->api->run('CREATE (p1:Person {name: $name1, age: $age1, location: $location1}),
+        $results = $this->api->run(
+            'CREATE (p1:Person {name: $name1, age: $age1, location: $location1}),
              (p2:Person {name: $name2, age: $age2, location: $location2}),
              (p1)-[r:FRIEND_OF]->(p2)
      RETURN {labels: labels(p1), properties: properties(p1)} AS node1,
@@ -974,7 +997,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 'name2' => 'John',
                 'age2' => 25,
                 'location2' => 'Los Angeles'
-            ]);
+            ]
+        );
 
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());

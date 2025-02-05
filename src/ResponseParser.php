@@ -13,7 +13,9 @@ use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 
 class ResponseParser
 {
-    public function __construct(private OGM $ogm) {}
+    public function __construct(private OGM $ogm)
+    {
+    }
 
     /**
      * Parses the response from a run query operation.
@@ -35,7 +37,7 @@ class ResponseParser
         $profiledQueryPlan = $this->buildProfiledQueryPlan($data['profiledQueryPlan'] ?? null);
         $accessMode = $this->getAccessMode($data['accessMode'] ?? '');
 
-        return new ResultSet($rows, $counters, $bookmarks,$profiledQueryPlan, $accessMode);
+        return new ResultSet($rows, $counters, $bookmarks, $profiledQueryPlan, $accessMode);
     }
 
     /**
@@ -149,7 +151,6 @@ class ResponseParser
             $queryPlanData['pageCacheHitRatio'] ?? 0.0,
             $queryPlanData['time'] ?? 0,
             $queryPlanData['operatorType'] ?? '',
-
         );
     }
 }

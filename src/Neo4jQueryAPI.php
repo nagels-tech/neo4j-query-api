@@ -70,18 +70,18 @@ class Neo4jQueryAPI
 
 
 
-//            if ($impersonatedUser !== null) {
-//                $payload['impersonatedUser'] = $impersonatedUser;
-//            }
-        error_log('Neo4j Payload: ' . json_encode($payload));
+            //            if ($impersonatedUser !== null) {
+            //                $payload['impersonatedUser'] = $impersonatedUser;
+            //            }
+            error_log('Neo4j Payload: ' . json_encode($payload));
 
             $response = $this->client->post("/db/{$this->config->database}/query/v2", ['json' => $payload]);
 
             return $this->responseParser->parseRunQueryResponse($response);
         } catch (RequestException $e) {
-       error_log('Neo4j Request Failed: ' . $e->getMessage());
+            error_log('Neo4j Request Failed: ' . $e->getMessage());
 
-           $this->handleRequestException($e);
+            $this->handleRequestException($e);
         }
     }
 

@@ -7,7 +7,8 @@ class loginConfig
     public function __construct(
         public readonly string $baseUrl,
         public readonly string $authToken
-    ) {}
+    ) {
+    }
 
     public static function fromEnv(): self
     {
