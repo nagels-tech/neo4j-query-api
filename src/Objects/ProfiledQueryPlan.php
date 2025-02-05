@@ -29,7 +29,7 @@ class ProfiledQueryPlan
         ?float $pageCacheHitRatio = 0.0,
         ?int $time = 0,
         ?string $operatorType = '',
-        QueryArguments $arguments
+//        ?QueryArguments $arguments = null,
     ) {
         $this->dbHits = $dbHits ?? 0;
         $this->records = $records ?? 0;
@@ -39,7 +39,7 @@ class ProfiledQueryPlan
         $this->pageCacheHitRatio = $pageCacheHitRatio ?? 0.0;
         $this->time = $time ?? 0;
         $this->operatorType = $operatorType ?? '';
-        $this->arguments = $arguments;
+//        $this->arguments = $arguments ?? new QueryArguments();
     }
     /**
      * @api
