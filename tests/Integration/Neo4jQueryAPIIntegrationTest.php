@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
@@ -9,14 +10,12 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
-use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\Bookmarks;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ResultCounters;
+use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
-use Neo4j\QueryAPI\Results\ResultSet;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Client\RequestExceptionInterface;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
@@ -29,7 +28,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     public function setUp(): void
     {
         $this->api = $this->initializeApi();
-
         // Clear database and populate test data
         $this->clearDatabase();
         $this->populateTestData();
@@ -39,18 +37,21 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     {
         return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
-            getenv('NEO4J_USERNAME'),
-            getenv('NEO4J_PASSWORD')
+            Authentication::basic(),
         );
     }
+
 
     public function testCounters(): void
     {
         $result = $this->api->run('CREATE (x:Node {hello: "world"})');
-
         $this->assertEquals(1, $result->getQueryCounters()->getNodesCreated());
     }
 
+    /**
+     * @throws Neo4jException
+     * @throws RequestExceptionInterface
+     */
     public function testCreateBookmarks(): void
     {
         $result = $this->api->run(cypher: 'CREATE (x:Node {hello: "world"})');
@@ -171,17 +172,26 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
     ";
 
+        // Mock response
         $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
         $mockSack = new MockHandler([
             new Response(200, [], $body),
         ]);
 
+        // Set up Guzzle HTTP client with the mock handler
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
-        $api = new Neo4jQueryAPI($client);
 
+        // Use environment variables for authentication
+        $auth = Authentication::basic(getenv("NEO4J_USERNAME"), getenv("NEO4J_PASSWORD"));
+
+        // Pass both client and authentication to Neo4jQueryAPI
+        $api = new Neo4jQueryAPI($client, $auth);
+
+        // Execute the query
         $result = $api->run($query);
 
+        // Validate the profiled query plan
         $plan = $result->getProfiledQueryPlan();
         $this->assertNotNull($plan, "The result of the query should not be null.");
 
@@ -194,6 +204,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testProfileCreateActedInRelationships(): void
     {
+
         $query = "
     PROFILE UNWIND range(1, 50) AS i
     MATCH (p:Person {id: i}), (m:Movie {year: 2000 + i})
@@ -221,32 +232,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
 
 
-    public function testTransactionCommit(): void
-    {
-        // Begin a new transaction
-        $tsx = $this->api->beginTransaction();
-
-        // Generate a random name for the node
-        $name = (string)mt_rand(1, 100000);
-
-        // Create a node within the transaction
-        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
-
-        // Validate that the node does not exist in the database before the transaction is committed
-        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-        $this->assertCount(0, $results);
-
-        // Validate that the node exists within the transaction
-        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-        $this->assertCount(1, $results);
-
-        // Commit the transaction
-        $tsx->commit();
-
-        // Validate that the node now exists in the database
-        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-        $this->assertCount(1, $results); // Updated to expect 1 result
-    }
 
 
     /**

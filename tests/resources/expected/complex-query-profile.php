@@ -4,7 +4,7 @@ use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Results\ResultSet;
+use Neo4j\QueryAPI\Objects\ResultSet;
 
 return new ResultSet(
     rows: [],
