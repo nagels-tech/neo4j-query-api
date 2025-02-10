@@ -8,7 +8,6 @@ use IteratorAggregate;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Traversable;
 
-
 class ResultSet implements IteratorAggregate, Countable
 {
     /**

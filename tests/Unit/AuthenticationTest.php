@@ -11,7 +11,7 @@ class AuthenticationTest extends TestCase
     {
 
         $mockToken = 'mocked_bearer_token';
-     $auth = Authentication::bearer($mockToken);
+        $auth = Authentication::bearer($mockToken);
 
         $this->assertEquals("Bearer $mockToken", $auth->getHeader(), 'Bearer token mismatch.');
         $this->assertEquals('Bearer', $auth->getType(), 'Type should be Bearer.');
