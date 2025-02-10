@@ -11,5 +11,3 @@ class NoAuth implements AuthenticateInterface
         return $request;
     }
 }
-
-
