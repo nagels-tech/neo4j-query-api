@@ -42,7 +42,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     {
         return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
-            Authentication::basic("neo4j", "9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0"),
+            Authentication::fromEnvironment(),
         );
     }
 

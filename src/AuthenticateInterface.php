@@ -1,5 +1,6 @@
 <?php
 
+
 namespace Neo4j\QueryAPI;
 
 use Psr\Http\Message\RequestInterface;

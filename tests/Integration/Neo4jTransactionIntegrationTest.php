@@ -1,29 +1,16 @@
 <?php
 
 namespace Neo4j\QueryAPI\Tests\Integration;
-
-use Neo4j\QueryAPI\Neo4jRequestFactory;
+use Exception;
 use Neo4j\QueryAPI\Objects\Authentication;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
-use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
-use Neo4j\QueryAPI\Objects\Bookmarks;
-use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
-use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\ResultSet;
-use Neo4j\QueryAPI\Results\ResultRow;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Client\RequestExceptionInterface;
+
 
 class Neo4jTransactionIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
-
-    private Neo4jRequestFactory $request;
 
     /**
      * @throws GuzzleException
@@ -31,16 +18,18 @@ class Neo4jTransactionIntegrationTest extends TestCase
     public function setUp(): void
     {
         $this->api = $this->initializeApi();
-        // Clear database and populate test data
         $this->clearDatabase();
         $this->populateTestData();
     }
 
+    /**
+     * @throws Exception
+     */
     private function initializeApi(): Neo4jQueryAPI
     {
         return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
-            Authentication::basic("neo4j", "9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0"),
+            Authentication::fromEnvironment(),
         );
     }
 

@@ -1,12 +1,8 @@
 <?php
-
 namespace Neo4j\QueryAPI\Tests\Unit;
 
-use Neo4j\QueryAPI\BasicAuthentication;
 use Neo4j\QueryAPI\Objects\Authentication;
-use PHPUnit\Framework\MockObject\Exception;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\RequestInterface;
 
 class AuthenticationTest extends TestCase
 {
@@ -23,26 +19,39 @@ class AuthenticationTest extends TestCase
         $this->assertEquals('Bearer', $auth->getType(), 'Type should be Bearer.');
     }
 
-    /**
-     * @throws Exception
-     */
     public function testBasicAuthentication(): void
     {
-        $mockUsername = 'neo4j';
-        $mockPassword = '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0';
+
+        $mockUsername = 'mockUser';
+        $mockPassword = 'mockPass';
+
+        putenv('NEO4J_USERNAME=' . $mockUsername);
+        putenv('NEO4J_PASSWORD=' . $mockPassword);
 
 
-        $auth = Authentication::basic($mockUsername, $mockPassword);
+        $auth = Authentication::basic(getenv('NEO4J_USERNAME'), getenv('NEO4J_PASSWORD'));
 
-        $this->assertInstanceOf(BasicAuthentication::class, $auth);
 
         $expectedHeader = 'Basic ' . base64_encode("$mockUsername:$mockPassword");
+        $this->assertEquals($expectedHeader, $auth->getHeader(), 'Basic authentication header mismatch.');
+        $this->assertEquals('Basic', $auth->getType(), 'Type should be Basic.');
 
-        $request = $this->createMock(RequestInterface::class);
+        putenv('NEO4J_USERNAME');
+        putenv('NEO4J_PASSWORD');
+    }
 
-        $request->expects($this->once())
-            ->method('withHeader')
-            ->with('Authorization', $expectedHeader)  // Use dynamically generated expected header
-            ->willReturn($request);
+    public function testFallbackToEnvironmentVariables(): void
+    {
+        putenv('NEO4J_USERNAME=mockEnvUser');
+        putenv('NEO4J_PASSWORD=mockEnvPass');
+
+        $auth = Authentication::basic(getenv('NEO4J_USERNAME'), getenv('NEO4J_PASSWORD'));
+
+        $expectedHeader = 'Basic ' . base64_encode("mockEnvUser:mockEnvPass");
+        $this->assertEquals($expectedHeader, $auth->getHeader(), 'Basic authentication with environment variables mismatch.');
+        $this->assertEquals('Basic', $auth->getType(), 'Type should be Basic.');
+
+        putenv('NEO4J_USERNAME');
+        putenv('NEO4J_PASSWORD');
     }
 }

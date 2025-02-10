@@ -2,23 +2,21 @@
 
 namespace Neo4j\QueryAPI;
 
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
+use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Objects\Authentication;
+use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
-use Neo4j\QueryAPI\Exception\Neo4jException;
-use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
 use stdClass;
-use Neo4j\QueryAPI\Objects\Bookmarks;
 
 class Neo4jQueryAPI
 {
@@ -28,6 +26,7 @@ class Neo4jQueryAPI
     public function __construct(ClientInterface $client, AuthenticateInterface $auth)
     {
         $this->client = $client;
+        $this->auth = $auth;
     }
 
     /**
@@ -39,7 +38,6 @@ class Neo4jQueryAPI
             'base_uri' => rtrim($address, '/'),
             'timeout' => 10.0,
             'headers' => [
-                'Authorization' => $auth->getHeader(),
                 'Content-Type' => 'application/vnd.neo4j.query',
                 'Accept' => 'application/vnd.neo4j.query',
             ],
@@ -63,44 +61,42 @@ class Neo4jQueryAPI
                 'includeCounters' => true,
             ];
 
+
             if ($bookmark !== null) {
                 $payload['bookmarks'] = $bookmark->getBookmarks();
             }
 
-            // Create the HTTP request
+
             $request = new Request('POST', '/db/' . $database . '/query/v2');
             $request = $this->auth->authenticate($request);
             $request = $request->withHeader('Content-Type', 'application/json');
             $request = $request->withBody(Utils::streamFor(json_encode($payload)));
-
-            // Send the request and get the response
             $response = $this->client->sendRequest($request);
             $contents = $response->getBody()->getContents();
 
-            // Parse the response data
+
             $data = json_decode($contents, true, flags: JSON_THROW_ON_ERROR);
 
-            // Check for errors in the response from Neo4j
+
             if (isset($data['errors']) && count($data['errors']) > 0) {
-                // If errors exist in the response, throw a Neo4jException
+
                 $error = $data['errors'][0];
                 throw new Neo4jException(
-                    $error, // Pass the entire error array instead of just the message
+                    $error,
                     0,
-                    null,
-                    $error
+                    null
+
+
                 );
             }
 
-            // Parse the result set and return it
+
             return $this->parseResultSet($data);
 
         } catch (RequestExceptionInterface $e) {
-            // Handle exceptions from the HTTP request
             $this->handleException($e);
         } catch (Neo4jException $e) {
-            // Catch Neo4j specific exceptions (if thrown)
-            throw $e; // Re-throw the exception
+            throw $e;
         }
     }
 
@@ -162,18 +158,17 @@ class Neo4jQueryAPI
         throw $e;
     }
 
-    /**
-     * @throws ClientExceptionInterface
-     */
     public function beginTransaction(string $database = 'neo4j'): Transaction
     {
         $request = new Request('POST', '/db/neo4j/query/v2/tx');
         $request = $this->auth->authenticate($request);
         $request = $request->withHeader('Content-Type', 'application/json');
+
         $response = $this->client->sendRequest($request);
+        $contents = $response->getBody()->getContents();
 
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
-        $responseData = json_decode($response->getBody(), true);
+        $responseData = json_decode($contents, true);
         $transactionId = $responseData['transaction']['id'];
 
         return new Transaction($this->client, $clusterAffinity, $transactionId);
@@ -233,5 +228,4 @@ class Neo4jQueryAPI
 
         return $profiledQueryPlan;
     }
-
 }
