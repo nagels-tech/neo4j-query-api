@@ -10,13 +10,14 @@ use Psr\Http\Message\StreamFactoryInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
+use Neo4j\QueryAPI\Objects\Authentication;
 
 class Neo4jRequestFactoryTest extends TestCase
 {
     private $psr17Factory;
     private $streamFactory;
-    private string $baseUri = '***REMOVED***';
-    private string $authHeader = 'Basic dXNlcjpwYXNzd29yZA==';
+    private string $address;
+    private string $authHeader;
 
     /**
      * @throws Exception
@@ -25,6 +26,11 @@ class Neo4jRequestFactoryTest extends TestCase
     {
         $this->psr17Factory = $this->createMock(RequestFactoryInterface::class);
         $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
+
+        $this->address = getenv('NEO4J_ADDRESS');
+
+        $auth = Authentication::fromEnvironment();
+        $this->authHeader = $auth->getHeader();
     }
 
     /**
@@ -36,20 +42,15 @@ class Neo4jRequestFactoryTest extends TestCase
         $parameters = ['param1' => 'value1'];
         $database = 'neo4j';
 
-
         $payload = json_encode([
             'statement' => $cypher,
             'parameters' => $parameters,
             'includeCounters' => true,
         ]);
-        $uri = "{$this->baseUri}/db/{$database}/query/v2";
-
+        $uri = "{$this->address}/db/{$database}/query/v2";
 
         $mockRequest = new Request('POST', $uri);
-
-
         $mockStream = Utils::streamFor($payload);
-
 
         $this->streamFactory->method('createStream')
             ->willReturn($mockStream);
@@ -60,7 +61,7 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->baseUri,
+            $this->address,
             $this->authHeader
         );
         $request = $factory->buildRunQueryRequest($database, $cypher, $parameters);
@@ -76,7 +77,7 @@ class Neo4jRequestFactoryTest extends TestCase
     public function testBuildBeginTransactionRequest()
     {
         $database = 'neo4j';
-        $uri = "{$this->baseUri}/db/{$database}/query/v2/tx";
+        $uri = "{$this->address}/db/{$database}/query/v2/tx";
 
         $mockRequest = new Request('POST', $uri);
         $mockStream = Utils::streamFor('');
@@ -90,11 +91,10 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->baseUri
+            $this->address
         );
         $request = $factory->buildBeginTransactionRequest($database);
 
-        // Assertions
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals($uri, (string) $request->getUri());
     }
@@ -106,7 +106,7 @@ class Neo4jRequestFactoryTest extends TestCase
     {
         $database = 'neo4j';
         $transactionId = '12345';
-        $uri = "{$this->baseUri}/db/{$database}/query/v2/tx/{$transactionId}/commit";
+        $uri = "{$this->address}/db/{$database}/query/v2/tx/{$transactionId}/commit";
 
         $mockRequest = new Request('POST', $uri);
         $mockStream = Utils::streamFor('');
@@ -120,7 +120,7 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->baseUri
+            $this->address
         );
         $request = $factory->buildCommitRequest($database, $transactionId);
 
@@ -135,7 +135,7 @@ class Neo4jRequestFactoryTest extends TestCase
     {
         $database = 'neo4j';
         $transactionId = '12345';
-        $uri = "{$this->baseUri}/db/{$database}/query/v2/tx/{$transactionId}/rollback";
+        $uri = "{$this->address}/db/{$database}/query/v2/tx/{$transactionId}/rollback";
 
         $mockRequest = new Request('POST', $uri);
         $mockStream = Utils::streamFor('');
@@ -149,7 +149,7 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->baseUri
+            $this->address
         );
         $request = $factory->buildRollbackRequest($database, $transactionId);
 
@@ -158,14 +158,15 @@ class Neo4jRequestFactoryTest extends TestCase
     }
 
     /**
-     * Test for the createRequest method (Private method should be tested indirectly through other public methods)
+     * Test for createRequest method with headers and body
      */
     public function testCreateRequestWithHeadersAndBody()
     {
         $cypher = 'MATCH (n) RETURN n';
         $parameters = ['param1' => 'value1'];
         $database = 'neo4j';
-        $uri = "{$this->baseUri}/db/{$database}/query/v2";
+        $uri = "{$this->address}/db/{$database}/query/v2";
+
         $payload = json_encode([
             'statement' => $cypher,
             'parameters' => $parameters,
@@ -183,7 +184,7 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->baseUri,
+            $this->address,
             $this->authHeader
         );
 
@@ -192,18 +193,19 @@ class Neo4jRequestFactoryTest extends TestCase
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals('application/json', $request->getHeaderLine('Accept'));
         $this->assertEquals($this->authHeader, $request->getHeaderLine('Authorization'));
-
-        // Assertions for body
         $this->assertJsonStringEqualsJsonString($payload, (string) $request->getBody());
     }
 
-
+    /**
+     * Test createRequest without Authorization header
+     */
     public function testCreateRequestWithoutAuthorizationHeader()
     {
         $cypher = 'MATCH (n) RETURN n';
         $parameters = ['param1' => 'value1'];
         $database = 'neo4j';
-        $uri = "{$this->baseUri}/db/{$database}/query/v2";
+        $uri = "{$this->address}/db/{$database}/query/v2";
+
         $payload = json_encode([
             'statement' => $cypher,
             'parameters' => $parameters,
@@ -221,15 +223,14 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->baseUri
+            $this->address
         );
 
         $request = $factory->buildRunQueryRequest($database, $cypher, $parameters);
 
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals('application/json', $request->getHeaderLine('Accept'));
-        $this->assertEmpty($request->getHeaderLine('Authorization'));  // No Authorization header
-
+        $this->assertEmpty($request->getHeaderLine('Authorization'));
         $this->assertJsonStringEqualsJsonString($payload, (string) $request->getBody());
     }
 }

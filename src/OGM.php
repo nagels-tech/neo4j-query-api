@@ -10,7 +10,7 @@ use Neo4j\QueryAPI\Objects\Path;
 class OGM
 {
     /**
-     * @param array{'$type': string, '_value': mixed} $object
+     * @param array{'$type': string, ' $object _value': mixed} $object
      * @return mixed
      */
     public function map(array $object): mixed
@@ -21,8 +21,8 @@ class OGM
             'String' => $object['_value'],
             'Boolean' => $object['_value'],
             'Null' => $object['_value'],
-            'Array' => $object['_value'], // Handle generic arrays
-            'List' => array_map([$this, 'map'], $object['_value']), // Recursively map lists
+            'Array' => $object['_value'],
+            'List' => array_map([$this, 'map'], $object['_value']),
             'Duration' => $object['_value'],
             'OffsetDateTime' => $object['_value'],
             'Node' => $this->mapNode($object['_value']),
@@ -40,7 +40,7 @@ class OGM
         $srid = (int)str_replace('SRID=', '', $sridPart);
 
         $pointPart = substr($wkt, strpos($wkt, 'POINT') + 6);
-        if (strpos($pointPart, 'Z') !== false) {
+        if (str_contains($pointPart, 'Z')) {
             $pointPart = str_replace('Z', '', $pointPart);
         }
         $pointPart = trim($pointPart, ' ()');
@@ -64,8 +64,8 @@ class OGM
     private function mapNode(array $nodeData): Node
     {
         return new Node(
-            $nodeData['_labels'], // Labels of the node
-            $this->mapProperties($nodeData['_properties']) // Mapped properties
+            $nodeData['_labels'],
+            $this->mapProperties($nodeData['_properties'])
         );
     }
 

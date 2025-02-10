@@ -32,8 +32,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     public function setUp(): void
     {
         $this->api = $this->initializeApi();
-
-        // Clear database and populate test data
         $this->clearDatabase();
         $this->populateTestData();
     }
@@ -82,7 +80,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testProfileCreateQueryExistence(): void
     {
-        // Define the CREATE query
+
         $query = "
     PROFILE UNWIND range(1, 100) AS i
     CREATE (:Person {
@@ -186,7 +184,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $client = new Client(['handler' => $handler]);
 
         // Use environment variables for authentication
-        $auth = Authentication::basic(getenv("NEO4J_USERNAME"), getenv("NEO4J_PASSWORD"));
+        $auth = Authentication::fromEnvironment();
 
         // Pass both client and authentication to Neo4jQueryAPI
         $api = new Neo4jQueryAPI($client, $auth);
@@ -230,9 +228,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->assertInstanceOf(ProfiledQueryPlan::class, $child);
         }
     }
-
-
-
 
 
     /**
