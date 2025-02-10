@@ -44,5 +44,5 @@ class AuthenticationTest extends TestCase
             ->method('withHeader')
             ->with('Authorization', $expectedHeader)  // Use dynamically generated expected header
             ->willReturn($request);
-   }
+    }
 }

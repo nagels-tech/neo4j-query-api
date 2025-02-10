@@ -5,6 +5,7 @@ namespace Neo4j\QueryAPI;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Utils;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
