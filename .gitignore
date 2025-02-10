@@ -11,7 +11,7 @@ test
 .phpunit.result.cache
 
 #PHP-CS-FIXER
-
+.php-cs-fixer.php
 .php-cs-fixer.cache
 
 
