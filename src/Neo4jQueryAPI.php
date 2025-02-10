@@ -85,8 +85,6 @@ class Neo4jQueryAPI
                     $error,
                     0,
                     null
-
-
                 );
             }
 

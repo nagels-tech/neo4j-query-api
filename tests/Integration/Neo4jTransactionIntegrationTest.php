@@ -1,12 +1,12 @@
 <?php
 
 namespace Neo4j\QueryAPI\Tests\Integration;
+
 use Exception;
 use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
-
 
 class Neo4jTransactionIntegrationTest extends TestCase
 {

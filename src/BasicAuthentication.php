@@ -32,4 +32,3 @@ class BasicAuthentication implements AuthenticateInterface
         return 'Basic';
     }
 }
-

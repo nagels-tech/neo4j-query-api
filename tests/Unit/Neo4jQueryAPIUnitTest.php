@@ -48,9 +48,9 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $config = $client->getConfig();
         $expectedAuthHeader = 'Basic ' . base64_encode('neo4j:9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0');
 
-      //  $this->assertEquals(rtrim($this->address, '/'), $config['base_uri']);
-      //  $this->assertArrayHasKey('Authorization', $config['headers'], 'Authorization header missing.');
-     //  $this->assertEquals($expectedAuthHeader, $config['headers']['Authorization'], 'Authorization header value mismatch.');
+        //  $this->assertEquals(rtrim($this->address, '/'), $config['base_uri']);
+        //  $this->assertArrayHasKey('Authorization', $config['headers'], 'Authorization header missing.');
+        //  $this->assertEquals($expectedAuthHeader, $config['headers']['Authorization'], 'Authorization header value mismatch.');
         $this->assertEquals('application/vnd.neo4j.query', $config['headers']['Content-Type']);
     }
 
