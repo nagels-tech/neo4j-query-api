@@ -2,7 +2,6 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
-use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
@@ -10,24 +9,30 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
-use Neo4j\QueryAPI\Objects\Bookmarks;
+use Neo4j\QueryAPI\Neo4jRequestFactory;
+use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
+use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Client\RequestExceptionInterface;
 
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
 
+    private Neo4jRequestFactory $request  ;
     /**
      * @throws GuzzleException
      */
     public function setUp(): void
     {
         $this->api = $this->initializeApi();
+
         // Clear database and populate test data
         $this->clearDatabase();
         $this->populateTestData();
@@ -37,14 +42,14 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     {
         return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
-            Authentication::basic(),
+            Authentication::fromEnvironment(),
         );
     }
-
 
     public function testCounters(): void
     {
         $result = $this->api->run('CREATE (x:Node {hello: "world"})');
+
         $this->assertEquals(1, $result->getQueryCounters()->getNodesCreated());
     }
 
@@ -172,13 +177,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
     ";
 
-        // Mock response
         $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
         $mockSack = new MockHandler([
             new Response(200, [], $body),
         ]);
 
-        // Set up Guzzle HTTP client with the mock handler
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
 
@@ -191,7 +194,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         // Execute the query
         $result = $api->run($query);
 
-        // Validate the profiled query plan
         $plan = $result->getProfiledQueryPlan();
         $this->assertNotNull($plan, "The result of the query should not be null.");
 
@@ -204,7 +206,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testProfileCreateActedInRelationships(): void
     {
-
         $query = "
     PROFILE UNWIND range(1, 50) AS i
     MATCH (p:Person {id: i}), (m:Movie {year: 2000 + i})
