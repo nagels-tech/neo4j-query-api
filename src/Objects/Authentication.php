@@ -12,7 +12,7 @@ class Authentication
 {
     public static function basic(string $username, string $password): AuthenticateInterface
     {
-        return new BasicAuthentication('neo4j', '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0');
+        return new BasicAuthentication($username, $password);
     }
 
 

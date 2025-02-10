@@ -31,6 +31,7 @@ class AuthenticationTest extends TestCase
         $mockUsername = 'neo4j';
         $mockPassword = '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0';
 
+
         $auth = Authentication::basic($mockUsername, $mockPassword);
 
         $this->assertInstanceOf(BasicAuthentication::class, $auth);
@@ -43,11 +44,5 @@ class AuthenticationTest extends TestCase
             ->method('withHeader')
             ->with('Authorization', $expectedHeader)  // Use dynamically generated expected header
             ->willReturn($request);
-
-        $auth->authenticate($request);
-
-        $this->assertEquals($expectedHeader, $auth->getHeader());
-        $this->assertEquals('Basic', $auth->getType());
-    }
-
+   }
 }

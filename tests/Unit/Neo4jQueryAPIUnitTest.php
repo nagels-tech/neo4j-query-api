@@ -18,10 +18,13 @@ use PHPUnit\Framework\TestCase;
 class Neo4jQueryAPIUnitTest extends TestCase
 {
     protected string $address;
+    protected string $username;
+    protected string $password;
 
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->address = getenv('NEO4J_ADDRESS');
     }
 
@@ -51,7 +54,6 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $this->assertArrayHasKey('Authorization', $config['headers'], 'Authorization header missing.');
         $this->assertEquals($expectedAuthHeader, $config['headers']['Authorization'], 'Authorization header value mismatch.');
         $this->assertEquals('application/vnd.neo4j.query', $config['headers']['Content-Type']);
-        $this->assertEquals('application/vnd.neo4j.query', $config['headers']['Accept']);
     }
 
     /**

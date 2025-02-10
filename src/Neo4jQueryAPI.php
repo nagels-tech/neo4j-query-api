@@ -2,22 +2,22 @@
 
 namespace Neo4j\QueryAPI;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Utils;
-use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Objects\Authentication;
-use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
+use Neo4j\QueryAPI\Exception\Neo4jException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
 use stdClass;
+use Neo4j\QueryAPI\Objects\Bookmarks;
 
 class Neo4jQueryAPI
 {
@@ -27,7 +27,6 @@ class Neo4jQueryAPI
     public function __construct(ClientInterface $client, AuthenticateInterface $auth)
     {
         $this->client = $client;
-        $this->auth = $auth;
     }
 
     /**
@@ -57,14 +56,12 @@ class Neo4jQueryAPI
     public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null): ResultSet
     {
         try {
-            // Prepare the payload
             $payload = [
                 'statement' => $cypher,
                 'parameters' => empty($parameters) ? new stdClass() : $parameters,
                 'includeCounters' => true,
             ];
 
-            // Include bookmarks if provided
             if ($bookmark !== null) {
                 $payload['bookmarks'] = $bookmark->getBookmarks();
             }
@@ -235,4 +232,5 @@ class Neo4jQueryAPI
 
         return $profiledQueryPlan;
     }
+
 }
