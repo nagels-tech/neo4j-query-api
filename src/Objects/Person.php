@@ -15,7 +15,7 @@ class Person extends Node
      */
     public function __construct(array $properties)
     {
-        // Pass the label 'Person' along with the properties to the parent Node constructor.
+
         parent::__construct(['Person'], $properties);
     }
 }

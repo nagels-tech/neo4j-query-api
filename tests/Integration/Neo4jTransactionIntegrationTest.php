@@ -53,27 +53,19 @@ class Neo4jTransactionIntegrationTest extends TestCase
     }
     public function testTransactionCommit(): void
     {
-        // Begin a new transaction
+
         $tsx = $this->api->beginTransaction();
 
-        // Generate a random name for the node
         $name = (string)mt_rand(1, 100000);
-
-        // Create a node within the transaction
         $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
 
-        // Validate that the node does not exist in the database before the transaction is committed
         $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(0, $results);
 
-        // Validate that the node exists within the transaction
         $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(1, $results);
 
-        // Commit the transaction
         $tsx->commit();
-
-        // Validate that the node now exists in the database
         $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(1, $results); // Updated to expect 1 result
     }

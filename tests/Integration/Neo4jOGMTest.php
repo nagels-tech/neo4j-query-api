@@ -385,10 +385,6 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals($expectedResult, $actual);
     }
 
-
-
-
-
     #[DataProvider('nullDataProvider')]
     public function testWithNull(string $query, array $parameters, ?string $expectedResult): void
     {

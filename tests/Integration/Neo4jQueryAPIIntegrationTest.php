@@ -182,23 +182,17 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
-
-        // Use environment variables for authentication
         $auth = Authentication::fromEnvironment();
 
-        // Pass both client and authentication to Neo4jQueryAPI
         $api = new Neo4jQueryAPI($client, $auth);
 
-        // Execute the query
         $result = $api->run($query);
 
         $plan = $result->getProfiledQueryPlan();
         $this->assertNotNull($plan, "The result of the query should not be null.");
 
-        // Load expected data
         $expected = require __DIR__ . '/../resources/expected/complex-query-profile.php';
 
-        // Assert the profiled query plan matches the expected result
         $this->assertEquals($expected->getProfiledQueryPlan(), $plan, "Profiled query plan does not match the expected value.");
     }
 
