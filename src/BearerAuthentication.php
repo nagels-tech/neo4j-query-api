@@ -15,6 +15,7 @@ class BearerAuthentication implements AuthenticateInterface
         $authHeader = 'Bearer ' . $this->token;
         return $request->withHeader('Authorization', $authHeader);
     }
+
     public function getHeader(): string
     {
         return 'Bearer ' . $this->token;

@@ -3,6 +3,7 @@
 namespace Neo4j\QueryAPI;
 
 use Neo4j\QueryAPI\Exception\Neo4jException;
+use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\ResultSet;
@@ -31,6 +32,7 @@ class Transaction
     {
         $response = $this->client->post("/db/neo4j/query/v2/tx/{$this->transactionId}", [
             'headers' => [
+                'Authorization' => Authentication::basic('neo4j', '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0')->getheader(),
                 'neo4j-cluster-affinity' => $this->clusterAffinity,
             ],
             'json' => [
@@ -115,6 +117,7 @@ class Transaction
     {
         $this->client->post("/db/neo4j/query/v2/tx/{$this->transactionId}/commit", [
             'headers' => [
+                'Authorization' => Authentication::basic('neo4j', '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0')->getheader(),
                 'neo4j-cluster-affinity' => $this->clusterAffinity,
             ],
         ]);
