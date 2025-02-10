@@ -17,7 +17,7 @@ class Authentication
 
     public static function fromEnvironment(): AuthenticateInterface
     {
-        // Fetch credentials from environment variables
+
         $username = getenv("NEO4J_USERNAME") ?: '';
         $password = getenv("NEO4J_PASSWORD") ?: '';
 
