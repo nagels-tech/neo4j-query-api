@@ -8,8 +8,6 @@ use IteratorAggregate;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Traversable;
 
-// Make sure to include the Bookmarks class
-
 class ResultSet implements IteratorAggregate, Countable
 {
     /**

@@ -35,7 +35,7 @@ class ProfiledQueryPlan
         ?string $operatorType,
         ProfiledQueryPlanArguments $arguments,
         ?array $children = [],
-        array $identifiers = [] // Default to an empty array
+        array $identifiers = []
     ) {
         $this->dbHits = $dbHits ?? 0;
         $this->records = $records ?? 0;
