@@ -49,47 +49,68 @@ class ProfiledQueryPlan
         $this->children = $children ?? [];
         $this->identifiers = $identifiers;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getDbHits(): int
     {
         return $this->dbHits;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getRecords(): int
     {
         return $this->records;
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function hasPageCacheStats(): bool
     {
         return $this->hasPageCacheStats;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getPageCacheHits(): int
     {
         return $this->pageCacheHits;
     }
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
 
     public function getPageCacheMisses(): int
     {
         return $this->pageCacheMisses;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getPageCacheHitRatio(): float
     {
         return $this->pageCacheHitRatio;
     }
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
 
     public function getTime(): int
     {
         return $this->time;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getOperatorType(): string
     {
         return $this->operatorType;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getArguments(): ProfiledQueryPlanArguments
     {
         return $this->arguments;
@@ -97,6 +118,10 @@ class ProfiledQueryPlan
 
     /**
      * @return list<ProfiledQueryPlan|ProfiledQueryPlanArguments>
+     */
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function getChildren(): array
     {
@@ -111,6 +136,9 @@ class ProfiledQueryPlan
     /**
      * @return string[]
      */
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getIdentifiers(): array
     {
         return $this->identifiers;
@@ -119,11 +147,17 @@ class ProfiledQueryPlan
     /**
      * @param string[] $identifiers
      */
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function setIdentifiers(array $identifiers): void
     {
         $this->identifiers = $identifiers;
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function addIdentifier(string $identifier): void
     {
         $this->identifiers[] = $identifier;
