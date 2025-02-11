@@ -6,10 +6,12 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use Neo4j\QueryAPI\Results\ResultRow;
+use phpDocumentor\Reflection\DocBlock\Tags\Template;
 use Traversable;
 
-// Make sure to include the Bookmarks class
-
+/**
+ * @template-implements IteratorAggregate<int, ResultRow>
+ */
 class ResultSet implements IteratorAggregate, Countable
 {
     /**
@@ -20,7 +22,7 @@ class ResultSet implements IteratorAggregate, Countable
         private ResultCounters $counters,
         private Bookmarks $bookmarks,
         private ?ProfiledQueryPlan $profiledQueryPlan = null,
-        private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
+        // private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
     ) {
     }
 
@@ -28,26 +30,30 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return new ArrayIterator($this->rows);
     }
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getProfiledQueryPlan(): ?ProfiledQueryPlan
     {
         return $this->profiledQueryPlan;
     }
-
-    public function getChildQueryPlan(): ?ChildQueryPlan
-    {
-        return $this->childQueryPlan;
-    }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function count(): int
     {
         return count($this->rows);
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getBookmarks(): ?Bookmarks
     {
         return $this->bookmarks;
