@@ -32,6 +32,9 @@ class Neo4jQueryAPI
     /**
      * @throws \Exception
      */
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function login(string $address, AuthenticateInterface $auth = null): self
     {
         $client = new Client([
@@ -163,9 +166,9 @@ class Neo4jQueryAPI
     /**
      * @psalm-suppress PossiblyUnusedMethod
      */
-    public function beginTransaction(string $database = 'neo4j'): Transaction
+    public function beginTransaction(): Transaction
     {
-        $request = new Request('POST', '/db/{$database}/query/v2/tx');
+        $request = new Request('POST', '/db/neo4j/query/v2/tx');
         $request = $this->auth->authenticate($request);
         $request = $request->withHeader('Content-Type', 'application/json');
 
