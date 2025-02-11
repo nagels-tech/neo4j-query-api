@@ -43,7 +43,7 @@ class Neo4jQueryAPI
             ],
         ]);
 
-        return new self($client, $auth ?? Authentication::basic());
+        return new self($client, $auth ?? Authentication::fromEnvironment());
     }
 
     /**
@@ -51,6 +51,10 @@ class Neo4jQueryAPI
      *
      * @throws Neo4jException
      * @throws RequestExceptionInterface
+     */
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function run(string $cypher, array $parameters = [], string $database = 'neo4j', Bookmarks $bookmark = null): ResultSet
     {
@@ -156,9 +160,12 @@ class Neo4jQueryAPI
         throw $e;
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function beginTransaction(string $database = 'neo4j'): Transaction
     {
-        $request = new Request('POST', '/db/neo4j/query/v2/tx');
+        $request = new Request('POST', '/db/{$database}/query/v2/tx');
         $request = $this->auth->authenticate($request);
         $request = $request->withHeader('Content-Type', 'application/json');
 

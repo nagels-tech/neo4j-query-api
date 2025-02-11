@@ -32,22 +32,31 @@ class ProfiledQueryPlanArguments
     {
         return $this->globalMemory;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getPlannerImpl(): ?string
     {
         return $this->plannerImpl;
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getMemory(): ?int
     {
         return $this->memory;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getStringRepresentation(): ?string
     {
         return $this->stringRepresentation;
     }
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getRuntime(): ?string
     {
         return $this->runtime;

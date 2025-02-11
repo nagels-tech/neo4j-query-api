@@ -26,7 +26,9 @@ class BasicAuthentication implements AuthenticateInterface
     {
         return 'Basic ' . base64_encode($this->username . ':' . $this->password);
     }
-
+    /**
+     * @psalm-suppress UnusedMethod
+     */
     public function getType(): string
     {
         return 'Basic';

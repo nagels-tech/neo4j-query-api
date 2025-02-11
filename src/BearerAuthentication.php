@@ -16,11 +16,17 @@ class BearerAuthentication implements AuthenticateInterface
         return $request->withHeader('Authorization', $authHeader);
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getHeader(): string
     {
         return 'Bearer ' . $this->token;
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function getType(): string
     {
         return 'Bearer';

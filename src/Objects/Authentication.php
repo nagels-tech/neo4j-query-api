@@ -15,6 +15,9 @@ class Authentication
         return new BasicAuthentication($username, $password);
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function fromEnvironment(): AuthenticateInterface
     {
         // Fetch credentials from environment variables
@@ -25,12 +28,17 @@ class Authentication
     }
 
 
-
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function noAuth(): AuthenticateInterface
     {
         return new NoAuth();
     }
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public static function bearer(string $token): AuthenticateInterface
     {
         return new BearerAuthentication($token);
