@@ -1,6 +1,6 @@
 <?php
 
-namespace Neo4j\QueryAPI;
+namespace Neo4j\QueryAPI\Authentication;
 
 use Psr\Http\Message\RequestInterface;
 

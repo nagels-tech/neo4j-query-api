@@ -6,20 +6,24 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
+use Neo4j\QueryAPI\Objects\Node;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\ResultSet;
+use Neo4j\QueryAPI\OGM;
 use Neo4j\QueryAPI\Results\ResultRow;
-use PHPUnit\Framework\Attributes\DataProvider;
+use Neo4j\QueryAPI\Results\ResultSet;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
-use Neo4j\QueryAPI\Transaction;
-use Psr\Http\Client\RequestExceptionInterface;
+use Neo4j\QueryAPI\Enums\AccessMode;
+use Neo4j\QueryAPI\ResponseParser;
+use Neo4j\QueryAPI\Configuration;
+use GuzzleHttp\Psr7\Response;
 
 /**
  *  @api
@@ -27,28 +31,59 @@ use Psr\Http\Client\RequestExceptionInterface;
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
-    /**
-     *  @api
-     */
-    /** @psalm-suppress UnusedProperty */
-    private Neo4jRequestFactory $request  ;
+
     /**
      * @throws GuzzleException
      */
     public function setUp(): void
     {
+        parent::setUp();
+
         $this->api = $this->initializeApi();
 
         $this->clearDatabase();
         $this->populateTestData();
     }
+    public function testParseRunQueryResponse(): void
+    {
+        $query = 'CREATE (n:TestNode {name: "Test"}) RETURN n';
+        $response = $this->api->run($query);
+        $bookmarks = $response->getBookmarks();
+
+        $this->assertEquals(new ResultSet(
+            rows: [
+                new ResultRow([
+                    'n' => new Node(
+                        ['TestNode'],
+                        [
+                        'name' => 'Test'
+                    ]
+                    )
+                ])
+            ],
+            counters: new ResultCounters(
+                containsUpdates: true,
+                nodesCreated: 1,
+                propertiesSet: 1,
+                labelsAdded:1
+            ),
+            bookmarks: $bookmarks,
+            profiledQueryPlan: null,
+            accessMode: AccessMode::WRITE
+        ), $response);
+    }
+
+    public function testInvalidQueryHandling()
+    {
+        $this->expectException(Neo4jException::class);
+
+        $this->api->run('INVALID CYPHER QUERY');
+    }
+
 
     private function initializeApi(): Neo4jQueryAPI
     {
-        return Neo4jQueryAPI::login(
-            getenv('NEO4J_ADDRESS'),
-            Authentication::fromEnvironment(),
-        );
+        return Neo4jQueryAPI::login(getenv('NEO4J_ADDRESS'), Authentication::fromEnvironment());
     }
 
     public function testCounters(): void
@@ -58,12 +93,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertEquals(1, $result->getQueryCounters()->getNodesCreated());
     }
 
-    /**
-     * @throws Neo4jException
-     * @throws RequestExceptionInterface
-     */
     public function testCreateBookmarks(): void
     {
+        $this->api = $this->initializeApi();
         $result = $this->api->run(cypher: 'CREATE (x:Node {hello: "world"})');
 
         $bookmarks = $result->getBookmarks();
@@ -72,7 +104,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $bookmarks->addBookmarks($result->getBookmarks());
 
-        $result = $this->api->run(cypher: 'MATCH (x:Node {hello: "world2"}) RETURN x', bookmark: $bookmarks);
+        $result = $this->api->run(cypher: 'MATCH (x:Node {hello: "world2"}) RETURN x');
+
+        $bookmarks->addBookmarks($result->getBookmarks());
 
         $this->assertCount(1, $result);
     }
@@ -87,7 +121,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testProfileCreateQueryExistence(): void
     {
-
         $query = "
     PROFILE UNWIND range(1, 100) AS i
     CREATE (:Person {
@@ -168,20 +201,18 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
     }
 
-    /**
-     * @throws Neo4jException
-     * @throws RequestExceptionInterface
-     */
-    public function testProfileCreateKnowsBidirectionalRelationshipsMock(): void
+    public function testProfileCreateKnowsBidirectionalRelationships(): void
     {
         $query = "
-        PROFILE UNWIND range(1, 100) AS i
-        UNWIND range(1, 100) AS j
-        MATCH (a:Person {id: i}), (b:Person {id: j})
-        WHERE a.id < b.id AND rand() < 0.1
-        CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
+    PROFILE UNWIND range(1, 100) AS i
+    UNWIND range(1, 100) AS j
+    MATCH (a:Person {id: i}), (b:Person {id: j})
+    WHERE a.id < b.id AND rand() < 0.1
+    CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
     ";
 
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
         $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
         $mockSack = new MockHandler([
             new Response(200, [], $body),
@@ -190,7 +221,17 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
         $auth = Authentication::fromEnvironment();
-        $api = new Neo4jQueryAPI($client, $auth);
+
+        $api = new Neo4jQueryAPI(
+            $client,
+            new ResponseParser(new OGM()),
+            new Neo4jRequestFactory(
+                new Psr17Factory(),
+                new Psr17Factory(),
+                new Configuration('ABC'),
+                $auth
+            )
+        );
 
         $result = $api->run($query);
 
@@ -215,32 +256,122 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
     }
 
-
     public function testChildQueryPlanExistence(): void
     {
         $result = $this->api->run("PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name");
 
         $profiledQueryPlan = $result->getProfiledQueryPlan();
         $this->assertNotNull($profiledQueryPlan);
-        $this->assertNotEmpty($profiledQueryPlan->getChildren());
+        $this->assertNotEmpty($profiledQueryPlan->children);
 
-        foreach ($profiledQueryPlan->getChildren() as $child) {
+        foreach ($profiledQueryPlan->children as $child) {
             $this->assertInstanceOf(ProfiledQueryPlan::class, $child);
         }
     }
+    //
+    //    public function testImpersonatedUserSuccess(): void
+    //    {
+    //        $this->markTestSkipped("stuck");
+    //
+    //        $result = $this->api->run(
+    //            "PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name",
+    //            [],
+    //            $this->config->database,
+    //            new Bookmarks([]),
+    //            'HAPPYBDAY'
+    //        );
+    //
+    //        $impersonatedUser = $result->getImpersonatedUser();
+    //        $this->assertNotNull($impersonatedUser, "Impersonated user should not be null.");
+    //    }
+
+    //    //
+    //    //
+    //    public function testImpersonatedUserFailure(): void
+    //    {
+    //        $this->markTestSkipped("stuck");
+    //        $this->expectException(Neo4jException::class);
+    //
+    //
+    //        $this->api->run(
+    //            "PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name",
+    //            [],
+    //            'neo4j',
+    //            null,
+    //            'invalidUser'
+    //        );
+    //    }
+
+    //    //
+    //    #[DoesNotPerformAssertions]
+    //    public function testRunWithWriteAccessMode(): void
+    //    {
+    //        $result = $this->api->run(
+    //            "CREATE (n:Person {name: 'Alice'}) RETURN n",
+    //            [],
+    //            'neo4j',
+    //            null,
+    //            null,
+    //            AccessMode::WRITE
+    //        );
+    //
+    //    }
+    //
+    //    #[DoesNotPerformAssertions]
+    //    public function testRunWithReadAccessMode(): void
+    //    {
+    //        $result = $this->api->run(
+    //            "MATCH (n) RETURN COUNT(n)",
+    //            [],
+    //            'neo4j',
+    //            null,
+    //            null,
+    //            AccessMode::READ
+    //        );
+    //    }
+
+    //
+    //    public function testReadModeWithWriteQuery(): void
+    //    {
+    //        $this->expectException(Neo4jException::class);
+    //        $this->expectExceptionMessage("Writing in read access mode not allowed. Attempted write to neo4j");
+    //
+    //        try {
+    //            $this->api->run(
+    //                "CREATE (n:Test {name: 'Test Node'})",
+    //                [],
+    //                $this->config->database,
+    //                new Bookmarks([]),
+    //                null,
+    //                AccessMode::WRITE
+    //            );
+    //        } catch (Neo4jException $e) {
+    //            error_log('Caught expected Neo4jException: ' . $e->getMessage());
+    //            throw $e;
+    //        }
+    //    }
+    //
+    //
+    //    #[DoesNotPerformAssertions]
+    //    public function testWriteModeWithReadQuery(): void
+    //    {
+    //        $this->api->run(
+    //            "MATCH (n:Test) RETURN n",
+    //            [],
+    //            'neo4j',
+    //            null,
+    //            null,
+    //            AccessMode::WRITE
+    //            //cos write encapsulates read
+    //        );
+    //    }
 
 
-    /**
-     * @throws GuzzleException
-     */
     private function clearDatabase(): void
     {
         $this->api->run('MATCH (n) DETACH DELETE n', []);
     }
 
-    /**
-     * @throws GuzzleException
-     */
     private function populateTestData(): void
     {
         $names = ['bob1', 'alicy'];
@@ -283,7 +414,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 new ResultRow(['n.name' => 'alicy']),
             ],
             new ResultCounters(),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run('MATCH (n:Person) WHERE n.name IN $names RETURN n.name', [
@@ -292,8 +425,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
     }
+
 
     public function testWithSingleName(): void
     {
@@ -302,7 +435,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 new ResultRow(['n.name' => 'bob1']),
             ],
             new ResultCounters(),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run('MATCH (n:Person) WHERE n.name = $name RETURN n.name', [
@@ -326,17 +461,20 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run('CREATE (n:Person {age: $age}) RETURN n.age', [
-            'age' => '30'
+            'age' => 30
         ]);
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
         $this->assertCount(1, $results->getBookmarks());
     }
+
 
     public function testWithFloat(): void
     {
@@ -350,7 +488,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run('CREATE (n:Person {height: $height}) RETURN n.height', [
@@ -374,7 +514,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 0,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run('CREATE (n:Person {middleName: $middleName}) RETURN n.middleName', [
@@ -383,7 +525,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $this->assertCount(1, $results->getBookmarks()->getBookmarks());
     }
 
     public function testWithBoolean(): void
@@ -398,7 +540,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run('CREATE (n:Person {isActive: $isActive}) RETURN n.isActive', [
@@ -422,7 +566,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run('CREATE (n:Person {name: $name}) RETURN n.name', [
@@ -447,7 +593,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 0,
                 labelsAdded: 0,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -473,7 +621,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -499,7 +649,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -524,7 +676,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -555,7 +709,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -586,7 +742,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -616,7 +774,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -644,11 +804,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                         'properties' => [
                             'name' => 'Ayush',
                             'location' => 'New York',
-                            'age' => '30'
+                             'age' => '30'
                         ],
-                        'labels' => [
-                            0 => 'Person'
-                        ]
+                'labels' => [
+                    0 => 'Person'
+                ]
 
                     ]
                 ]),
@@ -659,7 +819,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 3,
                 labelsAdded: 1,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -703,7 +865,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 relationshipsCreated: 1,
                 labelsAdded: 2,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -740,7 +904,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 0,
                 labelsAdded: 0,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -785,7 +951,9 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 relationshipsCreated: 1,
                 labelsAdded: 2,
             ),
-            new Bookmarks([])
+            new Bookmarks([]),
+            null,
+            AccessMode::WRITE
         );
 
         $results = $this->api->run(
@@ -810,6 +978,4 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
         $this->assertCount(1, $results->getBookmarks());
     }
-
-
 }

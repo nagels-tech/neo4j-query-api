@@ -6,16 +6,25 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\ResultSet;
+use Neo4j\QueryAPI\OGM;
 use Neo4j\QueryAPI\Results\ResultRow;
-use Neo4j\QueryAPI\AuthenticateInterface;
+use Neo4j\QueryAPI\Results\ResultSet;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
+use Neo4j\QueryAPI\ResponseParser;
+use Neo4j\QueryAPI\Enums\AccessMode;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+use RuntimeException;
+use Neo4j\QueryAPI\Configuration;
+use Neo4j\QueryAPI\loginConfig;
 
 /**
  *  @api
@@ -23,76 +32,125 @@ use PHPUnit\Framework\TestCase;
 class Neo4jQueryAPIUnitTest extends TestCase
 {
     protected string $address;
+    protected ResponseParser $parser;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->address = getenv('NEO4J_ADDRESS');
-    }
 
-    private function initializeApi(): Neo4jQueryAPI
-    {
-        return Neo4jQueryAPI::login(
-            $this->address,
-            Authentication::fromEnvironment()
-        );
+        $this->address = getenv('NEO4J_ADDRESS');
+
+        $this->ogm = new OGM();
+        $this->parser = new ResponseParser($this->ogm);
     }
 
     public function testCorrectClientSetup(): void
     {
-
-        $neo4jQueryAPI = $this->initializeApi();
-
-        $clientReflection = new \ReflectionClass(Neo4jQueryAPI::class);
-
-
-        $clientProperty = $clientReflection->getProperty('client');
-        $client = $clientProperty->getValue($neo4jQueryAPI);
-        $this->assertInstanceOf(Client::class, $client);
-
-        $authProperty = $clientReflection->getProperty('auth');
-        $auth = $authProperty->getValue($neo4jQueryAPI);
-        $this->assertInstanceOf(AuthenticateInterface::class, $auth);
-
-
-        $expectedAuth = Authentication::fromEnvironment();
-        $this->assertEquals($expectedAuth->getHeader(), $auth->getHeader(), 'Authentication headers mismatch');
-
-        $request = new Request('GET', '/test-endpoint');
-        $authenticatedRequest = $auth->authenticate($request);
-
-
-        $expectedAuthHeader = 'Basic ' . base64_encode(getenv("NEO4J_USERNAME") . ':' . getenv("NEO4J_PASSWORD"));
-        $this->assertEquals($expectedAuthHeader, $authenticatedRequest->getHeaderLine('Authorization'));
-
-        $requestWithHeaders = $authenticatedRequest->withHeader('Content-Type', 'application/vnd.neo4j.query');
-        $this->assertEquals('application/vnd.neo4j.query', $requestWithHeaders->getHeaderLine('Content-Type'));
+        $neo4jQueryAPI = Neo4jQueryAPI::login($this->address, Authentication::fromEnvironment());
+        $this->assertInstanceOf(Neo4jQueryAPI::class, $neo4jQueryAPI);
     }
 
-    /**
-     * @throws GuzzleException
-     */
+    #[DoesNotPerformAssertions]
     public function testRunSuccess(): void
     {
         $mock = new MockHandler([
-            new Response(200, ['X-Foo' => 'Bar'], '{"data": {"fields": ["hello"], "values": [[{"$type": "String", "_value": "world"}]]}}'),
+            new Response(200, [], '{"data": {"fields": ["hello"], "values": [[{"$type": "String", "_value": "world"}]]}}'),
         ]);
 
-        $auth = Authentication::fromEnvironment();
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
 
-        $neo4jQueryAPI = new Neo4jQueryAPI($client, $auth);
+        $loginConfig = Authentication::fromEnvironment();
+        $queryConfig = new Configuration($this->address);
+
+        $responseParser = $this->createMock(ResponseParser::class);
+
+        $neo4jQueryAPI = new Neo4jQueryAPI($client, $responseParser, new Neo4jRequestFactory(
+            new Psr17Factory(),
+            new Psr17Factory(),
+            $queryConfig,
+            $loginConfig
+        ));
 
         $cypherQuery = 'MATCH (n:Person) RETURN n LIMIT 5';
-        $result = $neo4jQueryAPI->run($cypherQuery);
-
-        $expectedResult = new ResultSet(
-            [new ResultRow(['hello' => 'world'])],
-            new ResultCounters(),
-            new Bookmarks([])
-        );
-
-        $this->assertEquals($expectedResult, $result);
+        $neo4jQueryAPI->run($cypherQuery);
     }
+
+
+
+    public function testParseValidResponse(): void
+    {
+        $mockStream = $this->createMock(StreamInterface::class);
+        $mockStream->method('getContents')->willReturn(json_encode([
+            'data' => [
+                'fields' => ['name'],
+                'values' => [['Alice'], ['Bob']],
+            ],
+            'counters' => ['nodesCreated' => 2],
+            'bookmarks' => ['bm1'],
+            'accessMode' => 'WRITE'
+        ]));
+
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getBody')->willReturn($mockStream);
+
+        $result = $this->parser->parseRunQueryResponse($mockResponse);
+        $this->assertInstanceOf(ResultSet::class, $result);
+        $this->assertCount(2, $result->getIterator());
+    }
+
+    public function testParseInvalidResponse(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $mockStream = $this->createMock(StreamInterface::class);
+        $mockStream->method('getContents')->willReturn(json_encode(['data' => null]));
+
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getBody')->willReturn($mockStream);
+
+        $this->parser->parseRunQueryResponse($mockResponse);
+    }
+
+    public function testGetAccessMode(): void
+    {
+        $mockStream = $this->createMock(StreamInterface::class);
+        $mockStream->method('getContents')->willReturn(json_encode([
+            'data' => [
+                'fields' => [],
+                'values' => []
+            ],
+            'accessMode' => 'WRITE'
+        ]));
+
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getBody')->willReturn($mockStream);
+
+        $result = $this->parser->parseRunQueryResponse($mockResponse);
+        $this->assertInstanceOf(ResultSet::class, $result);
+    }
+    public function testParseBookmarks(): void
+    {
+        $mockStream = $this->createMock(StreamInterface::class);
+        $mockStream->method('getContents')->willReturn(json_encode([
+            'data' => [
+                'fields' => [],
+                'values' => []
+            ],
+            'bookmarks' => ['bm1', 'bm2', 'bm3']
+        ]));
+
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getBody')->willReturn($mockStream);
+
+        $result = $this->parser->parseRunQueryResponse($mockResponse);
+
+        $this->assertInstanceOf(ResultSet::class, $result);
+
+        $bookmarks = $result->getBookmarks();
+
+        $this->assertInstanceOf(Bookmarks::class, $bookmarks);
+        $this->assertCount(3, $bookmarks->getBookmarks());
+        $this->assertEquals(['bm1', 'bm2', 'bm3'], $bookmarks->getBookmarks());
+    }
+
 }

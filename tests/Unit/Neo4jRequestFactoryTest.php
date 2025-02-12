@@ -3,6 +3,7 @@
 namespace Neo4j\QueryAPI\Tests\Unit;
 
 use Exception;
+use Neo4j\QueryAPI\Configuration;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -64,10 +65,10 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->address,
-            $this->authHeader
+            new Configuration($this->address),
+            Authentication::fromEnvironment(),
         );
-        $request = $factory->buildRunQueryRequest($database, $cypher, $parameters);
+        $request = $factory->buildRunQueryRequest($cypher, $parameters);
 
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals($uri, (string) $request->getUri());
@@ -94,9 +95,10 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->address
+            new Configuration($this->address),
+            Authentication::fromEnvironment(),
         );
-        $request = $factory->buildBeginTransactionRequest($database);
+        $request = $factory->buildBeginTransactionRequest();
 
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals($uri, (string) $request->getUri());
@@ -123,7 +125,8 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->address
+            new Configuration($this->address),
+            Authentication::fromEnvironment(),
         );
         $request = $factory->buildCommitRequest($database, $transactionId);
 
@@ -152,11 +155,12 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->address
+            new Configuration($this->address),
+            Authentication::fromEnvironment(),
         );
         $request = $factory->buildRollbackRequest($database, $transactionId);
 
-        $this->assertEquals('POST', $request->getMethod());
+        $this->assertEquals('DELETE', $request->getMethod());
         $this->assertEquals($uri, (string) $request->getUri());
     }
 
@@ -187,14 +191,14 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->address,
-            $this->authHeader
+            new Configuration($this->address),
+            Authentication::fromEnvironment(),
         );
 
-        $request = $factory->buildRunQueryRequest($database, $cypher, $parameters);
+        $request = $factory->buildRunQueryRequest($cypher, $parameters);
 
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals('application/json', $request->getHeaderLine('Accept'));
+        $this->assertEquals('application/vnd.neo4j.query', $request->getHeaderLine('Accept'));
         $this->assertEquals($this->authHeader, $request->getHeaderLine('Authorization'));
         $this->assertJsonStringEqualsJsonString($payload, (string) $request->getBody());
     }
@@ -226,13 +230,14 @@ class Neo4jRequestFactoryTest extends TestCase
         $factory = new Neo4jRequestFactory(
             $this->psr17Factory,
             $this->streamFactory,
-            $this->address
+            new Configuration($this->address),
+            Authentication::noAuth(),
         );
 
-        $request = $factory->buildRunQueryRequest($database, $cypher, $parameters);
+        $request = $factory->buildRunQueryRequest($cypher, $parameters);
 
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
-        $this->assertEquals('application/json', $request->getHeaderLine('Accept'));
+        $this->assertEquals('application/vnd.neo4j.query', $request->getHeaderLine('Accept'));
         $this->assertEmpty($request->getHeaderLine('Authorization'));
         $this->assertJsonStringEqualsJsonString($payload, (string) $request->getBody());
     }
