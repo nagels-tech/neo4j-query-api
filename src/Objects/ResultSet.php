@@ -12,6 +12,15 @@ use Traversable;
 /**
  * @template-implements IteratorAggregate<int, ResultRow>
  */
+
+/**
+ *  @api
+ */
+/**
+ * @template TKey
+ * @template TValue
+ * @implements IteratorAggregate<TKey, TValue>
+ */
 class ResultSet implements IteratorAggregate, Countable
 {
     /**
@@ -30,30 +39,24 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return new ArrayIterator($this->rows);
     }
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
     }
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getProfiledQueryPlan(): ?ProfiledQueryPlan
     {
         return $this->profiledQueryPlan;
     }
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     *  @api
      */
     public function count(): int
     {
         return count($this->rows);
     }
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getBookmarks(): ?Bookmarks
     {
         return $this->bookmarks;

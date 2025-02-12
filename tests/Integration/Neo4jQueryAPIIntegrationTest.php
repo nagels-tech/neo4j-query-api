@@ -20,11 +20,16 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Client\RequestExceptionInterface;
-/** @psalm-suppress UnusedClass */
+/**
+ *  @api
+ */
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
-
+    /**
+     *  @api
+     */
+    /** @psalm-suppress UnusedProperty */
     private Neo4jRequestFactory $request  ;
     /**
      * @throws GuzzleException

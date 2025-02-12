@@ -10,7 +10,9 @@ use Psr\Http\Message\StreamFactoryInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
-/** @psalm-suppress UnusedClass */
+/**
+ *  @api
+ */
 class Neo4jRequestFactoryTest extends TestCase
 {
     private $psr17Factory;

@@ -10,7 +10,9 @@ use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\OGM;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-/** @psalm-suppress UnusedClass */
+/**
+ *  @api
+ */
 class Neo4jOGMTest extends TestCase
 {
     private OGM $ogm;

@@ -7,7 +7,9 @@ use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
-/** @psalm-suppress UnusedClass */
+/**
+ *  @api
+ */
 class Neo4jTransactionIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;

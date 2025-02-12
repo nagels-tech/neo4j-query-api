@@ -6,7 +6,9 @@ use Neo4j\QueryAPI\Objects\Point;
 use Neo4j\QueryAPI\Objects\Node;
 use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\Objects\Path;
-
+/**
+ *  @api
+ */
 class OGM
 {
     /**
