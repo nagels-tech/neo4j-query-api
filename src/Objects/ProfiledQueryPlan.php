@@ -4,159 +4,41 @@ namespace Neo4j\QueryAPI\Objects;
 
 class ProfiledQueryPlan
 {
-    private int $dbHits;
-    private int $records;
-    private bool $hasPageCacheStats;
-    private int $pageCacheHits;
-    private int $pageCacheMisses;
-    private float $pageCacheHitRatio;
-    private int $time;
-    private string $operatorType;
-    private ProfiledQueryPlanArguments $arguments;
-
-    /**
-     * @var list<ProfiledQueryPlan>
-     */
-    private array $children;
-
-    /**
-     * @var string[]
-     */
-    private array $identifiers;
+    public readonly int $dbHits;
+    public readonly int $records;
+    public readonly bool $hasPageCacheStats;
+    public readonly int $pageCacheHits;
+    public readonly int $pageCacheMisses;
+    public readonly float $pageCacheHitRatio;
+    public readonly int $time;
+    public readonly string $operatorType;
+    public readonly ProfiledQueryPlanArguments $arguments;
+    public readonly array $children;
+    public readonly array $identifiers;
 
     public function __construct(
-        ?int $dbHits,
-        ?int $records,
-        ?bool $hasPageCacheStats,
-        ?int $pageCacheHits,
-        ?int $pageCacheMisses,
-        ?float $pageCacheHitRatio,
-        ?int $time,
-        ?string $operatorType,
+        int $dbHits = 0,
+        int $records = 0,
+        bool $hasPageCacheStats = false,
+        int $pageCacheHits = 0,
+        int $pageCacheMisses = 0,
+        float $pageCacheHitRatio = 0.0,
+        int $time = 0,
+        string $operatorType = '',
         ProfiledQueryPlanArguments $arguments,
-        ?array $children = [],
-        array $identifiers = [] // Default to an empty array
+        array $children = [],
+        array $identifiers = []
     ) {
-        $this->dbHits = $dbHits ?? 0;
-        $this->records = $records ?? 0;
-        $this->hasPageCacheStats = $hasPageCacheStats ?? false;
-        $this->pageCacheHits = $pageCacheHits ?? 0;
-        $this->pageCacheMisses = $pageCacheMisses ?? 0;
-        $this->pageCacheHitRatio = $pageCacheHitRatio ?? 0.0;
-        $this->time = $time ?? 0;
-        $this->operatorType = $operatorType ?? '';
+        $this->dbHits = $dbHits;
+        $this->records = $records;
+        $this->hasPageCacheStats = $hasPageCacheStats;
+        $this->pageCacheHits = $pageCacheHits;
+        $this->pageCacheMisses = $pageCacheMisses;
+        $this->pageCacheHitRatio = $pageCacheHitRatio;
+        $this->time = $time;
+        $this->operatorType = $operatorType;
         $this->arguments = $arguments;
-        $this->children = $children ?? [];
+        $this->children = $children;
         $this->identifiers = $identifiers;
-    }
-
-    /**
-     * @api
-     */
-    public function getDbHits(): int
-    {
-        return $this->dbHits;
-    }
-
-    /**
-     * @api
-     */
-    public function getRecords(): int
-    {
-        return $this->records;
-    }
-    /**
-     * @api
-     */
-
-    public function hasPageCacheStats(): bool
-    {
-        return $this->hasPageCacheStats;
-    }
-    /**
-     * @api
-     */
-
-    public function getPageCacheHits(): int
-    {
-        return $this->pageCacheHits;
-    }
-    /**
-     * @api
-     */
-
-    public function getPageCacheMisses(): int
-    {
-        return $this->pageCacheMisses;
-    }
-    /**
-     * @api
-     */
-
-    public function getPageCacheHitRatio(): float
-    {
-        return $this->pageCacheHitRatio;
-    }
-    /**
-     * @api
-     */
-
-    public function getTime(): int
-    {
-        return $this->time;
-    }
-    /**
-     * @api
-     */
-
-    public function getOperatorType(): string
-    {
-        return $this->operatorType;
-    }
-    /**
-     * @api
-     */
-
-    public function getArguments(): ProfiledQueryPlanArguments
-    {
-        return $this->arguments;
-    }
-
-    /**
-     * @api
-     * @return list<ProfiledQueryPlan>
-     */
-    public function getChildren(): array
-    {
-        return $this->children;
-    }
-    /**
-     * @api
-     */
-
-    public function addChild(ProfiledQueryPlan|ProfiledQueryPlanArguments $child): void
-    {
-        $this->children[] = $child;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getIdentifiers(): array
-    {
-        return $this->identifiers;
-    }
-
-    /**
-     * @param string[] $identifiers
-     */
-    public function setIdentifiers(array $identifiers): void
-    {
-        $this->identifiers = $identifiers;
-    }
-
-    public function addIdentifier(string $identifier): void
-    {
-        $this->identifiers[] = $identifier;
     }
 }
