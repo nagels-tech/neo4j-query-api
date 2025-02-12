@@ -26,7 +26,7 @@ class Neo4jExceptionUnitTest extends TestCase
         $this->assertSame('Statement', $exception->getSubType());
         $this->assertSame('SyntaxError', $exception->getName());
         $this->assertSame('Invalid syntax near ...', $exception->getMessage());
-        $this->assertSame(0, $exception->getCode()); // Default statusCode to 0
+        $this->assertSame(0, $exception->getCode());
     }
 
     /**
@@ -122,4 +122,3 @@ class Neo4jExceptionUnitTest extends TestCase
         $this->assertSame('Unauthorized', $exception->getName());
     }
 }
-

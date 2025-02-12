@@ -1,9 +1,6 @@
 <?php
 
-
-
 namespace Neo4j\QueryAPI\Results;
-
 
 use BadMethodCallException;
 use IteratorAggregate;
@@ -43,7 +40,7 @@ class ResultRow implements ArrayAccess, \Countable, IteratorAggregate
     }
     public function offsetUnset($offset): void
     {
-            throw new BadMethodCallException("You can't Unset {$offset}.");
+        throw new BadMethodCallException("You can't Unset {$offset}.");
 
     }
     /**
@@ -66,5 +63,3 @@ class ResultRow implements ArrayAccess, \Countable, IteratorAggregate
         return new \ArrayIterator($this->data);
     }
 }
-
-
