@@ -2,16 +2,18 @@
 
 namespace Neo4j\QueryAPI;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
+use Neo4j\QueryAPI\Results\ResultSet;
 use Psr\Http\Client\ClientInterface;
 use stdClass;
 
+/**
+ *  @api
+ */
 class Transaction
 {
     public function __construct(
@@ -23,11 +25,11 @@ class Transaction
 
     /**
      * Execute a Cypher query within the transaction.
+     * @api
      * @param string $query The Cypher query to be executed.
      * @param array $parameters Parameters for the query.
      * @return ResultSet The result rows in ResultSet format.
-     * @throws Neo4jException|GuzzleException If the response structure is invalid.
-     *@api
+     * @throws Neo4jException If the response structure is invalid.
      */
     public function run(string $query, array $parameters): ResultSet
     {

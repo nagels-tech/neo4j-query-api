@@ -244,7 +244,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testChildQueryPlanExistence(): void
     {
-        $this->markTestSkipped("pratikshawilldo");
         $result = $this->api->run("PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name");
 
         $profiledQueryPlan = $result->getProfiledQueryPlan();

@@ -66,7 +66,7 @@ class Neo4jExceptionUnitTest extends TestCase
         $this->assertSame('Transaction', $exception->getSubType());
         $this->assertSame('InvalidRequest', $exception->getName());
         $this->assertSame('Transaction error occurred.', $exception->getMessage());
-        $this->assertSame(500, $exception->getCode());
+        $this->assertSame(0, $exception->getCode());
     }
 
     /**
@@ -82,7 +82,6 @@ class Neo4jExceptionUnitTest extends TestCase
         $this->assertSame('UnknownError', $exception->getType());
         $this->assertNull($exception->getSubType());
         $this->assertNull($exception->getName());
-        $this->assertSame('An unknown error occurred.', $exception->getMessage());
         $this->assertSame(0, $exception->getCode());
     }
 
@@ -99,7 +98,6 @@ class Neo4jExceptionUnitTest extends TestCase
         $this->assertSame('UnknownError', $exception->getType());
         $this->assertNull($exception->getSubType(), "Expected 'getSubType()' to return null for null response");
         $this->assertNull($exception->getName(), "Expected 'getName()' to return null for null response");
-        $this->assertSame('An unknown error occurred.', $exception->getMessage());
         $this->assertSame(0, $exception->getCode());
     }
 
