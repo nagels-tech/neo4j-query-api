@@ -10,10 +10,8 @@ use Neo4j\QueryAPI\Objects\Path;
 class OGM
 {
     /**
-     * Map Neo4j response object to corresponding PHP object.
-     *
      * @param array{'$type': string, '_value': mixed} $object
-     * @return mixed Mapped object or primitive value.
+     * @return mixed
      */
     public function map(array $object): mixed
     {
@@ -42,20 +40,11 @@ class OGM
         };
     }
 
-
-    /**
-     * Parse Well-Known Text (WKT) format to a Point object.
-     *
-     * @param string $wkt Well-Known Text representation of a point.
-     * @return Point Parsed Point object.
-     */
     public static function parseWKT(string $wkt): Point
     {
-        // Extract SRID
         $sridPart = substr($wkt, 0, strpos($wkt, ';'));
         $srid = (int)str_replace('SRID=', '', $sridPart);
 
-        // Extract coordinates
         $pointPart = substr($wkt, strpos($wkt, 'POINT') + 6);
         $pointPart = str_replace('Z', '', trim($pointPart, ' ()'));
         $coordinates = explode(' ', $pointPart);
@@ -65,26 +54,18 @@ class OGM
         return new Point($x, $y, $z, $srid);
     }
 
-    /**
-     * Map a raw node data array to a Node object.
-     *
-     * @param array $nodeData Raw node data.
-     * @return Node Mapped Node object.
-     */
+
+
+
     private function mapNode(array $nodeData): Node
     {
         return new Node(
-            labels: $nodeData['_labels'] ?? [],
-            properties: $this->mapProperties($nodeData['_properties'] ?? [])
+            $nodeData['_labels'],
+            $this->mapProperties($nodeData['_properties'])
         );
     }
 
-    /**
-     * Map a raw relationship data array to a Relationship object.
-     *
-     * @param array $relationshipData Raw relationship data.
-     * @return Relationship Mapped Relationship object.
-     */
+
     private function mapRelationship(array $relationshipData): Relationship
     {
         return new Relationship(
@@ -93,12 +74,6 @@ class OGM
         );
     }
 
-    /**
-     * Map a raw path data array to a Path object.
-     *
-     * @param array $pathData Raw path data.
-     * @return Path Mapped Path object.
-     */
     private function mapPath(array $pathData): Path
     {
         $nodes = [];
@@ -115,14 +90,9 @@ class OGM
         return new Path($nodes, $relationships);
     }
 
-    /**
-     * Recursively map properties of a node or relationship.
-     *
-     * @param array $properties Raw properties data.
-     * @return array Mapped properties.
-     */
     private function mapProperties(array $properties): array
     {
         return array_map([$this, 'map'], $properties);
     }
+
 }

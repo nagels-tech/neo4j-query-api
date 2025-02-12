@@ -21,20 +21,18 @@ class Neo4jOGMTest extends TestCase
             'Test with age 30' => [
                 'CREATE (n:Person {age: $age}) RETURN n.age',
                 ['age' => 30],
-                30,  // Expected result should be just the integer, not an array
+                30,
             ],
             'Test with age 40' => [
                 'CREATE (n:Person {age: $age}) RETURN n.age',
                 ['age' => 40],
-                40,  // Expected result should be just the integer
+                40,
             ],
 
         ];
     }
 
-
-
-    public static function nullDataProvider()
+    public static function nullDataProvider(): array
     {
         return
             [
@@ -52,7 +50,7 @@ class Neo4jOGMTest extends TestCase
         return [
             ['query1', ['_value' => true], true],
             ['query2', ['_value' => false], false],
-            ['query3', ['_value' => null], null], // Optional if you want to test null as well.
+            ['query3', ['_value' => null], null],
         ];
     }
 
@@ -60,8 +58,8 @@ class Neo4jOGMTest extends TestCase
     {
         return [
             ['query1', ['_value' => 'Hello, world!'], 'Hello, world!'],
-            ['query2', ['_value' => ''], ''], // Test empty string
-            ['query3', ['_value' => null], null], // Optional if null handling is needed
+            ['query2', ['_value' => ''], ''],
+            ['query3', ['_value' => null], null],
         ];
     }
 
@@ -136,9 +134,9 @@ class Neo4jOGMTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Point::class, $point);
-        $this->assertEquals(1.2, $point->getX()); // x is longitude
-        $this->assertEquals(3.4, $point->getY()); // y is latitude
-        $this->assertNull($point->getZ()); // Ensure z is null for 2D point
+        $this->assertEquals(1.2, $point->getX());
+        $this->assertEquals(3.4, $point->getY());
+        $this->assertNull($point->getZ());
         $this->assertEquals(4326, $point->getSrid());
     }
 
@@ -386,10 +384,6 @@ class Neo4jOGMTest extends TestCase
 
         $this->assertEquals($expectedResult, $actual);
     }
-
-
-
-
 
     #[DataProvider('nullDataProvider')]
     public function testWithNull(string $query, array $parameters, ?string $expectedResult): void
