@@ -6,6 +6,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 
+/** @psalm-suppress UnusedClass */
 class Neo4jRequestFactory
 {
     private string $baseUri;
