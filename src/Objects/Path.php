@@ -5,6 +5,10 @@ namespace Neo4j\QueryAPI\Objects;
 /**
  * Represents a path in a Neo4j graph, consisting of nodes and relationships.
  */
+
+/**
+ *  @api
+ */
 class Path
 {
     /**

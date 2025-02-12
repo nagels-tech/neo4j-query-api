@@ -3,7 +3,9 @@
 namespace Neo4j\QueryAPI;
 
 use Psr\Http\Message\RequestInterface;
-
+/**
+ *  @api
+ */
 class BearerAuthentication implements AuthenticateInterface
 {
     public function __construct(private string $token)
@@ -16,17 +18,13 @@ class BearerAuthentication implements AuthenticateInterface
         return $request->withHeader('Authorization', $authHeader);
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getHeader(): string
     {
         return 'Bearer ' . $this->token;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getType(): string
     {
         return 'Bearer';

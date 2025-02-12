@@ -6,7 +6,9 @@ use Neo4j\QueryAPI\Results\ResultRow;
 use OutOfBoundsException;
 use BadMethodCallException;
 use PHPUnit\Framework\TestCase;
-/** @psalm-suppress UnusedClass */
+/**
+ *  @api
+ */
 class ResultRowTest extends TestCase
 {
     public function testArrayAccessGet(): void

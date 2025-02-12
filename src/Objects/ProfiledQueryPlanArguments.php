@@ -1,7 +1,9 @@
 <?php
 
 namespace Neo4j\QueryAPI\Objects;
-
+/**
+ *  @api
+ */
 class ProfiledQueryPlanArguments
 {
     public function __construct(
@@ -12,7 +14,7 @@ class ProfiledQueryPlanArguments
         private readonly ?string $runtime = null,
         private readonly ?int    $time = null,
         private readonly ?int    $pageCacheMisses = null,
-        //        private readonly ?int    $pageCacheHits = null,
+        private readonly ?int    $pageCacheHits = null,
         private readonly ?string $runtimeImpl = null,
         private readonly ?int    $version = null,
         private readonly ?int    $dbHits = null,
@@ -28,163 +30,125 @@ class ProfiledQueryPlanArguments
     ) {
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+
     public function getGlobalMemory(): ?int
     {
         return $this->globalMemory;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getPlannerImpl(): ?string
     {
         return $this->plannerImpl;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getMemory(): ?int
     {
         return $this->memory;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getStringRepresentation(): ?string
     {
         return $this->stringRepresentation;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getRuntime(): ?string
     {
         return $this->runtime;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getTime(): ?int
     {
         return $this->time;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
 
     public function getPageCacheMisses(): ?int
     {
         return $this->pageCacheMisses;
     }
-
     /**
-     * @psalm-suppress PossiblyUnusedMethod
+     *  @api
      */
-    /*private function getPageCacheHits(): ?int
+   
+    private function getPageCacheHits(): ?int
     {
         return $this->pageCacheHits;
-    }*/
+    }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getRuntimeImpl(): ?string
     {
         return $this->runtimeImpl;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getVersion(): ?int
     {
         return $this->version;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
 
     public function getDbHits(): ?int
     {
         return $this->dbHits;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getBatchSize(): ?int
     {
         return $this->batchSize;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getDetails(): ?string
     {
         return $this->details;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getPlannerVersion(): ?string
     {
         return $this->plannerVersion;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getPipelineInfo(): ?string
     {
         return $this->pipelineInfo;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getRuntimeVersion(): ?string
     {
         return $this->runtimeVersion;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getEstimatedRows(): ?float
     {
         return $this->estimatedRows;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getPlanner(): ?string
     {
         return $this->planner;
     }
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
+   
     public function getRows(): ?int
     {
         return $this->rows;

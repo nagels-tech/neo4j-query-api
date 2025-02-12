@@ -5,6 +5,10 @@ namespace Neo4j\QueryAPI\Objects;
 /**
  * Represents a relationship in a Neo4j graph, with a type and associated properties.
  */
+
+/**
+ *  @api
+ */
 class Relationship
 {
     /**

@@ -3,7 +3,9 @@
 namespace Neo4j\QueryAPI;
 
 use Psr\Http\Message\RequestInterface;
-
+/**
+ *  @api
+ */
 interface AuthenticateInterface
 {
     /**
