@@ -10,8 +10,13 @@
 >
     <projectFiles>
         <directory name="src" />
+        <directory name="tests" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+    <issueHandlers>
+        <PossiblyUnusedProperty errorLevel="suppress"/>
+        <PossiblyUnusedMethod errorLevel="suppress"/>
+    </issueHandlers>
 </psalm>

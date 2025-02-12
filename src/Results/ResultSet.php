@@ -26,10 +26,10 @@ class ResultSet implements IteratorAggregate, Countable
      */
     public function __construct(
         private readonly array     $rows,
-        private ?ResultCounters     $counters = null,
-        private Bookmarks          $bookmarks,
-        private ?ProfiledQueryPlan $profiledQueryPlan,
-        private AccessMode          $accessMode
+        private readonly ?ResultCounters     $counters = null,
+        private readonly Bookmarks          $bookmarks,
+        private readonly ?ProfiledQueryPlan $profiledQueryPlan,
+        private readonly AccessMode          $accessMode
     ) {
 
 
@@ -64,10 +64,6 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return $this->bookmarks;
     }
-
-    /**
-     * @api
-     */
 
     public function getAccessMode(): ?AccessMode
     {

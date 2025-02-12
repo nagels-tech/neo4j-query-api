@@ -8,9 +8,10 @@ use Neo4j\QueryAPI\Enums\AccessMode;
 class Configuration
 {
     public function __construct(
-        public readonly string $database = 'neo4j',
-        public readonly bool $includeCounters = true,
-        public readonly Bookmarks $bookmark = new Bookmarks([]),
+        public readonly string     $baseUri,
+        public readonly string     $database = 'neo4j',
+        public readonly bool       $includeCounters = true,
+        public readonly Bookmarks  $bookmarks = new Bookmarks([]),
         public readonly AccessMode $accessMode = AccessMode::WRITE,
     ) {
     }

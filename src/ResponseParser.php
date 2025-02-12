@@ -3,6 +3,7 @@
 namespace Neo4j\QueryAPI;
 
 use Neo4j\QueryAPI\Enums\AccessMode;
+use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
 use Psr\Http\Message\ResponseInterface;
 use Neo4j\QueryAPI\Results\ResultSet;
@@ -14,7 +15,7 @@ use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 
 class ResponseParser
 {
-    public function __construct(private OGM $ogm)
+    public function __construct(private readonly OGM $ogm)
     {
     }
 
@@ -33,10 +34,15 @@ class ResponseParser
 
     private function validateAndDecodeResponse(ResponseInterface $response): array
     {
-        $contents = (string) $response->getBody()->getContents();
+        if ($response->getStatusCode() >= 400) {
+            $errorResponse = json_decode((string)$response->getBody(), true);
+            throw Neo4jException::fromNeo4jResponse($errorResponse);
+        }
+
+        $contents = $response->getBody()->getContents();
         $data = json_decode($contents, true);
 
-        if (!isset($data['data']) || $data['data'] === null) {
+        if (!isset($data['data'])) {
             throw new RuntimeException('Invalid response: "data" key missing or null.');
         }
 
@@ -93,7 +99,35 @@ class ResponseParser
             return null;
         }
 
-        $queryArguments = new ProfiledQueryPlanArguments();
+        $mappedArguments = array_map(function ($value) {
+            if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
+                return $this->ogm->map($value);
+            }
+            return $value;
+        }, $queryPlanData['arguments'] ?? []);
+
+        $queryArguments = new ProfiledQueryPlanArguments(
+            globalMemory: $mappedArguments['GlobalMemory'] ?? null,
+            plannerImpl: $mappedArguments['planner-impl'] ?? null,
+            memory: $mappedArguments['Memory'] ?? null,
+            stringRepresentation: $mappedArguments['string-representation'] ?? null,
+            runtime: $mappedArguments['runtime'] ?? null,
+            time: $mappedArguments['Time'] ?? null,
+            pageCacheMisses: $mappedArguments['PageCacheMisses'] ?? null,
+            pageCacheHits: $mappedArguments['PageCacheHits'] ?? null,
+            runtimeImpl: $mappedArguments['runtime-impl'] ?? null,
+            version: $mappedArguments['version'] ?? null,
+            dbHits: $mappedArguments['DbHits'] ?? null,
+            batchSize: $mappedArguments['batch-size'] ?? null,
+            details: $mappedArguments['Details'] ?? null,
+            plannerVersion: $mappedArguments['planner-version'] ?? null,
+            pipelineInfo: $mappedArguments['PipelineInfo'] ?? null,
+            runtimeVersion: $mappedArguments['runtime-version'] ?? null,
+            id: $mappedArguments['Id'] ?? null,
+            estimatedRows: $mappedArguments['EstimatedRows'] ?? null,
+            planner: $mappedArguments['planner'] ?? null,
+            rows: $mappedArguments['Rows'] ?? null
+        );
         $children = array_map(fn ($child) => $this->buildProfiledQueryPlan($child), $queryPlanData['children'] ?? []);
 
         return new ProfiledQueryPlan(

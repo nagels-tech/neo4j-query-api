@@ -8,11 +8,14 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Neo4jRequestFactory;
+use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\OGM;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\ResponseParser;
@@ -23,21 +26,19 @@ use RuntimeException;
 use Neo4j\QueryAPI\Configuration;
 use Neo4j\QueryAPI\loginConfig;
 
+/**
+ *  @api
+ */
 class Neo4jQueryAPIUnitTest extends TestCase
 {
     protected string $address;
-    protected string $username;
-    protected string $password;
     protected ResponseParser $parser;
-    private OGM $ogm;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->address = getenv('NEO4J_ADDRESS');
-        $this->username = getenv('NEO4J_USERNAME');
-        $this->password = getenv('NEO4J_PASSWORD');
 
         $this->ogm = new OGM();
         $this->parser = new ResponseParser($this->ogm);
@@ -45,7 +46,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
     public function testCorrectClientSetup(): void
     {
-        $neo4jQueryAPI = Neo4jQueryAPI::login($this->address, $this->username, $this->password);
+        $neo4jQueryAPI = Neo4jQueryAPI::login($this->address, Authentication::fromEnvironment());
         $this->assertInstanceOf(Neo4jQueryAPI::class, $neo4jQueryAPI);
     }
 
@@ -59,16 +60,20 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
 
-        $loginConfig = LoginConfig::fromEnv();
-        $queryConfig = new Configuration();
+        $loginConfig = Authentication::fromEnvironment();
+        $queryConfig = new Configuration($this->address);
 
         $responseParser = $this->createMock(ResponseParser::class);
 
-        $neo4jQueryAPI = new Neo4jQueryAPI($loginConfig, $responseParser, $queryConfig);
+        $neo4jQueryAPI = new Neo4jQueryAPI($client, $responseParser, new Neo4jRequestFactory(
+            new Psr17Factory(),
+            new Psr17Factory(),
+            $queryConfig,
+            $loginConfig
+        ));
 
         $cypherQuery = 'MATCH (n:Person) RETURN n LIMIT 5';
-        $result = $neo4jQueryAPI->run($cypherQuery);
-
+        $neo4jQueryAPI->run($cypherQuery);
     }
 
 

@@ -1,9 +1,12 @@
 <?php
 
-namespace Neo4j\QueryAPI;
+namespace Neo4j\QueryAPI\Authentication;
 
 use Psr\Http\Message\RequestInterface;
 
+/**
+ *  @api
+ */
 class BasicAuthentication implements AuthenticateInterface
 {
     private string $username;
@@ -25,7 +28,9 @@ class BasicAuthentication implements AuthenticateInterface
     {
         return 'Basic ' . base64_encode($this->username . ':' . $this->password);
     }
-
+    /**
+     * @psalm-suppress UnusedMethod
+     */
     public function getType(): string
     {
         return 'Basic';
