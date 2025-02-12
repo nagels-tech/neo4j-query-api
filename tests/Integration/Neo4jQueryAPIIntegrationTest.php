@@ -21,10 +21,16 @@ use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Client\RequestExceptionInterface;
 
+/**
+ *  @api
+ */
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
-
+    /**
+     *  @api
+     */
+    /** @psalm-suppress UnusedProperty */
     private Neo4jRequestFactory $request  ;
     /**
      * @throws GuzzleException
@@ -32,6 +38,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     public function setUp(): void
     {
         $this->api = $this->initializeApi();
+
         $this->clearDatabase();
         $this->populateTestData();
     }
@@ -183,7 +190,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
         $auth = Authentication::fromEnvironment();
-
         $api = new Neo4jQueryAPI($client, $auth);
 
         $result = $api->run($query);

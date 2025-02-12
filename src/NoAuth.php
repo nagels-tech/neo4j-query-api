@@ -4,6 +4,9 @@ namespace Neo4j\QueryAPI;
 
 use Psr\Http\Message\RequestInterface;
 
+/**
+ *  @api
+ */
 class NoAuth implements AuthenticateInterface
 {
     public function authenticate(RequestInterface $request): RequestInterface

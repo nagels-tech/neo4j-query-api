@@ -5,6 +5,10 @@ namespace Neo4j\QueryAPI\Objects;
 /**
  * Represents a point with x, y, z coordinates, and SRID (Spatial Reference System Identifier).
  */
+/**
+ *  @api
+ */
+
 class Point
 {
     /**

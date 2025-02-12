@@ -17,6 +17,9 @@ use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\AuthenticateInterface;
 use PHPUnit\Framework\TestCase;
 
+/**
+ *  @api
+ */
 class Neo4jQueryAPIUnitTest extends TestCase
 {
     protected string $address;

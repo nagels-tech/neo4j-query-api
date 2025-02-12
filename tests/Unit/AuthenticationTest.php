@@ -5,12 +5,16 @@ namespace Neo4j\QueryAPI\Tests\Unit;
 use Neo4j\QueryAPI\Objects\Authentication;
 use PHPUnit\Framework\TestCase;
 
+/**
+ *  @api
+ */
 class AuthenticationTest extends TestCase
 {
     public function testBearerToken(): void
     {
-
         $mockToken = 'mocked_bearer_token';
+
+
         $auth = Authentication::bearer($mockToken);
 
         $this->assertEquals("Bearer $mockToken", $auth->getHeader(), 'Bearer token mismatch.');

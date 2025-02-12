@@ -12,6 +12,9 @@ use GuzzleHttp\Psr7\Utils;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 
+/**
+ *  @api
+ */
 class Neo4jRequestFactoryTest extends TestCase
 {
     private $psr17Factory;
