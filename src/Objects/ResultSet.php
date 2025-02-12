@@ -6,19 +6,33 @@ use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use Neo4j\QueryAPI\Results\ResultRow;
+use phpDocumentor\Reflection\DocBlock\Tags\Template;
 use Traversable;
 
+/**
+ * @template-implements IteratorAggregate<int, ResultRow>
+ */
+
+/**
+ *  @api
+ */
+/**
+ * @template TKey
+ * @template TValue
+ * @implements IteratorAggregate<TKey, TValue>
+ */
 class ResultSet implements IteratorAggregate, Countable
 {
     /**
      * @param list<ResultRow> $rows
      */
+
     public function __construct(
         private readonly array $rows,
         private ResultCounters $counters,
         private Bookmarks $bookmarks,
         private ?ProfiledQueryPlan $profiledQueryPlan = null,
-        private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
+        // private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
     ) {
     }
 
@@ -26,6 +40,7 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return new ArrayIterator($this->rows);
     }
+
     public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
@@ -35,12 +50,9 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return $this->profiledQueryPlan;
     }
-
-    public function getChildQueryPlan(): ?ChildQueryPlan
-    {
-        return $this->childQueryPlan;
-    }
-
+    /**
+     *  @api
+     */
     public function count(): int
     {
         return count($this->rows);

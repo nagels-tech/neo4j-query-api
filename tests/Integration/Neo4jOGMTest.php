@@ -11,6 +11,9 @@ use Neo4j\QueryAPI\OGM;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ *  @api
+ */
 class Neo4jOGMTest extends TestCase
 {
     private OGM $ogm;
@@ -374,7 +377,7 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);
         $this->assertEquals('B', $path->getNodes()[1]->getProperties()['name']['_value']);
     }
-
+    /** @psalm-suppress PossiblyUnusedParam */
     #[DataProvider('integerDataProvider')] public function testWithInteger(string $query, array $parameters, int $expectedResult): void
     {
         $actual = $this->ogm->map([
@@ -385,6 +388,10 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals($expectedResult, $actual);
     }
 
+
+
+    /** @psalm-suppress PossiblyUnusedParam */
+
     #[DataProvider('nullDataProvider')]
     public function testWithNull(string $query, array $parameters, ?string $expectedResult): void
     {
@@ -394,7 +401,7 @@ class Neo4jOGMTest extends TestCase
         ]);
         $this->assertEquals($expectedResult, $actual);
     }
-
+    /** @psalm-suppress PossiblyUnusedParam */
     #[DataProvider('booleanDataProvider')]
     public function testWithBoolean(string $query, array $parameters, ?bool $expectedResult): void
     {
@@ -404,7 +411,7 @@ class Neo4jOGMTest extends TestCase
         ]);
         $this->assertEquals($expectedResult, $actual);
     }
-
+    /** @psalm-suppress PossiblyUnusedParam */
     #[DataProvider('stringDataProvider')]
     public function testWithString(string $query, array $parameters, ?string $expectedResult): void
     {

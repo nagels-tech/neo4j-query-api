@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI;
 
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
@@ -18,6 +19,9 @@ use Psr\Http\Client\RequestExceptionInterface;
 use RuntimeException;
 use stdClass;
 
+/**
+ *  @api
+ */
 class Neo4jQueryAPI
 {
     private ClientInterface $client;
@@ -30,7 +34,10 @@ class Neo4jQueryAPI
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
+     */
+    /**
+     * @api
      */
     public static function login(string $address, AuthenticateInterface $auth = null): self
     {
@@ -43,7 +50,7 @@ class Neo4jQueryAPI
             ],
         ]);
 
-        return new self($client, $auth ?? Authentication::basic());
+        return new self($client, $auth ?? Authentication::fromEnvironment());
     }
 
     /**
@@ -156,7 +163,8 @@ class Neo4jQueryAPI
         throw $e;
     }
 
-    public function beginTransaction(string $database = 'neo4j'): Transaction
+
+    public function beginTransaction(): Transaction
     {
         $request = new Request('POST', '/db/neo4j/query/v2/tx');
         $request = $this->auth->authenticate($request);
