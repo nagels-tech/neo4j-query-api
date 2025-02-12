@@ -9,7 +9,7 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
 
 /**
- *  @api
+ * @api
  */
 class Neo4jTransactionIntegrationTest extends TestCase
 {
@@ -54,6 +54,7 @@ class Neo4jTransactionIntegrationTest extends TestCase
             $this->api->run('CREATE (:Person {name: $name})', ['name' => $name]);
         }
     }
+
     public function testTransactionCommit(): void
     {
 
@@ -74,5 +75,56 @@ class Neo4jTransactionIntegrationTest extends TestCase
         $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(1, $results); // Updated to expect 1 result
     }
+
+    public function testTransactionRollback(): void
+    {
+        $tsx = $this->api->beginTransaction();
+
+        $name = 'rollback_' . mt_rand(1, 100000);
+        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
+        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results);
+
+        $tsx->rollback();
+
+        // Ensure the node is not in the database
+        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+    }
+
+    public function testCreateNodeAndCommit(): void
+    {
+        $tsx = $this->api->beginTransaction();
+
+        $name = 'committed_' . mt_rand(1, 100000);
+        $tsx->run("CREATE (x:Person {name: \$name})", ['name' => $name]);
+
+        $results = $this->api->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+
+        $tsx->commit();
+        $results = $this->api->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results);
+    }
+
+    public function testCreateNodeAndRollback(): void
+    {
+        $tsx = $this->api->beginTransaction();
+
+        $name = 'rollback_' . mt_rand(1, 100000);
+        $tsx->run("CREATE (x:Person {name: \$name})", ['name' => $name]);
+
+        $results = $tsx->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results);
+
+        $results = $this->api->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+
+        $tsx->rollback();
+        $results = $this->api->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+    }
+
+
 
 }
