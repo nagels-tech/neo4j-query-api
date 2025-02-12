@@ -2,94 +2,90 @@
 
 namespace Neo4j\QueryAPI;
 
+use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
+use Neo4j\QueryAPI\Enums\AccessMode;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 /**
- *  @api
+ * @api
  */
 class Neo4jRequestFactory
 {
-    private string $baseUri;
-    private ?string $authHeader = null;
-    private RequestFactoryInterface $psr17Factory;
-    private StreamFactoryInterface $streamFactory;
-
     public function __construct(
-        RequestFactoryInterface $psr17Factory,
-        StreamFactoryInterface $streamFactory,
-        string $baseUri,
-        ?string $authHeader = null
+        private RequestFactoryInterface $psr17Factory,
+        private StreamFactoryInterface  $streamFactory,
+        private Configuration           $configuration,
+        private AuthenticateInterface   $auth
     ) {
-        $this->psr17Factory = $psr17Factory;
-        $this->streamFactory = $streamFactory;
-        $this->baseUri = $baseUri;
-        $this->authHeader = $authHeader;
     }
 
     public function buildRunQueryRequest(
-        string $database,
         string $cypher,
-        array $parameters = [],
-        bool $includeCounters = true,
-        ?array $bookmarks = null
+        array  $parameters = []
     ): RequestInterface {
+        return $this->createRequest("/db/{$this->configuration->database}/query/v2", $cypher, $parameters);
+    }
+
+    public function buildBeginTransactionRequest(): RequestInterface
+    {
+        return $this->createRequest("/db/{$this->configuration->database}/query/v2/tx", null, null);
+    }
+
+    public function buildCommitRequest(string $transactionId, string $clusterAffinity): RequestInterface
+    {
+        return $this->createRequest("/db/{$this->configuration->database}/query/v2/tx/{$transactionId}/commit", null, null)
+            ->withHeader("neo4j-cluster-affinity", $clusterAffinity);
+    }
+
+    public function buildRollbackRequest(string $transactionId, string $clusterAffinity): RequestInterface
+    {
+        return $this->createRequest("/db/{$this->configuration->database}/query/v2/tx/{$transactionId}/rollback", null, null)
+            ->withHeader("neo4j-cluster-affinity", $clusterAffinity)
+            ->withMethod("DELETE");
+    }
+
+    public function buildTransactionRunRequest(string $query, array $parameters, string $transactionId, string $clusterAffinity): RequestInterface
+    {
+        return $this->createRequest("/db/neo4j/query/v2/tx/{$transactionId}", $query, $parameters)
+            ->withHeader("neo4j-cluster-affinity", $clusterAffinity);
+    }
+
+    private function createRequest(string $uri, ?string $cypher, ?array $parameters): RequestInterface
+    {
+        $request = $this->psr17Factory->createRequest('POST', $this->configuration->baseUri . $uri);
+
         $payload = [
-            'statement' => $cypher,
             'parameters' => empty($parameters) ? new \stdClass() : $parameters,
-            'includeCounters' => $includeCounters,
+            'includeCounters' => $this->configuration->includeCounters
         ];
 
-        if ($bookmarks !== null) {
-            $payload['bookmarks'] = $bookmarks;
+        if ($this->configuration->accessMode === AccessMode::READ) {
+            $payload['accessMode'] = AccessMode::READ;
         }
 
-        $uri = rtrim($this->baseUri, '/') . "/db/{$database}/query/v2";
-
-        return $this->createRequest('POST', $uri, json_encode($payload));
-    }
-
-    public function buildBeginTransactionRequest(string $database): RequestInterface
-    {
-        $uri = rtrim($this->baseUri, '/') . "/db/{$database}/query/v2/tx";
-        return $this->createRequest('POST', $uri);
-    }
-
-    public function buildCommitRequest(string $database, string $transactionId): RequestInterface
-    {
-        $uri = rtrim($this->baseUri, '/') . "/db/{$database}/query/v2/tx/{$transactionId}/commit";
-        return $this->createRequest('POST', $uri);
-    }
-
-    public function buildRollbackRequest(string $database, string $transactionId): RequestInterface
-    {
-        $uri = rtrim($this->baseUri, '/') . "/db/{$database}/query/v2/tx/{$transactionId}/rollback";
-        return $this->createRequest('POST', $uri);
-    }
-
-    private function createRequest(string $method, string $uri, ?string $body = null): RequestInterface
-    {
-        $request = $this->psr17Factory->createRequest($method, $uri);
-
-        $headers = [
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-        ];
-
-        if ($this->authHeader) {
-            $headers['Authorization'] = $this->authHeader;
+        if ($cypher) {
+            $payload['statement'] = $cypher;
         }
 
-        foreach ($headers as $name => $value) {
-            $request = $request->withHeader($name, $value);
+        if ($parameters) {
+            $payload['parameters'] = $parameters;
         }
 
-        if ($body !== null) {
-            $stream = $this->streamFactory->createStream($body);
-            $request = $request->withBody($stream);
+        if ($this->configuration->bookmarks !== null) {
+            $payload['bookmarks'] = $this->configuration->bookmarks;
         }
 
-        return $request;
+        $request = $request->withHeader('Content-Type', 'application/json');
+        $request = $request->withHeader('Accept', 'application/vnd.neo4j.query');
+
+        $body = json_encode($payload);
+
+        $stream = $this->streamFactory->createStream($body);
+
+        $request = $request->withBody($stream);
+
+        return $this->auth->authenticate($request);
     }
 }

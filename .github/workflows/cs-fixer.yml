@@ -2,9 +2,6 @@ name: PHP CS Fixer
 
 on:
   push:
-  pull_request:
-    paths:
-      - '**/*.php'
   workflow_dispatch:
 
 jobs:

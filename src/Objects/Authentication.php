@@ -2,11 +2,10 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-use Exception;
-use Neo4j\QueryAPI\AuthenticateInterface;
-use Neo4j\QueryAPI\BasicAuthentication;
-use Neo4j\QueryAPI\BearerAuthentication;
-use Neo4j\QueryAPI\NoAuth;
+use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
+use Neo4j\QueryAPI\Authentication\BasicAuthentication;
+use Neo4j\QueryAPI\Authentication\BearerAuthentication;
+use Neo4j\QueryAPI\Authentication\NoAuth;
 
 /**
  *  @api

@@ -13,27 +13,33 @@ use Neo4j\QueryAPI\Objects\Path;
 class OGM
 {
     /**
-     * @param array{'$type': string, ' $object _value': mixed} $object
+     * @param array{'$type': string, '_value': mixed} $object
      * @return mixed
      */
     public function map(array $object): mixed
     {
+        if (!isset($object['$type'])) {
+            if (isset($object['elementId'], $object['labels'], $object['properties'])) {
+                return $this->mapNode($object); // Handle as a Node
+            }
+            throw new \InvalidArgumentException('Unknown object type: ' . json_encode($object));
+        }
+
+        //        if (!isset($object['_value'])) {
+        //            throw new \InvalidArgumentException('Missing _value key in object: ' . json_encode($object));
+        //        }
+
         return match ($object['$type']) {
-            'Integer' => $object['_value'],
-            'Float' => $object['_value'],
-            'String' => $object['_value'],
-            'Boolean' => $object['_value'],
-            'Null' => $object['_value'],
+            'Integer', 'Float', 'String', 'Boolean', 'Duration', 'OffsetDateTime' => $object['_value'],
             'Array' => $object['_value'],
+            'Null' => null,
             'List' => array_map([$this, 'map'], $object['_value']),
-            'Duration' => $object['_value'],
-            'OffsetDateTime' => $object['_value'],
             'Node' => $this->mapNode($object['_value']),
             'Map' => $this->mapProperties($object['_value']),
             'Point' => $this->parseWKT($object['_value']),
             'Relationship' => $this->mapRelationship($object['_value']),
             'Path' => $this->mapPath($object['_value']),
-            default => throw new \InvalidArgumentException('Unknown type: ' . $object['$type']),
+            default => throw new \InvalidArgumentException('Unknown type: ' . $object['$type'] . ' in object: ' . json_encode($object)),
         };
     }
 
@@ -43,22 +49,13 @@ class OGM
         $srid = (int)str_replace('SRID=', '', $sridPart);
 
         $pointPart = substr($wkt, strpos($wkt, 'POINT') + 6);
-        if (str_contains($pointPart, 'Z')) {
-            $pointPart = str_replace('Z', '', $pointPart);
-        }
+        $pointPart = str_replace('Z', '', $pointPart);
         $pointPart = trim($pointPart, ' ()');
         $coordinates = explode(' ', $pointPart);
 
-        if (count($coordinates) === 2) {
-            [$x, $y] = $coordinates;
-            $z = null;
-        } elseif (count($coordinates) === 3) {
-            [$x, $y, $z] = $coordinates;
-        } else {
-            throw new \InvalidArgumentException("Invalid WKT format: unable to parse coordinates.");
-        }
+        [$x, $y, $z] = array_pad(array_map('floatval', $coordinates), 3, null);
 
-        return new Point((float)$x, (float)$y, $z !== null ? (float)$z : null, $srid);
+        return new Point($x, $y, $z, $srid);
     }
 
 
@@ -76,8 +73,8 @@ class OGM
     private function mapRelationship(array $relationshipData): Relationship
     {
         return new Relationship(
-            $relationshipData['_type'],
-            $this->mapProperties($relationshipData['_properties'])
+            type: $relationshipData['_type'] ?? '',
+            properties: $this->mapProperties($relationshipData['_properties'] ?? [])
         );
     }
 
@@ -99,11 +96,7 @@ class OGM
 
     private function mapProperties(array $properties): array
     {
-        $mappedProperties = [];
-        foreach ($properties as $key => $value) {
-            $mappedProperties[$key] = $this->map($value);
-        }
-        return $mappedProperties;
+        return array_map([$this, 'map'], $properties);
     }
 
 }
