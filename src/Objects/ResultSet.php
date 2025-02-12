@@ -32,7 +32,7 @@ class ResultSet implements IteratorAggregate, Countable
         private ResultCounters $counters,
         private Bookmarks $bookmarks,
         private ?ProfiledQueryPlan $profiledQueryPlan = null,
-       // private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
+        // private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
     ) {
     }
 
