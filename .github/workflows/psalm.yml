@@ -2,10 +2,6 @@ name: Psalm Static Analysis
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - '**/*.php'
   pull_request:
     paths:
       - '**/*.php'
