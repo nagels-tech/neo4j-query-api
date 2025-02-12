@@ -3,6 +3,7 @@
 namespace Neo4j\QueryAPI;
 
 use Psr\Http\Message\RequestInterface;
+
 /**
  *  @api
  */
@@ -13,7 +14,6 @@ class BasicAuthentication implements AuthenticateInterface
 
     public function __construct(?string $username = null, ?string $password = null)
     {
-        // Use provided values or fallback to environment variables
         $this->username = $username ?? getenv("NEO4J_USERNAME") ?: '';
         $this->password = $password ?? getenv("NEO4J_PASSWORD") ?: '';
     }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Neo4j\QueryAPI\Objects;
+
 /**
  *  @api
  */
@@ -37,7 +38,7 @@ class ProfiledQueryPlan
         ?string $operatorType,
         ProfiledQueryPlanArguments $arguments,
         ?array $children = [],
-        array $identifiers = [] // Default to an empty array
+        array $identifiers = []
     ) {
         $this->dbHits = $dbHits ?? 0;
         $this->records = $records ?? 0;
@@ -51,50 +52,50 @@ class ProfiledQueryPlan
         $this->children = $children ?? [];
         $this->identifiers = $identifiers;
     }
-   
+
     public function getDbHits(): int
     {
         return $this->dbHits;
     }
-   
+
     public function getRecords(): int
     {
         return $this->records;
     }
 
-   
+
     public function hasPageCacheStats(): bool
     {
         return $this->hasPageCacheStats;
     }
-   
+
     public function getPageCacheHits(): int
     {
         return $this->pageCacheHits;
     }
-   
+
 
     public function getPageCacheMisses(): int
     {
         return $this->pageCacheMisses;
     }
-   
+
     public function getPageCacheHitRatio(): float
     {
         return $this->pageCacheHitRatio;
     }
-   
+
 
     public function getTime(): int
     {
         return $this->time;
     }
-   
+
     public function getOperatorType(): string
     {
         return $this->operatorType;
     }
-   
+
     public function getArguments(): ProfiledQueryPlanArguments
     {
         return $this->arguments;
@@ -104,7 +105,7 @@ class ProfiledQueryPlan
      * @return list<ProfiledQueryPlan|ProfiledQueryPlanArguments>
      */
 
-   
+
     public function getChildren(): array
     {
         return $this->children;
@@ -118,7 +119,7 @@ class ProfiledQueryPlan
     /**
      * @return string[]
      */
-   
+
     public function getIdentifiers(): array
     {
         return $this->identifiers;
@@ -127,13 +128,13 @@ class ProfiledQueryPlan
     /**
      * @param string[] $identifiers
      */
-   
+
     public function setIdentifiers(array $identifiers): void
     {
         $this->identifiers = $identifiers;
     }
 
-   
+
     public function addIdentifier(string $identifier): void
     {
         $this->identifiers[] = $identifier;

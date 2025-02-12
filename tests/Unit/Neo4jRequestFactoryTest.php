@@ -10,6 +10,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Utils;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
+
 /**
  *  @api
  */
@@ -95,8 +96,6 @@ class Neo4jRequestFactoryTest extends TestCase
             $this->baseUri
         );
         $request = $factory->buildBeginTransactionRequest($database);
-
-        // Assertions
         $this->assertEquals('POST', $request->getMethod());
         $this->assertEquals($uri, (string) $request->getUri());
     }
@@ -194,8 +193,6 @@ class Neo4jRequestFactoryTest extends TestCase
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals('application/json', $request->getHeaderLine('Accept'));
         $this->assertEquals($this->authHeader, $request->getHeaderLine('Authorization'));
-
-        // Assertions for body
         $this->assertJsonStringEqualsJsonString($payload, (string) $request->getBody());
     }
 
@@ -230,7 +227,7 @@ class Neo4jRequestFactoryTest extends TestCase
 
         $this->assertEquals('application/json', $request->getHeaderLine('Content-Type'));
         $this->assertEquals('application/json', $request->getHeaderLine('Accept'));
-        $this->assertEmpty($request->getHeaderLine('Authorization'));  // No Authorization header
+        $this->assertEmpty($request->getHeaderLine('Authorization'));
 
         $this->assertJsonStringEqualsJsonString($payload, (string) $request->getBody());
     }

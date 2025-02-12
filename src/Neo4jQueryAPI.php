@@ -163,7 +163,7 @@ class Neo4jQueryAPI
         throw $e;
     }
 
-   
+
     public function beginTransaction(): Transaction
     {
         $request = new Request('POST', '/db/neo4j/query/v2/tx');

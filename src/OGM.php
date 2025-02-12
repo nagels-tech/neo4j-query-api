@@ -6,6 +6,7 @@ use Neo4j\QueryAPI\Objects\Point;
 use Neo4j\QueryAPI\Objects\Node;
 use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\Objects\Path;
+
 /**
  *  @api
  */
@@ -23,8 +24,8 @@ class OGM
             'String' => $object['_value'],
             'Boolean' => $object['_value'],
             'Null' => $object['_value'],
-            'Array' => $object['_value'], // Handle generic arrays
-            'List' => array_map([$this, 'map'], $object['_value']), // Recursively map lists
+            'Array' => $object['_value'],
+            'List' => array_map([$this, 'map'], $object['_value']),
             'Duration' => $object['_value'],
             'OffsetDateTime' => $object['_value'],
             'Node' => $this->mapNode($object['_value']),

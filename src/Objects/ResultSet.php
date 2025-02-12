@@ -26,12 +26,13 @@ class ResultSet implements IteratorAggregate, Countable
     /**
      * @param list<ResultRow> $rows
      */
+
     public function __construct(
         private readonly array $rows,
         private ResultCounters $counters,
         private Bookmarks $bookmarks,
         private ?ProfiledQueryPlan $profiledQueryPlan = null,
-        // private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
+       // private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
     ) {
     }
 
@@ -39,12 +40,12 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return new ArrayIterator($this->rows);
     }
-   
+
     public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
     }
-   
+
     public function getProfiledQueryPlan(): ?ProfiledQueryPlan
     {
         return $this->profiledQueryPlan;
@@ -56,7 +57,7 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return count($this->rows);
     }
-   
+
     public function getBookmarks(): ?Bookmarks
     {
         return $this->bookmarks;

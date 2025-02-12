@@ -10,6 +10,7 @@ use Neo4j\QueryAPI\Objects\ResultSet;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Psr\Http\Client\ClientInterface;
 use stdClass;
+
 /**
  *  @api
  */
