@@ -6,6 +6,7 @@ use Neo4j\QueryAPI\Results\ResultRow;
 use OutOfBoundsException;
 use BadMethodCallException;
 use PHPUnit\Framework\TestCase;
+
 /**
  *  @api
  */

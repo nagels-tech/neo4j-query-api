@@ -3,6 +3,7 @@
 namespace Neo4j\QueryAPI;
 
 use Psr\Http\Message\RequestInterface;
+
 /**
  *  @api
  */
@@ -18,13 +19,13 @@ class BearerAuthentication implements AuthenticateInterface
         return $request->withHeader('Authorization', $authHeader);
     }
 
-   
+
     public function getHeader(): string
     {
         return 'Bearer ' . $this->token;
     }
 
-   
+
     public function getType(): string
     {
         return 'Bearer';

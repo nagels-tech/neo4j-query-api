@@ -20,6 +20,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Client\RequestExceptionInterface;
+
 /**
  *  @api
  */
@@ -38,7 +39,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     {
         $this->api = $this->initializeApi();
 
-        // Clear database and populate test data
         $this->clearDatabase();
         $this->populateTestData();
     }
@@ -87,7 +87,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testProfileCreateQueryExistence(): void
     {
-        // Define the CREATE query
         $query = "
     PROFILE UNWIND range(1, 100) AS i
     CREATE (:Person {
@@ -190,22 +189,13 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
 
-        // Use environment variables for authentication
         $auth = Authentication::basic(getenv("NEO4J_USERNAME"), getenv("NEO4J_PASSWORD"));
-
-        // Pass both client and authentication to Neo4jQueryAPI
         $api = new Neo4jQueryAPI($client, $auth);
-
-        // Execute the query
         $result = $api->run($query);
 
         $plan = $result->getProfiledQueryPlan();
         $this->assertNotNull($plan, "The result of the query should not be null.");
-
-        // Load expected data
         $expected = require __DIR__ . '/../resources/expected/complex-query-profile.php';
-
-        // Assert the profiled query plan matches the expected result
         $this->assertEquals($expected->getProfiledQueryPlan(), $plan, "Profiled query plan does not match the expected value.");
     }
 
