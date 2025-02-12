@@ -3,100 +3,89 @@
 namespace Neo4j\QueryAPI;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use Neo4j\QueryAPI\Enums\AccessMode;
-use Neo4j\QueryAPI\Objects\Bookmarks;
-use Neo4j\QueryAPI\Results\ResultSet;
+use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
 use Neo4j\QueryAPI\Exception\Neo4jException;
+use Neo4j\QueryAPI\Objects\Authentication;
+use Neo4j\QueryAPI\Results\ResultSet;
+use Nyholm\Psr7\Factory\Psr17Factory;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
-use Neo4j\QueryAPI\loginConfig;
 
 class Neo4jQueryAPI
 {
-    private Client $client;
-    private loginConfig $loginConfig;
-    private Configuration $config;
-    private ResponseParser $responseParser;
-
-    public function __construct(LoginConfig $loginConfig, ResponseParser $responseParser, Configuration $config)
-    {
-        $this->loginConfig = $loginConfig;
-        $this->responseParser = $responseParser;
-        $this->config = $config;
-
-        $this->client = new Client([
-            'base_uri' => rtrim($this->loginConfig->baseUrl, '/'),
-            'timeout'  => 10.0,
-            'headers'  => [
-                'Authorization' => 'Basic ' . $this->loginConfig->authToken,
-                'Accept'  => 'application/vnd.neo4j.query',
-            ],
-        ]);
+    public function __construct(
+        private ClientInterface $client,
+        private ResponseParser $responseParser,
+        private Neo4jRequestFactory $requestFactory
+    ) {
     }
 
-
     /**
-     * Static method to create an instance with login details.
+     * @api
      */
-    public static function login(): self
+    public static function login(string $address, AuthenticateInterface $auth = null): self
     {
-        $loginConfig = loginConfig::fromEnv();
-        $config = new Configuration();
+        $client = new Client();
 
-        return new self($loginConfig, new ResponseParser(new OGM()), $config);
+        return new self(
+            client: $client,
+            responseParser: new ResponseParser(
+                ogm: new OGM()
+            ),
+            requestFactory: new Neo4jRequestFactory(
+                psr17Factory: new Psr17Factory(),
+                streamFactory: new Psr17Factory(),
+                configuration: new Configuration(
+                    baseUri: $address
+                ),
+                auth: $auth ?? Authentication::fromEnvironment()
+            )
+        );
     }
 
 
 
     /**
      * Executes a Cypher query.
-     *
-     * @throws Neo4jException|RequestExceptionInterface
      */
     public function run(string $cypher, array $parameters = []): ResultSet
     {
+        $request = $this->requestFactory->buildRunQueryRequest($cypher, $parameters);
+
         try {
-            $payload = [
-                'statement'      => $cypher,
-                'parameters'     => empty($parameters) ? new \stdClass() : $parameters,
-                'includeCounters' => $this->config->includeCounters,
-                'accessMode'     => $this->config->accessMode->value,
-            ];
-
-            if (!empty($this->config->bookmark)) {
-                $payload['bookmarks'] = $this->config->bookmark;
-            }
-
-
-
-            //            if ($impersonatedUser !== null) {
-            //                $payload['impersonatedUser'] = $impersonatedUser;
-            //            }
-            error_log('Neo4j Payload: ' . json_encode($payload));
-
-            $response = $this->client->post("/db/{$this->config->database}/query/v2", ['json' => $payload]);
-
-            return $this->responseParser->parseRunQueryResponse($response);
-        } catch (RequestException $e) {
-            error_log('Neo4j Request Failed: ' . $e->getMessage());
-
+            $response = $this->client->sendRequest($request);
+        } catch (RequestExceptionInterface $e) {
             $this->handleRequestException($e);
         }
+
+        return $this->responseParser->parseRunQueryResponse($response);
     }
 
     /**
      * Starts a transaction.
      */
-    public function beginTransaction(string $database = 'neo4j'): Transaction
+    public function beginTransaction(): Transaction
     {
-        $response = $this->client->post("/db/{$database}/query/v2/tx");
+        $request = $this->requestFactory->buildBeginTransactionRequest();
+
+        try {
+            $response = $this->client->sendRequest($request);
+        } catch (RequestExceptionInterface $e) {
+            $this->handleRequestException($e);
+        }
 
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
         $responseData = json_decode($response->getBody(), true);
         $transactionId = $responseData['transaction']['id'];
 
-        return new Transaction($this->client, $clusterAffinity, $transactionId);
+        return new Transaction(
+            $this->client,
+            $this->responseParser,
+            $this->requestFactory,
+            $clusterAffinity,
+            $transactionId
+        );
     }
 
     /**

@@ -3,12 +3,10 @@
 namespace Neo4j\QueryAPI;
 
 use Neo4j\QueryAPI\Exception\Neo4jException;
-use Neo4j\QueryAPI\Objects\Authentication;
-use Neo4j\QueryAPI\Objects\Bookmarks;
-use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Client\RequestExceptionInterface;
+use Psr\Http\Message\ResponseInterface;
 use stdClass;
 
 /**
@@ -18,6 +16,8 @@ class Transaction
 {
     public function __construct(
         private ClientInterface $client,
+        private ResponseParser $responseParser,
+        private Neo4jRequestFactory $requestFactory,
         private string $clusterAffinity,
         private string $transactionId
     ) {
@@ -33,84 +33,15 @@ class Transaction
      */
     public function run(string $query, array $parameters): ResultSet
     {
-        $response = $this->client->post("/db/neo4j/query/v2/tx/{$this->transactionId}", [
-            'headers' => [
-                'Authorization' => Authentication::basic('neo4j', '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0')->getheader(),
-                'neo4j-cluster-affinity' => $this->clusterAffinity,
-            ],
-            'json' => [
-                'statement' => $query,
-                'parameters' => empty($parameters) ? new stdClass() : $parameters,
-                'includeCounters' => true
-            ],
-        ]);
+        $request = $this->requestFactory->buildTransactionRunRequest($query, $parameters, $this->transactionId, $this->clusterAffinity);
 
-        $responseBody = $response->getBody()->getContents();
-        $data = json_decode($responseBody, true);
-
-        if (!isset($data['data']['fields'], $data['data']['values'])) {
-            throw new Neo4jException([
-                'message' => 'Unexpected response structure from Neo4j',
-                'response' => $data,
-            ]);
+        try {
+            $response = $this->client->sendRequest($request);
+        } catch (RequestExceptionInterface $e) {
+            $this->handleRequestException($e);
         }
 
-        $keys = $data['data']['fields'];
-        $values = $data['data']['values'];
-
-        if (empty($values)) {
-            return new ResultSet(
-                rows: [],
-                counters: new ResultCounters(
-                    containsUpdates: $data['counters']['containsUpdates'],
-                    nodesCreated: $data['counters']['nodesCreated'],
-                    nodesDeleted: $data['counters']['nodesDeleted'],
-                    propertiesSet: $data['counters']['propertiesSet'],
-                    relationshipsCreated: $data['counters']['relationshipsCreated'],
-                    relationshipsDeleted: $data['counters']['relationshipsDeleted'],
-                    labelsAdded: $data['counters']['labelsAdded'],
-                    labelsRemoved: $data['counters']['labelsRemoved'],
-                    indexesAdded: $data['counters']['indexesAdded'],
-                    indexesRemoved: $data['counters']['indexesRemoved'],
-                    constraintsAdded: $data['counters']['constraintsAdded'],
-                    constraintsRemoved: $data['counters']['constraintsRemoved'],
-                    containsSystemUpdates: $data['counters']['containsSystemUpdates'],
-                    systemUpdates: $data['counters']['systemUpdates']
-                ),
-                bookmarks: new Bookmarks($data['bookmarks'] ?? [])
-            );
-        }
-
-        $ogm = new OGM();
-        $rows = array_map(function ($resultRow) use ($ogm, $keys) {
-            $data = [];
-            foreach ($keys as $index => $key) {
-                $fieldData = $resultRow[$index] ?? null;
-                $data[$key] = $ogm->map($fieldData);
-            }
-            return new ResultRow($data);
-        }, $values);
-
-        return new ResultSet(
-            rows: $rows,
-            counters: new ResultCounters(
-                containsUpdates: $data['counters']['containsUpdates'],
-                nodesCreated: $data['counters']['nodesCreated'],
-                nodesDeleted: $data['counters']['nodesDeleted'],
-                propertiesSet: $data['counters']['propertiesSet'],
-                relationshipsCreated: $data['counters']['relationshipsCreated'],
-                relationshipsDeleted: $data['counters']['relationshipsDeleted'],
-                labelsAdded: $data['counters']['labelsAdded'],
-                labelsRemoved: $data['counters']['labelsRemoved'],
-                indexesAdded: $data['counters']['indexesAdded'],
-                indexesRemoved: $data['counters']['indexesRemoved'],
-                constraintsAdded: $data['counters']['constraintsAdded'],
-                constraintsRemoved: $data['counters']['constraintsRemoved'],
-                containsSystemUpdates: $data['counters']['containsSystemUpdates'],
-                systemUpdates: $data['counters']['systemUpdates']
-            ),
-            bookmarks: new Bookmarks($data['bookmarks'] ?? [])
-        );
+        return $this->responseParser->parseRunQueryResponse($response);
     }
 
     /**
@@ -118,12 +49,9 @@ class Transaction
      */
     public function commit(): void
     {
-        $this->client->post("/db/neo4j/query/v2/tx/{$this->transactionId}/commit", [
-            'headers' => [
-                'Authorization' => Authentication::basic('neo4j', '9lWmptqBgxBOz8NVcTJjgs3cHPyYmsy63ui6Spmw1d0')->getheader(),
-                'neo4j-cluster-affinity' => $this->clusterAffinity,
-            ],
-        ]);
+        $request = $this->requestFactory->buildCommitRequest($this->transactionId, $this->clusterAffinity);
+
+        $this->client->sendRequest($request);
     }
 
     /**
@@ -131,10 +59,24 @@ class Transaction
      */
     public function rollback(): void
     {
-        $this->client->delete("/db/neo4j/query/v2/tx/{$this->transactionId}", [
-            'headers' => [
-                'neo4j-cluster-affinity' => $this->clusterAffinity,
-            ],
-        ]);
+        $request = $this->requestFactory->buildRollbackRequest($this->transactionId, $this->clusterAffinity);
+
+        $this->client->sendRequest($request);
+    }
+
+    /**
+     * Handles request exceptions by parsing error details and throwing a Neo4jException.
+     *
+     * @throws Neo4jException
+     */
+    private function handleRequestException(RequestExceptionInterface $e): void
+    {
+        $response = $e->getResponse();
+        if ($response instanceof ResponseInterface) {
+            $errorResponse = json_decode((string)$response->getBody(), true);
+            throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
+        }
+
+        throw new Neo4jException(['message' => $e->getMessage()], 500, $e);
     }
 }

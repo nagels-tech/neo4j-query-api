@@ -2,12 +2,14 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-use Exception;
-use Neo4j\QueryAPI\AuthenticateInterface;
-use Neo4j\QueryAPI\BasicAuthentication;
-use Neo4j\QueryAPI\BearerAuthentication;
-use Neo4j\QueryAPI\NoAuth;
+use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
+use Neo4j\QueryAPI\Authentication\BasicAuthentication;
+use Neo4j\QueryAPI\Authentication\BearerAuthentication;
+use Neo4j\QueryAPI\Authentication\NoAuth;
 
+/**
+ *  @api
+ */
 class Authentication
 {
     public static function basic(string $username, string $password): AuthenticateInterface
@@ -15,9 +17,9 @@ class Authentication
         return new BasicAuthentication($username, $password);
     }
 
+
     public static function fromEnvironment(): AuthenticateInterface
     {
-
         $username = getenv("NEO4J_USERNAME") ?: '';
         $password = getenv("NEO4J_PASSWORD") ?: '';
 
@@ -30,6 +32,7 @@ class Authentication
     {
         return new NoAuth();
     }
+
 
     public static function bearer(string $token): AuthenticateInterface
     {

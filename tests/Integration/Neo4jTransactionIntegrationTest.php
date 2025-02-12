@@ -8,6 +8,9 @@ use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
 
+/**
+ *  @api
+ */
 class Neo4jTransactionIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
@@ -57,6 +60,7 @@ class Neo4jTransactionIntegrationTest extends TestCase
         $tsx = $this->api->beginTransaction();
 
         $name = (string)mt_rand(1, 100000);
+
         $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
 
         $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
@@ -66,6 +70,7 @@ class Neo4jTransactionIntegrationTest extends TestCase
         $this->assertCount(1, $results);
 
         $tsx->commit();
+
         $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(1, $results); // Updated to expect 1 result
     }

@@ -1,5 +1,6 @@
 <?php
 
+use Neo4j\QueryAPI\Enums\AccessMode;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments;
@@ -246,7 +247,7 @@ return new ResultSet(
                                                         identifiers: ["i"]
                                                     )
                                                 ],
-                                                identifiers: ["i","j"]
+                                                identifiers: ["i", "j"]
                                             ),
                                             // CHILD #1.1.1.1.2: CartesianProduct@neo4j (id=5)
                                             new ProfiledQueryPlan(
@@ -340,10 +341,10 @@ return new ResultSet(
                                                                     estimatedRows: 1000.0,
                                                                     rows: 20000,
                                                                 ),
-                                                                identifiers: ["i","j","a"]
+                                                                identifiers: ["i", "j", "a"]
                                                             )
                                                         ],
-                                                        identifiers: ["i","j","a"]
+                                                        identifiers: ["i", "j", "a"]
                                                     ),
                                                     // CHILD #1.1.1.1.2.2: Filter@neo4j (id=6)
                                                     new ProfiledQueryPlan(
@@ -406,27 +407,28 @@ return new ResultSet(
                                                                     estimatedRows: 1000.0,
                                                                     rows: 0
                                                                 ),
-                                                                identifiers: ["i","j","b"]
+                                                                identifiers: ["i", "j", "b"]
                                                             )
                                                         ],
-                                                        identifiers: ["i","j","b"]
+                                                        identifiers: ["i", "j", "b"]
                                                     )
                                                 ],
-                                                identifiers: ["i","j","a","b"]
+                                                identifiers: ["i", "j", "a", "b"]
                                             )
                                         ],
-                                        identifiers: ["i","j","a","b"]
+                                        identifiers: ["i", "j", "a", "b"]
                                     )
                                 ],
-                                identifiers: ["i","j","a","b"]
+                                identifiers: ["i", "j", "a", "b"]
                             )
                         ],
-                        identifiers: ["j","a","i","b","anon_0","anon_1"]
+                        identifiers: ["j", "a", "i", "b", "anon_0", "anon_1"]
                     )
                 ],
-                identifiers: ["j","a","i","b","anon_0","anon_1"]
+                identifiers: ["j", "a", "i", "b", "anon_0", "anon_1"]
             )
         ],
-        identifiers: ["j","a","i","b","anon_0","anon_1"]
-    )
+        identifiers: ["j", "a", "i", "b", "anon_0", "anon_1"]
+    ),
+    accessMode: AccessMode::WRITE
 );
