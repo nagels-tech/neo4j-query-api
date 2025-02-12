@@ -87,6 +87,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testProfileCreateQueryExistence(): void
     {
+
         $query = "
     PROFILE UNWIND range(1, 100) AS i
     CREATE (:Person {
@@ -188,14 +189,16 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
-
-        $auth = Authentication::basic(getenv("NEO4J_USERNAME"), getenv("NEO4J_PASSWORD"));
+        $auth = Authentication::fromEnvironment();
         $api = new Neo4jQueryAPI($client, $auth);
+
         $result = $api->run($query);
 
         $plan = $result->getProfiledQueryPlan();
         $this->assertNotNull($plan, "The result of the query should not be null.");
+
         $expected = require __DIR__ . '/../resources/expected/complex-query-profile.php';
+
         $this->assertEquals($expected->getProfiledQueryPlan(), $plan, "Profiled query plan does not match the expected value.");
     }
 
@@ -225,9 +228,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->assertInstanceOf(ProfiledQueryPlan::class, $child);
         }
     }
-
-
-
 
 
     /**
