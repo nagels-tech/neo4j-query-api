@@ -1,6 +1,6 @@
 <?php
 
-namespace Neo4j\QueryAPI\Results;
+namespace Neo4j\QueryAPI\Objects;
 
 use ArrayIterator;
 use Countable;
@@ -8,6 +8,7 @@ use IteratorAggregate;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\Objects\Bookmarks;
+use Neo4j\QueryAPI\Results\ResultRow;
 use Traversable;
 use Neo4j\QueryAPI\Enums\AccessMode;
 
@@ -24,15 +25,12 @@ class ResultSet implements IteratorAggregate, Countable
      * @param list<ResultRow> $rows
      */
     public function __construct(
-        private readonly array     $rows,
-        private ?ResultCounters     $counters = null,
-        private Bookmarks          $bookmarks,
-        private ?ProfiledQueryPlan $profiledQueryPlan,
-        private AccessMode          $accessMode
-    )
-    {
-
-
+        private readonly array $rows,
+        private ResultCounters $counters,
+        private Bookmarks $bookmarks,
+        private ?ProfiledQueryPlan $profiledQueryPlan = null,
+        private ?ProfiledQueryPlanArguments $profiledQueryPlanArguments = null
+    ) {
     }
 
     /**

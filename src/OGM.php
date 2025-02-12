@@ -10,10 +10,8 @@ use Neo4j\QueryAPI\Objects\Path;
 class OGM
 {
     /**
-     * Map Neo4j response object to corresponding PHP object.
-     *
-     * @param array{'$type': string, '_value': mixed} $object
-     * @return mixed Mapped object or primitive value.
+     * @param array{'$type': string, ' $object _value': mixed} $object
+     * @return mixed
      */
     public function map(array $object): mixed
     {
@@ -51,13 +49,14 @@ class OGM
      */
     public static function parseWKT(string $wkt): Point
     {
-        // Extract SRID
         $sridPart = substr($wkt, 0, strpos($wkt, ';'));
         $srid = (int)str_replace('SRID=', '', $sridPart);
 
-        // Extract coordinates
         $pointPart = substr($wkt, strpos($wkt, 'POINT') + 6);
-        $pointPart = str_replace('Z', '', trim($pointPart, ' ()'));
+        if (strpos($pointPart, 'Z') !== false) {
+            $pointPart = str_replace('Z', '', $pointPart);
+        }
+        $pointPart = trim($pointPart, ' ()');
         $coordinates = explode(' ', $pointPart);
 
         [$x, $y, $z] = array_pad(array_map('floatval', $coordinates), 3, null);
@@ -79,12 +78,7 @@ class OGM
         );
     }
 
-    /**
-     * Map a raw relationship data array to a Relationship object.
-     *
-     * @param array $relationshipData Raw relationship data.
-     * @return Relationship Mapped Relationship object.
-     */
+
     private function mapRelationship(array $relationshipData): Relationship
     {
         return new Relationship(
@@ -93,35 +87,29 @@ class OGM
         );
     }
 
-    /**
-     * Map a raw path data array to a Path object.
-     *
-     * @param array $pathData Raw path data.
-     * @return Path Mapped Path object.
-     */
     private function mapPath(array $pathData): Path
     {
         $nodes = [];
         $relationships = [];
 
         foreach ($pathData as $item) {
-            match ($item['$type']) {
-                'Node' => $nodes[] = $this->mapNode($item['_value']),
-                'Relationship' => $relationships[] = $this->mapRelationship($item['_value']),
-            };
+            if ($item['$type'] === 'Node') {
+                $nodes[] = $this->mapNode($item['_value']);
+            } elseif ($item['$type'] === 'Relationship') {
+                $relationships[] = $this->mapRelationship($item['_value']);
+            }
         }
 
         return new Path($nodes, $relationships);
     }
 
-    /**
-     * Recursively map properties of a node or relationship.
-     *
-     * @param array $properties Raw properties data.
-     * @return array Mapped properties.
-     */
     private function mapProperties(array $properties): array
     {
-        return array_map([$this, 'map'], $properties);
+        $mappedProperties = [];
+        foreach ($properties as $key => $value) {
+            $mappedProperties[$key] = $this->map($value);
+        }
+        return $mappedProperties;
     }
+
 }
