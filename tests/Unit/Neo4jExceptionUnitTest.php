@@ -5,7 +5,7 @@ namespace Neo4j\QueryAPI\Tests\Unit;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Exception\Neo4jException;
-
+/** @psalm-suppress UnusedClass */
 class Neo4jExceptionUnitTest extends TestCase
 {
     /**
