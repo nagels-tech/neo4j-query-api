@@ -56,6 +56,7 @@ class Neo4jTransactionIntegrationTest extends TestCase
     }
     public function testTransactionCommit(): void
     {
+
         $tsx = $this->api->beginTransaction();
 
         $name = (string)mt_rand(1, 100000);
