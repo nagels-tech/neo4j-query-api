@@ -46,7 +46,8 @@ class OGM
         $srid = (int)str_replace('SRID=', '', $sridPart);
 
         $pointPart = substr($wkt, strpos($wkt, 'POINT') + 6);
-        $pointPart = str_replace('Z', '', trim($pointPart, ' ()'));
+        $pointPart = str_replace('Z', '', $pointPart);
+        $pointPart = trim($pointPart, ' ()');
         $coordinates = explode(' ', $pointPart);
 
         [$x, $y, $z] = array_pad(array_map('floatval', $coordinates), 3, null);

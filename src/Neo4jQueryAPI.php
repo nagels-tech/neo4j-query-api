@@ -15,7 +15,7 @@ use Neo4j\QueryAPI\loginConfig;
 class Neo4jQueryAPI
 {
     private Client $client;
-    private LoginConfig $loginConfig;
+    private loginConfig $loginConfig;
     private Configuration $config;
     private ResponseParser $responseParser;
 

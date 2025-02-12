@@ -143,7 +143,6 @@ class Neo4jOGMTest extends TestCase
 
     public function testWithWGS84_3DPoint(): void
     {
-
         $point = $this->ogm->map([
             '$type' => 'Point',
             '_value' => 'SRID=4979;POINT Z (12.34 56.78 100.5)',

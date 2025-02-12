@@ -5,11 +5,13 @@ namespace Neo4j\QueryAPI\Results;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use Neo4j\QueryAPI\Enums\AccessMode;
+use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\Bookmarks;  // Make sure to include the Bookmarks class
 use Traversable;
-use Neo4j\QueryAPI\Enums\AccessMode;
+
+// Make sure to include the Bookmarks class
 
 /**
  * @api
