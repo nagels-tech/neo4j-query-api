@@ -20,7 +20,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
 use Psr\Http\Client\RequestExceptionInterface;
-
+/** @psalm-suppress UnusedClass */
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;

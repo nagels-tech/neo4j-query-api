@@ -6,7 +6,7 @@ use Neo4j\QueryAPI\Results\ResultRow;
 use OutOfBoundsException;
 use BadMethodCallException;
 use PHPUnit\Framework\TestCase;
-
+/** @psalm-suppress UnusedClass */
 class ResultRowTest extends TestCase
 {
     public function testArrayAccessGet(): void
@@ -20,7 +20,7 @@ class ResultRowTest extends TestCase
         $this->assertEquals('Bob', $row['name']);
         $this->assertEquals(20, $row['age']);
     }
-
+    /** @psalm-suppress UnusedVariable */
     public function testArrayAccessInvalidKey(): void
     {
         $row = new ResultRow([

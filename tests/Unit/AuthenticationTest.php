@@ -4,7 +4,7 @@ namespace Neo4j\QueryAPI\Tests\Unit;
 
 use Neo4j\QueryAPI\Objects\Authentication;
 use PHPUnit\Framework\TestCase;
-
+/** @psalm-suppress UnusedClass */
 class AuthenticationTest extends TestCase
 {
     public function testBearerToken(): void
