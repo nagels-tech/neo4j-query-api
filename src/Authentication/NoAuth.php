@@ -9,6 +9,15 @@ use Psr\Http\Message\RequestInterface;
  */
 class NoAuth implements AuthenticateInterface
 {
+    public function getHeader(): string
+    {
+        return '';
+    }
+
+    public function getType(): string
+    {
+        return 'NoAuth';
+    }
     public function authenticate(RequestInterface $request): RequestInterface
     {
         return $request;

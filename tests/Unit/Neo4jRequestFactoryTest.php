@@ -18,20 +18,22 @@ use Neo4j\QueryAPI\Objects\Authentication;
  */
 class Neo4jRequestFactoryTest extends TestCase
 {
+
     private $psr17Factory;
     private $streamFactory;
-    private string $address;
-    private string $authHeader;
+    private string $address = '';
+    private string $authHeader = '';
 
     /**
      * @throws Exception
      */
+
     protected function setUp(): void
     {
         $this->psr17Factory = $this->createMock(RequestFactoryInterface::class);
         $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
 
-        $this->address = getenv('NEO4J_ADDRESS');
+        $this->address =  getenv('NEO4J_ADDRESS');
 
         $auth = Authentication::fromEnvironment();
         $this->authHeader = $auth->getHeader();
@@ -40,7 +42,7 @@ class Neo4jRequestFactoryTest extends TestCase
     /**
      * Test for buildRunQueryRequest
      */
-    public function testBuildRunQueryRequest()
+    public function testBuildRunQueryRequest(): void
     {
         $cypher = 'MATCH (n) RETURN n';
         $parameters = ['param1' => 'value1'];
@@ -78,7 +80,7 @@ class Neo4jRequestFactoryTest extends TestCase
     /**
      * Test for buildBeginTransactionRequest
      */
-    public function testBuildBeginTransactionRequest()
+    public function testBuildBeginTransactionRequest(): void
     {
         $database = 'neo4j';
         $uri = "{$this->address}/db/{$database}/query/v2/tx";
@@ -107,7 +109,7 @@ class Neo4jRequestFactoryTest extends TestCase
     /**
      * Test for buildCommitRequest
      */
-    public function testBuildCommitRequest()
+    public function testBuildCommitRequest(): void
     {
         $database = 'neo4j';
         $transactionId = '12345';
@@ -137,7 +139,7 @@ class Neo4jRequestFactoryTest extends TestCase
     /**
      * Test for buildRollbackRequest
      */
-    public function testBuildRollbackRequest()
+    public function testBuildRollbackRequest(): void
     {
         $database = 'neo4j';
         $transactionId = '12345';
@@ -167,7 +169,7 @@ class Neo4jRequestFactoryTest extends TestCase
     /**
      * Test for createRequest method with headers and body
      */
-    public function testCreateRequestWithHeadersAndBody()
+    public function testCreateRequestWithHeadersAndBody(): void
     {
         $cypher = 'MATCH (n) RETURN n';
         $parameters = ['param1' => 'value1'];
@@ -206,7 +208,8 @@ class Neo4jRequestFactoryTest extends TestCase
     /**
      * Test createRequest without Authorization header
      */
-    public function testCreateRequestWithoutAuthorizationHeader()
+    public function testCreateRequestWithoutAuthorizationHeader(): void
+
     {
         $cypher = 'MATCH (n) RETURN n';
         $parameters = ['param1' => 'value1'];

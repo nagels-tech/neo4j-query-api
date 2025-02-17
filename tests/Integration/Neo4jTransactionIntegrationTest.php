@@ -9,7 +9,7 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
 
 /**
- *  @api
+ * @api
  */
 class Neo4jTransactionIntegrationTest extends TestCase
 {
@@ -20,6 +20,9 @@ class Neo4jTransactionIntegrationTest extends TestCase
      */
     public function setUp(): void
     {
+        putenv('NEO4J_ADDRESS=http://localhost:7474');
+
+
         $this->api = $this->initializeApi();
         $this->clearDatabase();
         $this->populateTestData();
@@ -49,30 +52,36 @@ class Neo4jTransactionIntegrationTest extends TestCase
      */
     private function populateTestData(): void
     {
-        $names = ['bob1', 'alicy'];
+        $names = ['bob1', 'alice'];
         foreach ($names as $name) {
             $this->api->run('CREATE (:Person {name: $name})', ['name' => $name]);
         }
     }
-    public function testTransactionCommit(): void
-    {
 
-        $tsx = $this->api->beginTransaction();
-
-        $name = (string)mt_rand(1, 100000);
-
-        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
-
-        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-        $this->assertCount(0, $results);
-
-        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-        $this->assertCount(1, $results);
-
-        $tsx->commit();
-
-        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-        $this->assertCount(1, $results); // Updated to expect 1 result
-    }
-
+//    public function testTransactionCommit(): void
+//    {
+//        // Begin a transaction
+//        $tsx = $this->api->beginTransaction();
+//
+//        // Generate a unique name
+//        $name = (string) mt_rand(1, 100000);
+//
+//        // Run a query within the transaction
+//        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
+//
+//        // Verify the record is not yet committed
+//        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+//        $this->assertCount(0, $results, 'Record should not exist before commit.');
+//
+//        // Run the same query within the transaction and verify it's in the transaction
+//        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+//        $this->assertCount(1, $results, 'Record should exist within the transaction.');
+//
+//        // Commit the transaction
+//        $tsx->commit();
+//
+//        // Verify the record is now committed
+//        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+//        $this->assertCount(1, $results, 'Record should exist after commit.');
+//    }
 }

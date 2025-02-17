@@ -29,10 +29,11 @@ class AuthenticationTest extends TestCase
 
         putenv('NEO4J_USERNAME=' . $mockUsername);
         putenv('NEO4J_PASSWORD=' . $mockPassword);
+        $username = getenv('NEO4J_USERNAME') ?: 'defaultUsername';
+        $password = getenv('NEO4J_PASSWORD') ?: 'defaultPassword';
 
 
-        $auth = Authentication::basic(getenv('NEO4J_USERNAME'), getenv('NEO4J_PASSWORD'));
-
+        $auth = Authentication::basic($username, $password);
 
         $expectedHeader = 'Basic ' . base64_encode("$mockUsername:$mockPassword");
         $this->assertEquals($expectedHeader, $auth->getHeader(), 'Basic authentication header mismatch.');

@@ -49,7 +49,7 @@ return new ResultSet(
             dbHits: 0,
             batchSize: 128,
             details: "",
-            plannerVersion: 5.26,
+            plannerVersion: (string) 5.26,
             pipelineInfo: "In Pipeline 3",
             runtimeVersion: 5.26,
             id: 0,

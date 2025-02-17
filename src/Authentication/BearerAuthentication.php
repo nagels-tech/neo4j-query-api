@@ -11,6 +11,7 @@ class BearerAuthentication implements AuthenticateInterface
 {
     public function __construct(private string $token)
     {
+        $this->token = $token;
     }
 
     public function authenticate(RequestInterface $request): RequestInterface

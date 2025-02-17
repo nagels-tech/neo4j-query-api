@@ -24,13 +24,14 @@ use Neo4j\QueryAPI\Enums\AccessMode;
 use Neo4j\QueryAPI\ResponseParser;
 use Neo4j\QueryAPI\Configuration;
 use GuzzleHttp\Psr7\Response;
+use RuntimeException;
 
 /**
  *  @api
  */
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
-    private Neo4jQueryAPI $api;
+    private readonly Neo4jQueryAPI $api;
 
     /**
      * @throws GuzzleException
@@ -90,15 +91,17 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     {
         $result = $this->api->run('CREATE (x:Node {hello: "world"})');
 
-        $this->assertEquals(1, $result->getQueryCounters()->getNodesCreated());
+        $queryCounters = $result->getQueryCounters();
+
+        $this->assertNotNull($queryCounters);
+        $this->assertEquals(1, $queryCounters->getNodesCreated());
     }
 
     public function testCreateBookmarks(): void
     {
-        $this->api = $this->initializeApi();
         $result = $this->api->run(cypher: 'CREATE (x:Node {hello: "world"})');
 
-        $bookmarks = $result->getBookmarks();
+        $bookmarks = new Bookmarks($result->getBookmarks() ?: []);
 
         $result = $this->api->run('CREATE (x:Node {hello: "world2"})');
 
@@ -214,6 +217,10 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $result = $this->api->run($query);
         $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
         $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
+
+        if ($body === false) {
+            throw new RuntimeException('Failed to read the file: ' . __DIR__ . '/../resources/responses/complex-query-profile.json');
+        }
         $mockSack = new MockHandler([
             new Response(200, [], $body),
         ]);
@@ -425,6 +432,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
 
@@ -446,7 +455,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithInteger(): void
@@ -472,7 +482,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
 
@@ -499,7 +510,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithNull(): void
@@ -525,7 +537,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks()->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithBoolean(): void
@@ -551,7 +564,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithString(): void
@@ -577,7 +591,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithArray(): void
@@ -605,7 +620,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithDate(): void
@@ -633,7 +649,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithDuration(): void
@@ -661,7 +678,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithWGS84_2DPoint(): void
@@ -694,7 +712,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithWGS84_3DPoint(): void
@@ -727,7 +746,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithCartesian2DPoint(): void
@@ -759,7 +779,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);
     }
 
     public function testWithCartesian3DPoint(): void
@@ -792,8 +813,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
-    }
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks); }
 
     public function testWithNode(): void
     {
@@ -836,8 +857,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
-    }
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);    }
 
     public function testWithPath(): void
     {
@@ -885,8 +906,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
-    }
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);    }
 
 
     public function testWithMap(): void
@@ -917,8 +938,8 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
-    }
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);    }
 
     public function testWithRelationship(): void
     {
@@ -976,6 +997,6 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $this->assertCount(1, $results->getBookmarks());
-    }
+        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertCount(1, $bookmarks);    }
 }
