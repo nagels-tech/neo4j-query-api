@@ -7,6 +7,7 @@ use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Results\ResultSet;
+use Neo4j\QueryAPI\Configuration;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
@@ -14,34 +15,41 @@ use Psr\Http\Message\ResponseInterface;
 
 class Neo4jQueryAPI
 {
+    private Configuration $config;
+
     public function __construct(
         private ClientInterface $client,
         private ResponseParser $responseParser,
-        private Neo4jRequestFactory $requestFactory
+        private Neo4jRequestFactory $requestFactory,
+        ?Configuration $config = null
     ) {
+        $this->config = $config ?? new Configuration(getenv("NEO4J_ADDRESS")); // Default configuration if not provided
     }
 
     /**
      * @api
      */
-    public static function login(string $address, AuthenticateInterface $auth = null): self
+    public static function login(string $address, ?AuthenticateInterface $auth = null, ?Configuration $config = null): self
     {
         $client = new Client();
+        $config = $config ?? new Configuration(baseUri: $address);
 
         return new self(
             client: $client,
-            responseParser: new ResponseParser(
-                ogm: new OGM()
-            ),
+            responseParser: new ResponseParser(new OGM()),
             requestFactory: new Neo4jRequestFactory(
                 psr17Factory: new Psr17Factory(),
                 streamFactory: new Psr17Factory(),
-                configuration: new Configuration(
-                    baseUri: $address
-                ),
+                configuration: $config,
                 auth: $auth ?? Authentication::fromEnvironment()
-            )
+            ),
+            config: $config
         );
+    }
+
+    public function getConfig(): Configuration
+    {
+        return $this->config;
     }
 
     /**
@@ -59,7 +67,6 @@ class Neo4jQueryAPI
 
         return $this->responseParser->parseRunQueryResponse($response);
     }
-
     /**
      * Starts a transaction.
      */
@@ -86,6 +93,7 @@ class Neo4jQueryAPI
         );
     }
 
+
     /**
      * Handles request exceptions by parsing error details and throwing a Neo4jException.
      *
@@ -95,7 +103,7 @@ class Neo4jQueryAPI
     {
         $response = $e->getResponse();
         if ($response instanceof ResponseInterface) {
-            $errorResponse = json_decode((string)$response->getBody(), true);
+            $errorResponse = json_decode((string) $response->getBody(), true);
             throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
         }
 
