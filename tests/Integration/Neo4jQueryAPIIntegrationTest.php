@@ -81,9 +81,23 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     }
 
 
-    private function initializeApi(): Neo4jQueryAPI
+    /*private function initializeApi(): Neo4jQueryAPI
     {
         return Neo4jQueryAPI::login(getenv('NEO4J_ADDRESS'), Authentication::fromEnvironment());
+    }*/
+
+    private function initializeApi(): Neo4jQueryAPI
+    {
+        $client = new Client();
+        $responseParser = new ResponseParser(ogm: new OGM());
+
+        $requestFactory = new Neo4jRequestFactory(
+            psr17Factory: new Psr17Factory(),
+            streamFactory: new Psr17Factory(),
+            configuration: new Configuration(baseUri: getenv('NEO4J_ADDRESS')),
+            auth: Authentication::fromEnvironment()
+        );
+        return new Neo4jQueryAPI($client, $responseParser, $requestFactory);
     }
 
     public function testCounters(): void
