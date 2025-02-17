@@ -44,8 +44,6 @@ class Neo4jQueryAPI
         );
     }
 
-
-
     /**
      * Executes a Cypher query.
      */
