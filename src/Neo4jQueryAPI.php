@@ -1,5 +1,4 @@
 <?php
-
 namespace Neo4j\QueryAPI;
 
 use GuzzleHttp\Client;
@@ -14,34 +13,19 @@ use Psr\Http\Message\ResponseInterface;
 
 class Neo4jQueryAPI
 {
+    private ClientInterface $client;
+    private ResponseParser $responseParser;
+    private Neo4jRequestFactory $requestFactory;
+
+    // Constructor injection for flexibility
     public function __construct(
-        private ClientInterface $client,
-        private ResponseParser $responseParser,
-        private Neo4jRequestFactory $requestFactory
+        ClientInterface $client,
+        ResponseParser $responseParser,
+        Neo4jRequestFactory $requestFactory
     ) {
-    }
-
-    /**
-     * @api
-     */
-    public static function login(string $address, AuthenticateInterface $auth = null): self
-    {
-        $client = new Client();
-
-        return new self(
-            client: $client,
-            responseParser: new ResponseParser(
-                ogm: new OGM()
-            ),
-            requestFactory: new Neo4jRequestFactory(
-                psr17Factory: new Psr17Factory(),
-                streamFactory: new Psr17Factory(),
-                configuration: new Configuration(
-                    baseUri: $address
-                ),
-                auth: $auth ?? Authentication::fromEnvironment()
-            )
-        );
+        $this->client = $client;
+        $this->responseParser = $responseParser;
+        $this->requestFactory = $requestFactory;
     }
 
     /**

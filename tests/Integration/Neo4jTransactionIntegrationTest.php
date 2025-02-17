@@ -3,9 +3,15 @@
 namespace Neo4j\QueryAPI\Tests\Integration;
 
 use Exception;
+use GuzzleHttp\Client;
+use Neo4j\QueryAPI\Configuration;
+use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\OGM;
+use Neo4j\QueryAPI\ResponseParser;
+use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -28,14 +34,29 @@ class Neo4jTransactionIntegrationTest extends TestCase
     /**
      * @throws Exception
      */
-    private function initializeApi(): Neo4jQueryAPI
+  /*  private function initializeApi(): Neo4jQueryAPI
     {
         return Neo4jQueryAPI::login(
             getenv('NEO4J_ADDRESS'),
             Authentication::fromEnvironment(),
         );
-    }
+    }*/
+    private function initializeApi(): Neo4jQueryAPI
+    {
+        $client = new Client(); // Guzzle Client
 
+
+        $responseParser = new ResponseParser(ogm: new OGM());
+
+        $requestFactory = new Neo4jRequestFactory(
+            psr17Factory: new Psr17Factory(),
+            streamFactory: new Psr17Factory(),
+            configuration: new Configuration(baseUri: getenv('NEO4J_ADDRESS')),
+            auth: Authentication::fromEnvironment()
+        );
+
+        return new Neo4jQueryAPI($client, $responseParser, $requestFactory);
+    }
     /**
      * @throws GuzzleException
      */
