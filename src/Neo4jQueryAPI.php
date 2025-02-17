@@ -34,6 +34,12 @@ class Neo4jQueryAPI
         $client = new Client();
         $config = $config ?? new Configuration(baseUri: $address);
 
+
+       /* if the user now passes a config object without an address it will break.
+
+$config = new Configuration(database: 'mydb');
+
+QueryApi::login('http://myaddress', Authentication::fromEnvironment(), $config);*/
         return new self(
             client: $client,
             responseParser: new ResponseParser(new OGM()),
@@ -44,6 +50,7 @@ class Neo4jQueryAPI
                 auth: $auth ?? Authentication::fromEnvironment()
             ),
             config: $config
+
         );
     }
 
