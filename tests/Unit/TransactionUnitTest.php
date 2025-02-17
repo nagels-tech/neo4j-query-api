@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI\Tests\Unit;
 
+use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
@@ -45,7 +46,7 @@ class TransactionUnitTest extends TestCase
 
         $mockRequest = $this->createMock(RequestInterface::class);
         $mockResponse = $this->createMock(ResponseInterface::class);
-        $mockResultSet = $this->createMock(\Neo4j\QueryAPI\Results\ResultSet::class);
+        $mockResultSet = $this->createMock(ResultSet::class);
 
         $this->requestFactory->expects($this->once())
             ->method('buildTransactionRunRequest')
