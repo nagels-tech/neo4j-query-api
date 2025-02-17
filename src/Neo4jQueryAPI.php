@@ -17,7 +17,7 @@ class Neo4jQueryAPI
     private ResponseParser $responseParser;
     private Neo4jRequestFactory $requestFactory;
 
-    // Constructor injection for flexibility
+
     public function __construct(
         ClientInterface $client,
         ResponseParser $responseParser,
