@@ -18,11 +18,12 @@ class OGM
      */
     public function map(array $object): mixed
     {
+
         if (!isset($object['$type'])) {
-            if (isset($object['elementId'], $object['labels'], $object['properties'])) {
-                return $this->mapNode($object); // Handle as a Node
+            if (array_key_exists('elementId', $object) && array_key_exists('labels', $object) && array_key_exists('properties', $object)) {
+                return $this->mapNode($object);
             }
-            throw new \InvalidArgumentException('Unknown object type: ' . json_encode($object));
+            throw new \InvalidArgumentException('Unknown object type: ' . json_encode($object, JSON_THROW_ON_ERROR));
         }
 
         //        if (!isset($object['_value'])) {
@@ -39,21 +40,30 @@ class OGM
             'Point' => $this->parseWKT($object['_value']),
             'Relationship' => $this->mapRelationship($object['_value']),
             'Path' => $this->mapPath($object['_value']),
-            default => throw new \InvalidArgumentException('Unknown type: ' . $object['$type'] . ' in object: ' . json_encode($object)),
+            default => throw new \InvalidArgumentException('Unknown type: ' . $object['$type'] . ' in object: ' . json_encode($object, JSON_THROW_ON_ERROR)),
         };
     }
 
     public static function parseWKT(string $wkt): Point
     {
-        $sridPart = substr($wkt, 0, strpos($wkt, ';'));
+        $sridPos = strpos($wkt, ';');
+        if ($sridPos === false) {
+            throw new \InvalidArgumentException("Invalid WKT format: missing ';'");
+        }
+        $sridPart = substr($wkt, 0, $sridPos);
         $srid = (int)str_replace('SRID=', '', $sridPart);
 
-        $pointPart = substr($wkt, strpos($wkt, 'POINT') + 6);
+        $pointPos = strpos($wkt, 'POINT');
+        if ($pointPos === false) {
+            throw new \InvalidArgumentException("Invalid WKT format: missing 'POINT'");
+        }
+        $pointPart = substr($wkt, $pointPos + 6);
+
         $pointPart = str_replace('Z', '', $pointPart);
         $pointPart = trim($pointPart, ' ()');
         $coordinates = explode(' ', $pointPart);
 
-        [$x, $y, $z] = array_pad(array_map('floatval', $coordinates), 3, null);
+        [$x, $y, $z] = array_pad(array_map('floatval', $coordinates), 3, 0.0);
 
         return new Point($x, $y, $z, $srid);
     }
