@@ -36,9 +36,23 @@ class Neo4jQueryAPITest extends TestCase
 
         Neo4jQueryAPI::login('http://myaddress', Authentication::fromEnvironment(), $config);
     }
-    /**
-     * Test to ensure that an exception is thrown when baseUri is empty.
-     */
+    public function testLoginWithNullConfiguration()
+    {
+        $config = null;
+
+        $api = Neo4jQueryAPI::login('http://myaddress', Authentication::fromEnvironment(), $config);
+
+        $this->assertInstanceOf(Neo4jQueryAPI::class, $api);$this->assertEquals('http://myaddress', $api->getConfig()->baseUri);
+    }
+    public function testConfigOnly()
+    {
+        $config = new COnfiguration(baseUri: 'http://valid.address');
+
+        $api = Neo4jQueryAPI::login(auth: Authentication::fromEnvironment(), config: $config);
+
+        $this->assertInstanceOf(Neo4jQueryAPI::class, $api);
+        $this->assertEquals('http://valid.address', $api->getConfig()->baseUri);
+    }
 
 
 }

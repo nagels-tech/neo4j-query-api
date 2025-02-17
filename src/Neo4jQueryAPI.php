@@ -23,13 +23,13 @@ class Neo4jQueryAPI
         private Neo4jRequestFactory $requestFactory,
         ?Configuration $config = null
     ) {
-        $this->config = $config ?? new Configuration(getenv("NEO4J_ADDRESS")); // Default configuration if not provided
+        $this->config = $config ?? new Configuration(baseUri: 'http://myaddress'); // Default configuration if not provided
     }
 
     /**
      * @api
      */
-    public static function login(string $address, ?AuthenticateInterface $auth = null, ?Configuration $config = null): self
+    public static function login(string $address = null, ?AuthenticateInterface $auth = null, ?Configuration $config = null): self
     {
         $client = new Client();
         $config = $config ?? new Configuration(baseUri: $address);
