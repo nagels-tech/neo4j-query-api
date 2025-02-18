@@ -90,7 +90,6 @@ class ResponseParser
 
     private function buildProfiledQueryPlan(?array $queryPlanData): ?ProfiledQueryPlan
     {
-
         if ($queryPlanData === null || empty($queryPlanData)) {
             return null;
         }
@@ -98,36 +97,46 @@ class ResponseParser
         /**
          * @var array<string, mixed> $mappedArguments
          */
-        $mappedArguments = array_map(function ($value): mixed {
-            if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
-                return $this->ogm->map($value);
+        $mappedArguments = array_map(function (array $value): mixed {
+            if (
+                isset($value['$type'], $value['_value']) &&
+                is_string($value['$type'])
+            ) {
+                return $this->ogm->map([
+                    '$type' => $value['$type'],
+                    '_value' => $value['_value']
+                ]); // ✅ Pass only expected keys
             }
             return $value;
         }, $queryPlanData['arguments'] ?? []);
 
         $queryArguments = new ProfiledQueryPlanArguments(
             globalMemory: $mappedArguments['GlobalMemory'] ?? null,
-            plannerImpl: $mappedArguments['planner-impl'] ?? null, //('planner-impl', $mappedArguments) ? $mappedArguments['planner-impl'] : null,
-            memory: array_key_exists('Memory', $mappedArguments) ? $mappedArguments['Memory'] : null,
-            stringRepresentation: array_key_exists('string-representation', $mappedArguments) ? $mappedArguments['string-representation'] : null,
-            runtime: array_key_exists('runtime', $mappedArguments) ? $mappedArguments['runtime'] : null,
-            time: array_key_exists('Time', $mappedArguments) ? $mappedArguments['Time'] : null,
-            pageCacheMisses: array_key_exists('PageCacheMisses', $mappedArguments) ? $mappedArguments['PageCacheMisses'] : null,
-            pageCacheHits: array_key_exists('PageCacheHits', $mappedArguments) ? $mappedArguments['PageCacheHits'] : null,
-            runtimeImpl: array_key_exists('runtime-impl', $mappedArguments) ? $mappedArguments['runtime-impl'] : null,
-            version: array_key_exists('version', $mappedArguments) ? $mappedArguments['version'] : null,
-            dbHits: array_key_exists('DbHits', $mappedArguments) ? $mappedArguments['DbHits'] : null,
-            batchSize: array_key_exists('batch-size', $mappedArguments) ? $mappedArguments['batch-size'] : null,
-            details: array_key_exists('Details', $mappedArguments) ? $mappedArguments['Details'] : null,
-            plannerVersion: array_key_exists('planner-version', $mappedArguments) ? $mappedArguments['planner-version'] : null,
-            pipelineInfo: array_key_exists('PipelineInfo', $mappedArguments) ? $mappedArguments['PipelineInfo'] : null,
-            runtimeVersion: array_key_exists('runtime-version', $mappedArguments) ? $mappedArguments['runtime-version'] : null,
-            id: array_key_exists('Id', $mappedArguments) ? $mappedArguments['Id'] : null,
-            estimatedRows: array_key_exists('EstimatedRows', $mappedArguments) ? $mappedArguments['EstimatedRows'] : null,
-            planner: array_key_exists('planner', $mappedArguments) ? $mappedArguments['planner'] : null,
-            rows: array_key_exists('Rows', $mappedArguments) ? $mappedArguments['Rows'] : null
+            plannerImpl: $mappedArguments['planner-impl'] ?? null,
+            memory: $mappedArguments['Memory'] ?? null,
+            stringRepresentation: $mappedArguments['string-representation'] ?? null,
+            runtime: $mappedArguments['runtime'] ?? null,
+            time: $mappedArguments['Time'] ?? null,
+            pageCacheMisses: $mappedArguments['PageCacheMisses'] ?? null,
+            pageCacheHits: $mappedArguments['PageCacheHits'] ?? null,
+            runtimeImpl: $mappedArguments['runtime-impl'] ?? null,
+            version: $mappedArguments['version'] ?? null,
+            dbHits: $mappedArguments['DbHits'] ?? null,
+            batchSize: $mappedArguments['batch-size'] ?? null,
+            details: $mappedArguments['Details'] ?? null,
+            plannerVersion: $mappedArguments['planner-version'] ?? null,
+            pipelineInfo: $mappedArguments['PipelineInfo'] ?? null,
+            runtimeVersion: $mappedArguments['runtime-version'] ?? null,
+            id: $mappedArguments['Id'] ?? null,
+            estimatedRows: $mappedArguments['EstimatedRows'] ?? null,
+            planner: $mappedArguments['planner'] ?? null,
+            rows: $mappedArguments['Rows'] ?? null
         );
-        $children = array_map(fn ($child) => $this->buildProfiledQueryPlan($child), $queryPlanData['children'] ?? []);
+
+        $children = array_map(
+            fn (array $child): ?ProfiledQueryPlan => $this->buildProfiledQueryPlan($child),
+            $queryPlanData['children'] ?? []
+        );
 
         return new ProfiledQueryPlan(
             $queryPlanData['dbHits'] ?? 0,
@@ -143,4 +152,5 @@ class ResponseParser
             $queryPlanData['identifiers'] ?? []
         );
     }
+
 }

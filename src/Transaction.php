@@ -20,7 +20,6 @@ class Transaction
         private Neo4jRequestFactory $requestFactory,
         private string $clusterAffinity,
         private string $transactionId
-
     ) {
     }
 
@@ -36,10 +35,16 @@ class Transaction
     {
         $request = $this->requestFactory->buildTransactionRunRequest($query, $parameters, $this->transactionId, $this->clusterAffinity);
 
+        $response = null; // ✅ Ensures response is always defined
+
         try {
             $response = $this->client->sendRequest($request);
         } catch (RequestExceptionInterface $e) {
             $this->handleRequestException($e);
+        }
+
+        if (!$response instanceof ResponseInterface) {
+            throw new Neo4jException(['message' => 'Failed to receive a valid response from Neo4j'], 500);
         }
 
         return $this->responseParser->parseRunQueryResponse($response);
@@ -51,7 +56,6 @@ class Transaction
     public function commit(): void
     {
         $request = $this->requestFactory->buildCommitRequest($this->transactionId, $this->clusterAffinity);
-
         $this->client->sendRequest($request);
     }
 
@@ -61,7 +65,6 @@ class Transaction
     public function rollback(): void
     {
         $request = $this->requestFactory->buildRollbackRequest($this->transactionId, $this->clusterAffinity);
-
         $this->client->sendRequest($request);
     }
 
@@ -72,7 +75,9 @@ class Transaction
      */
     private function handleRequestException(RequestExceptionInterface $e): void
     {
-        $response = $e->getResponse();
+        // ✅ Corrected: Check if exception has a response
+        $response = method_exists($e, 'getResponse') ? $e->getResponse() : null;
+
         if ($response instanceof ResponseInterface) {
             $errorResponse = json_decode((string)$response->getBody(), true);
             throw Neo4jException::fromNeo4jResponse($errorResponse, $e);

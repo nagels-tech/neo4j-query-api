@@ -14,9 +14,10 @@ class BasicAuthentication implements AuthenticateInterface
 
     public function __construct(?string $username = null, ?string $password = null)
     {
-        $this->username = $username ?? (getenv("NEO4J_USERNAME") !== false ? getenv("NEO4J_USERNAME") : '');
-        $this->password = $password ?? (getenv("NEO4J_PASSWORD") !== false ? getenv("NEO4J_PASSWORD") : '');
+        $this->username = $username ?? (is_string($envUser = getenv("NEO4J_USERNAME")) ? $envUser : '');
+        $this->password = $password ?? (is_string($envPass = getenv("NEO4J_PASSWORD")) ? $envPass : '');
     }
+
 
     public function authenticate(RequestInterface $request): RequestInterface
     {

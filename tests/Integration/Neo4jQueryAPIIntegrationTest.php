@@ -31,34 +31,30 @@ use RuntimeException;
  */
 class Neo4jQueryAPIIntegrationTest extends TestCase
 {
-    private readonly Neo4jQueryAPI $api;
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private Neo4jQueryAPI $api;
 
-    /**
-     * @throws GuzzleException
-     */
     public function setUp(): void
     {
         parent::setUp();
-
         $this->api = $this->initializeApi();
-
         $this->clearDatabase();
         $this->populateTestData();
     }
+
+
     public function testParseRunQueryResponse(): void
     {
         $query = 'CREATE (n:TestNode {name: "Test"}) RETURN n';
         $response = $this->api->run($query);
-        $bookmarks = $response->getBookmarks();
+        $bookmarks = $response->getBookmarks() ?? new Bookmarks([]);
 
         $this->assertEquals(new ResultSet(
             rows: [
                 new ResultRow([
                     'n' => new Node(
                         ['TestNode'],
-                        [
-                        'name' => 'Test'
-                    ]
+                        ['name' => 'Test']
                     )
                 ])
             ],
@@ -66,7 +62,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
                 containsUpdates: true,
                 nodesCreated: 1,
                 propertiesSet: 1,
-                labelsAdded:1
+                labelsAdded: 1
             ),
             bookmarks: $bookmarks,
             profiledQueryPlan: null,
@@ -74,23 +70,23 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         ), $response);
     }
 
-    public function testInvalidQueryHandling()
+    public function testInvalidQueryHandling(): void
     {
         $this->expectException(Neo4jException::class);
-
         $this->api->run('INVALID CYPHER QUERY');
     }
 
-
     private function initializeApi(): Neo4jQueryAPI
     {
-        return Neo4jQueryAPI::login(getenv('NEO4J_ADDRESS'), Authentication::fromEnvironment());
+        $address = getenv('NEO4J_ADDRESS');
+        if ($address === false) {
+            $address = 'default-address';
+        }
+        return Neo4jQueryAPI::login($address, Authentication::fromEnvironment());
     }
-
     public function testCounters(): void
     {
         $result = $this->api->run('CREATE (x:Node {hello: "world"})');
-
         $queryCounters = $result->getQueryCounters();
 
         $this->assertNotNull($queryCounters);
@@ -99,20 +95,20 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testCreateBookmarks(): void
     {
-        $result = $this->api->run(cypher: 'CREATE (x:Node {hello: "world"})');
+        $result = $this->api->run('CREATE (x:Node {hello: "world"})');
 
-        $bookmarks = new Bookmarks($result->getBookmarks() ?: []);
+        $bookmarks = $result->getBookmarks() ?? new Bookmarks([]);
 
         $result = $this->api->run('CREATE (x:Node {hello: "world2"})');
-
         $bookmarks->addBookmarks($result->getBookmarks());
 
-        $result = $this->api->run(cypher: 'MATCH (x:Node {hello: "world2"}) RETURN x');
-
+        $result = $this->api->run('MATCH (x:Node {hello: "world2"}) RETURN x');
         $bookmarks->addBookmarks($result->getBookmarks());
 
         $this->assertCount(1, $result);
     }
+
+
 
 
     public function testProfileExistence(): void

@@ -23,15 +23,17 @@ class AuthenticationTest extends TestCase
 
     public function testBasicAuthentication(): void
     {
-
         $mockUsername = 'mockUser';
         $mockPassword = 'mockPass';
 
         putenv('NEO4J_USERNAME=' . $mockUsername);
         putenv('NEO4J_PASSWORD=' . $mockPassword);
-        $username = getenv('NEO4J_USERNAME') ?: 'defaultUsername';
-        $password = getenv('NEO4J_PASSWORD') ?: 'defaultPassword';
 
+        $username = getenv('NEO4J_USERNAME');
+        $password = getenv('NEO4J_PASSWORD');
+
+        $username = is_string($username) ? $username : 'defaultUser';
+        $password = is_string($password) ? $password : 'defaultPass';
 
         $auth = Authentication::basic($username, $password);
 
@@ -48,7 +50,13 @@ class AuthenticationTest extends TestCase
         putenv('NEO4J_USERNAME=mockEnvUser');
         putenv('NEO4J_PASSWORD=mockEnvPass');
 
-        $auth = Authentication::basic(getenv('NEO4J_USERNAME'), getenv('NEO4J_PASSWORD'));
+        $username = getenv('NEO4J_USERNAME');
+        $password = getenv('NEO4J_PASSWORD');
+
+        $username = is_string($username) ? $username : 'fallbackUser';
+        $password = is_string($password) ? $password : 'fallbackPass';
+
+        $auth = Authentication::basic($username, $password);
 
         $expectedHeader = 'Basic ' . base64_encode("mockEnvUser:mockEnvPass");
         $this->assertEquals($expectedHeader, $auth->getHeader(), 'Basic authentication with environment variables mismatch.');
@@ -57,4 +65,5 @@ class AuthenticationTest extends TestCase
         putenv('NEO4J_USERNAME');
         putenv('NEO4J_PASSWORD');
     }
+
 }

@@ -26,19 +26,29 @@ use Neo4j\QueryAPI\Configuration;
  */
 class Neo4jQueryAPIUnitTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private OGM $ogm;
+
+    /** @psalm-suppress PropertyNotSetInConstructor */
     protected string $address;
+
+    /** @psalm-suppress PropertyNotSetInConstructor */
     protected ResponseParser $parser;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->address = getenv('NEO4J_ADDRESS');
+        $address = getenv('NEO4J_ADDRESS');
+        $this->address = is_string($address) ? $address : '';
 
         $this->ogm = new OGM();
         $this->parser = new ResponseParser($this->ogm);
     }
+
+
+
+
 
     public function testCorrectClientSetup(): void
     {
