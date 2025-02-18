@@ -26,7 +26,7 @@ $resultSet = $neo4j->run($cypher);
 foreach ($resultSet as $row) {
     $node = $row['n'];
 
-       $properties = $node->getProperties();
+    $properties = $node->getProperties();
 
     if (isset($properties['title'])) {
         echo "Movie Title: " . $properties['title'] . "\n";
