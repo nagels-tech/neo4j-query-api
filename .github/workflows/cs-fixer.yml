@@ -9,18 +9,29 @@ jobs:
     name: PHP CS Fixer
     runs-on: ubuntu-latest
 
+    services:
+      neo4j:
+        image: neo4j:latest
+        ports:
+          - 7474:7474
+          - 7687:7687
+        env:
+          NEO4J_AUTH: neo4j/password
+        options: --health-cmd="curl --silent --fail localhost:7474" --health-interval=10s --health-retries=5 --health-timeout=5s
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.2
-          tools: composer
+      - name: Set up Docker Compose
+        run: docker-compose -f docker-compose.yml up -d
 
-      - name: Install dependencies
-        run: composer install --no-progress --prefer-dist
+      - name: Install Composer dependencies
+        run: docker exec -t php-app composer install --no-progress --prefer-dist
 
       - name: Run PHP CS Fixer
-        run: vendor/bin/php-cs-fixer fix --dry-run --diff --allow-risky=yes
+        run: |
+          docker exec -t php-app vendor/bin/php-cs-fixer fix --dry-run --diff --allow-risky=yes
+
+      - name: Clean up Docker
+        run: docker-compose down

@@ -13,6 +13,12 @@ jobs:
     name: Run PHPUnit Tests
     runs-on: ubuntu-latest
 
+    services:
+      neo4j:
+        image: neo4j:latest
+        ports:
+          - 7474:7474
+          - 7687:7687
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
