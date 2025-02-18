@@ -7,12 +7,14 @@ use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @api
  */
 class Neo4jTransactionIntegrationTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private Neo4jQueryAPI $api;
 
     /**
@@ -33,10 +35,13 @@ class Neo4jTransactionIntegrationTest extends TestCase
      */
     private function initializeApi(): Neo4jQueryAPI
     {
-        return Neo4jQueryAPI::login(
-            getenv('NEO4J_ADDRESS'),
-            Authentication::fromEnvironment(),
-        );
+        $address = getenv('NEO4J_ADDRESS');
+
+        if ($address === false) {
+            throw new RuntimeException('NEO4J_ADDRESS is not set in the environment.');
+        }
+
+        return Neo4jQueryAPI::login($address, Authentication::fromEnvironment());
     }
 
     /**

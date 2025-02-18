@@ -24,11 +24,15 @@ class Authentication
 
     public static function fromEnvironment(): AuthenticateInterface
     {
-        $username = getenv("NEO4J_USERNAME") ?: '';
-        $password = getenv("NEO4J_PASSWORD") ?: '';
+        $username = getenv("NEO4J_USERNAME");
+        $password = getenv("NEO4J_PASSWORD");
 
-        return new BasicAuthentication($username, $password);
+        return new BasicAuthentication(
+            $username !== false ? $username : null,
+            $password !== false ? $password : null
+        );
     }
+
 
 
 

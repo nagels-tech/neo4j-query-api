@@ -9,32 +9,39 @@ use IteratorAggregate;
 use OutOfBoundsException;
 use ArrayAccess;
 use Traversable;
-
 /**
- * @template TKey of array-key
  * @template TValue
- * @implements ArrayAccess<TKey, TValue>
- * @implements IteratorAggregate<TKey, TValue>
+ * @implements ArrayAccess<string, TValue>
+ * @implements IteratorAggregate<string, TValue>
  */
 class ResultRow implements ArrayAccess, Countable, IteratorAggregate
 {
-    public function __construct(private array $data)
-    {
+    /** @var array<string, TValue> */
+    private array $data;
 
+    public function __construct(array $data)
+    {
+        $this->data = $data;
     }
 
-
-    public function offsetExists($offset): bool
-    {
-        return isset($this->data[$offset]);
-    }
-
-    public function offsetGet($offset): mixed
+    public function offsetGet(mixed $offset): mixed
     {
         if (!$this->offsetExists($offset)) {
             throw new OutOfBoundsException("Column {$offset} not found.");
         }
         return $this->data[$offset];
+    }
+
+    public function get(string $row): mixed
+    {
+        return $this->offsetGet($row);
+    }
+
+
+
+    public function offsetExists($offset): bool
+    {
+        return isset($this->data[$offset]);
     }
 
     public function offsetSet($offset, $value): void
@@ -45,11 +52,6 @@ class ResultRow implements ArrayAccess, Countable, IteratorAggregate
     {
         throw new BadMethodCallException("You can't Unset {$offset}.");
 
-    }
-
-    public function get(string $row): mixed
-    {
-        return $this->offsetGet($row);
     }
 
     public function count(): int
