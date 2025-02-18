@@ -11,13 +11,17 @@ jobs:
 
     services:
       neo4j:
-        image: neo4j:latest
+        image: neo4j:5.5  # Use a stable version instead of 'latest'
         ports:
           - 7474:7474
           - 7687:7687
         env:
           NEO4J_AUTH: neo4j/password
-        options: --health-cmd="curl --silent --fail localhost:7474" --health-interval=10s --health-retries=5 --health-timeout=5s
+        options:
+          --health-cmd="curl --silent --fail http://localhost:7474"
+          --health-interval=10s
+          --health-retries=5
+          --health-timeout=5s
 
     steps:
       - name: Checkout code
@@ -25,6 +29,15 @@ jobs:
 
       - name: Set up Docker Compose
         run: docker-compose -f docker-compose.yml up -d
+
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for Neo4j service to be ready..."
+          # Check if Neo4j is up and running by polling the health endpoint
+          until curl --silent --fail http://localhost:7474; do
+            echo "Waiting for Neo4j to become available..."
+            sleep 5
+          done
 
       - name: Install Composer dependencies
         run: docker exec -t php-app composer install --no-progress --prefer-dist
