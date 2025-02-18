@@ -1,4 +1,5 @@
 <?php
+
 namespace Neo4j\QueryAPI\Tests\Integration;
 
 use InvalidArgumentException;
@@ -6,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Configuration;
+
 
 class Neo4jQueryAPITest extends TestCase
 {
@@ -42,7 +44,8 @@ class Neo4jQueryAPITest extends TestCase
 
         $api = Neo4jQueryAPI::login('http://myaddress', Authentication::fromEnvironment(), $config);
 
-        $this->assertInstanceOf(Neo4jQueryAPI::class, $api);$this->assertEquals('http://myaddress', $api->getConfig()->baseUri);
+        $this->assertInstanceOf(Neo4jQueryAPI::class, $api);
+        $this->assertEquals('http://myaddress', $api->getConfig()->baseUri);
     }
     public function testConfigOnly()
     {
