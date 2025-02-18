@@ -13,20 +13,6 @@ jobs:
     name: Run PHPUnit Tests
     runs-on: ubuntu-latest
 
-    services:
-      neo4j:
-        image: neo4j:latest
-        ports:
-          - 7474:7474
-          - 7687:7687
-        env:
-          NEO4J_AUTH: neo4j/password
-        options: >-
-          --health-cmd "curl --silent --fail localhost:7474 || exit 1"
-          --health-interval 10s
-          --health-retries 5
-          --health-timeout 5s
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -47,9 +33,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
 
-      - name: Load environment variables from .env
-        run: |
-          export $(grep -v '^#' .env | xargs)
-
-      - name: Run PHPUnit Tests
+      - name: Run Tests without phpunit.xml
+        env:
+          NEO4J_ADDRESS: ${{ secrets.NEO4J_ADDRESS }}
+          NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+          NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
         run: vendor/bin/phpunit --configuration phpunit.dist.xml
