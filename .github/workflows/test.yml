@@ -33,5 +33,13 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
 
-      - name: Run Tests with phpunit.dist.xml
+      - name: Set Neo4j Environment Variables
+        run: |
+          echo "NEO4J_AUTH=neo4j/${NEO4J_PASSWORD}" >> $GITHUB_ENV
+          echo "NEO4J_ADDRESS=${NEO4J_ADDRESS}" >> $GITHUB_ENV
+        env:
+          NEO4J_PASSWORD: "***REMOVED***"
+          NEO4J_ADDRESS: "***REMOVED***"
+
+      - name: Run Tests
         run: vendor/bin/phpunit --configuration phpunit.dist.xml
