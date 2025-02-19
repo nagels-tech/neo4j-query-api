@@ -36,12 +36,10 @@ jobs:
       - name: Set Neo4j Environment Variables
         run: |
           echo "NEO4J_ADDRESS=***REMOVED***" >> $GITHUB_ENV
-          echo "NEO4J_USERNAME=neo4j" >> $GITHUB_ENV
-          echo "NEO4J_PASSWORD=***REMOVED***" >> $GITHUB_ENV
+          echo "NEO4J_AUTH=neo4j/***REMOVED***" >> $GITHUB_ENV
 
       - name: Run Tests
         env:
           NEO4J_ADDRESS: ${{ env.NEO4J_ADDRESS }}
-          NEO4J_USERNAME: ${{ env.NEO4J_USERNAME }}
-          NEO4J_PASSWORD: ${{ env.NEO4J_PASSWORD }}
+          NEO4J_AUTH: ${{ env.NEO4J_AUTH }}
         run: vendor/bin/phpunit --configuration phpunit.dist.xml
