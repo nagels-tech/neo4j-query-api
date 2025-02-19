@@ -33,6 +33,5 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
 
-      - name: Run Tests using phpunit.dist.xml
+      - name: Run Tests with phpunit.dist.xml
         run: vendor/bin/phpunit --configuration phpunit.dist.xml
-#main file
