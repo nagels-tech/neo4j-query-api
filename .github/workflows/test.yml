@@ -19,7 +19,7 @@ jobs:
         env:
           NEO4J_AUTH: neo4j/password
         options: >-
-          --health-cmd "curl --silent --fail http://localhost:7474 || exit 1"
+          --health-cmd "wget --no-verbose --tries=1 --spider localhost:7474 || exit 1"
           --health-interval 10s
           --health-retries 5
           --health-timeout 5s
