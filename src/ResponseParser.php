@@ -105,7 +105,7 @@ class ResponseParser
                 return $this->ogm->map([
                     '$type' => $value['$type'],
                     '_value' => $value['_value']
-                ]); // ✅ Pass only expected keys
+                ]);
             }
             return $value;
         }, $queryPlanData['arguments'] ?? []);
