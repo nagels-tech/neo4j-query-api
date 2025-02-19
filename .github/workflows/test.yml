@@ -48,7 +48,7 @@ jobs:
 
       - name: Run Tests without phpunit.xml
         env:
-          NEO4J_ADDRESS: "http://neo4j"
+          NEO4J_ADDRESS: "http://localhost"
           NEO4J_USERNAME: "neo4j"
           NEO4J_PASSWORD: "password"
         run: vendor/bin/phpunit --configuration phpunit.dist.xml
