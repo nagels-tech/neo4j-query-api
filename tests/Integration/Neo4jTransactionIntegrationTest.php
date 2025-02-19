@@ -22,8 +22,13 @@ class Neo4jTransactionIntegrationTest extends TestCase
      */
     public function setUp(): void
     {
-        putenv('NEO4J_ADDRESS=http://localhost:7474');
+        parent::setUp();
 
+        $address = is_string(getenv('NEO4J_ADDRESS')) ? getenv('NEO4J_ADDRESS') : '';
+
+        if ($address === '') {
+            throw new RuntimeException('NEO4J_ADDRESS is not set.');
+        }
 
         $this->api = $this->initializeApi();
         $this->clearDatabase();

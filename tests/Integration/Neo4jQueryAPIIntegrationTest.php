@@ -212,17 +212,26 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $result = $this->api->run($query);
         $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+
         $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
 
         if ($body === false) {
             throw new RuntimeException('Failed to read the file: ' . __DIR__ . '/../resources/responses/complex-query-profile.json');
         }
+
         $mockSack = new MockHandler([
             new Response(200, [], $body),
         ]);
 
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
+
+        $neo4jAddress = is_string(getenv('NEO4J_ADDRESS')) ? getenv('NEO4J_ADDRESS') : '';
+
+        if ($neo4jAddress === '') {
+            throw new RuntimeException('NEO4J_ADDRESS is not set.');
+        }
+
         $auth = Authentication::fromEnvironment();
 
         $api = new Neo4jQueryAPI(
@@ -231,12 +240,13 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
             new Neo4jRequestFactory(
                 new Psr17Factory(),
                 new Psr17Factory(),
-                new Configuration('ABC'),
+                new Configuration($neo4jAddress),
                 $auth
             )
         );
 
-        $result = $api->run($query);
+
+$result = $api->run($query);
 
         $plan = $result->getProfiledQueryPlan();
         $this->assertNotNull($plan, "The result of the query should not be null.");
