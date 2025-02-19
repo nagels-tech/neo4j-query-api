@@ -1,0 +1,65 @@
+name: Test Neo4j Aura
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch: # Allows manual trigger
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests-aura:
+    name: Run PHPUnit Tests with Neo4j Aura
+    runs-on: ubuntu-latest
+
+    services:
+      neo4j:
+        image: neo4j:latest
+        ports:
+          - 7474:7474
+          - 7687:7687
+        env:
+          NEO4J_AUTH: neo4j/password
+        options: >-
+          --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:7474 || exit 1"
+          --health-interval 10s
+          --health-retries 5
+          --health-timeout 5s
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          tools: composer, xdebug
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install --no-progress --prefer-dist
+
+      - name: Set Neo4j Environment Variables
+        run: |
+          echo "NEO4J_ADDRESS=http://localhost:7474" >> $GITHUB_ENV
+          echo "NEO4J_USERNAME=neo4j" >> $GITHUB_ENV
+          echo "NEO4J_PASSWORD=password" >> $GITHUB_ENV
+          echo "NEO4J_AUTH=neo4j/password" >> $GITHUB_ENV
+
+      - name: Run Tests
+        env:
+          NEO4J_ADDRESS: ${{ env.NEO4J_ADDRESS }}
+          NEO4J_USERNAME: ${{ env.NEO4J_USERNAME }}
+          NEO4J_PASSWORD: ${{ env.NEO4J_PASSWORD }}
+          NEO4J_AUTH: ${{ env.NEO4J_AUTH }}
+        run: vendor/bin/phpunit --configuration phpunit.dist.xml
