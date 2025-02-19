@@ -10,9 +10,22 @@ concurrency:
 
 jobs:
   tests:
+    services:
+      neo4j:
+        image: neo4j:latest
+        ports:
+          - 7474:7474
+          - 7687:7687
+        env:
+          NEO4J_AUTH: neo4j/password
+        options: >-
+          --health-cmd "curl --silent --fail localhost:7474 || exit 1"
+          --health-interval 10s
+          --health-retries 5
+          --health-timeout 5s
+
     name: Run PHPUnit Tests
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -33,15 +46,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
 
-      - name: Set Neo4j Environment Variables
-        run: |
-          echo "NEO4J_ADDRESS=***REMOVED***" >> $GITHUB_ENV
-          echo "NEO4J_USERNAME=neo4j" >> $GITHUB_ENV
-          echo "NEO4J_PASSWORD=***REMOVED***" >> $GITHUB_ENV
-
-      - name: Run Tests
+      - name: Run Tests without phpunit.xml
         env:
-          NEO4J_ADDRESS: ${{ env.NEO4J_ADDRESS }}
-          NEO4J_USERNAME: ${{ env.NEO4J_USERNAME }}
-          NEO4J_PASSWORD: ${{ env.NEO4J_PASSWORD }}
+          NEO4J_ADDRESS: "http://neo4j"
+          NEO4J_USERNAME: "neo4j"
+          NEO4J_PASSWORD: "password"
         run: vendor/bin/phpunit --configuration phpunit.dist.xml
