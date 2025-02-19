@@ -33,9 +33,5 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
 
-      - name: Run Tests without phpunit.xml
-        env:
-          NEO4J_ADDRESS: ${{ secrets.NEO4J_ADDRESS }}
-          NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
-          NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
+      - name: Run Tests using phpunit.dist.xml
         run: vendor/bin/phpunit --configuration phpunit.dist.xml
