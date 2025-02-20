@@ -11,7 +11,6 @@ use Neo4j\QueryAPI\Configuration;
 /** @psalm-suppress UnusedClass */
 class Neo4jQueryAPITest extends TestCase
 {
-
     public function testLoginWithValidConfiguration()
     {
         $config = new Configuration(baseUri: 'http://valid.address');
