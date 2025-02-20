@@ -11,14 +11,6 @@ use Neo4j\QueryAPI\Configuration;
 /** @psalm-suppress UnusedClass */
 class Neo4jQueryAPITest extends TestCase
 {
-    public function testLoginWithConfigurationWithoutAddress()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Address (baseUri) must be provided.");
-        $config = new Configuration(baseUri: "");
-
-        Neo4jQueryAPI::login('http://myaddress', Authentication::fromEnvironment(), $config);
-    }
 
     public function testLoginWithValidConfiguration()
     {
@@ -28,16 +20,6 @@ class Neo4jQueryAPITest extends TestCase
 
         $this->assertInstanceOf(Neo4jQueryAPI::class, $api);
         $this->assertEquals('http://valid.address', $api->getConfig()->baseUri);
-    }
-
-    public function testLoginWithEmptyAddress()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Address (baseUri) must be provided.");
-
-        $config = new Configuration(baseUri: "");
-
-        Neo4jQueryAPI::login('http://myaddress', Authentication::fromEnvironment(), $config);
     }
 
     public function testLoginWithNullConfiguration()

@@ -26,8 +26,6 @@ class Configuration
         public readonly Bookmarks  $bookmarks = new Bookmarks([]),
         public readonly AccessMode $accessMode = AccessMode::WRITE,
     ) {
-        if (empty($this->baseUri)) {
-            throw new InvalidArgumentException("Address (baseUri) must be provided.");
-        }
+
     }
 }
