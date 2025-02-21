@@ -1,4 +1,5 @@
 <?php
+
 namespace Neo4j\QueryAPI;
 
 use Http\Discovery\Psr17FactoryDiscovery;
