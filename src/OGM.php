@@ -6,6 +6,7 @@ use Neo4j\QueryAPI\Objects\Point;
 use Neo4j\QueryAPI\Objects\Node;
 use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\Objects\Path;
+use InvalidArgumentException;
 
 /**
  *  @api
@@ -13,36 +14,61 @@ use Neo4j\QueryAPI\Objects\Path;
 class OGM
 {
     /**
-     * @param array{'$type': string, '_value': mixed} $object
+     * @param array<array-key, mixed> $data
      * @return mixed
      */
-    public function map(array $object): mixed
+    public function map(array $data): mixed
     {
-
-        if (!isset($object['$type'])) {
-            if (array_key_exists('elementId', $object) && array_key_exists('labels', $object) && array_key_exists('properties', $object)) {
-                return $this->mapNode($object);
-            }
-            throw new \InvalidArgumentException('Unknown object type: ' . json_encode($object, JSON_THROW_ON_ERROR));
+        if (!isset($data['$type']) || !array_key_exists('_value', $data) || !is_string($data['$type'])) {
+            throw new InvalidArgumentException("Unknown object type: " . json_encode($data, JSON_THROW_ON_ERROR));
         }
 
-        //        if (!isset($object['_value'])) {
-        //            throw new \InvalidArgumentException('Missing _value key in object: ' . json_encode($object));
-        //        }
-
-        return match ($object['$type']) {
-            'Integer', 'Float', 'String', 'Boolean', 'Duration', 'OffsetDateTime' => $object['_value'],
-            'Array' => $object['_value'],
+        return match ($data['$type']) {
+            'Integer', 'Float', 'String', 'Boolean', 'Duration', 'OffsetDateTime' => $data['_value'],
+            'Array', 'List' => is_array($data['_value']) ? array_map([$this, 'map'], $data['_value']) : [],
             'Null' => null,
-            'List' => array_map([$this, 'map'], $object['_value']),
-            'Node' => $this->mapNode($object['_value']),
-            'Map' => $this->mapProperties($object['_value']),
-            'Point' => $this->parseWKT($object['_value']),
-            'Relationship' => $this->mapRelationship($object['_value']),
-            'Path' => $this->mapPath($object['_value']),
-            default => throw new \InvalidArgumentException('Unknown type: ' . $object['$type'] . ' in object: ' . json_encode($object, JSON_THROW_ON_ERROR)),
+            'Node' => $this->mapNode($data['_value']),
+            'Map' => is_array($data['_value']) ? $this->mapProperties($data['_value']) : [],
+            'Point' => $this->parsePoint($data['_value']),
+            'Relationship' => $this->mapRelationship($data['_value']),
+            'Path' => $this->mapPath($data['_value']),
+            default => throw new InvalidArgumentException('Unknown type: ' . json_encode($data, JSON_THROW_ON_ERROR)),
         };
     }
+
+
+    private function parsePoint(string $value): Point
+    {
+        // Match SRID and coordinate values
+        if (preg_match('/SRID=(\d+);POINT(?: Z)? \(([-\d.]+) ([-\d.]+)(?: ([-\d.]+))?\)/', $value, $matches)) {
+            $srid = (int) $matches[1];
+            $x = (float) $matches[2];
+            $y = (float) $matches[3];
+            $z = isset($matches[4]) ? (float) $matches[4] : null; // Handle optional Z coordinate
+
+            return new Point($x, $y, $z, $srid);
+        }
+
+        throw new InvalidArgumentException("Invalid Point format: " . $value);
+    }
+
+
+    private function mapNode(array $nodeData): Node
+    {
+        return new Node(
+            labels: $nodeData['_labels'] ?? [],
+            properties: $this->mapProperties($nodeData['_properties'] ?? []) // ✅ Fix: Ensure properties exist
+        );
+    }
+
+    private function mapRelationship(array $relationshipData): Relationship
+    {
+        return new Relationship(
+            type: $relationshipData['_type'] ?? 'UNKNOWN',  // ✅ Fix: Default to 'UNKNOWN'
+            properties: $this->mapProperties($relationshipData['_properties'] ?? [])
+        );
+    }
+
 
     public static function parseWKT(string $wkt): Point
     {
@@ -69,25 +95,6 @@ class OGM
     }
 
 
-
-
-    private function mapNode(array $nodeData): Node
-    {
-        return new Node(
-            $nodeData['_labels'],
-            $this->mapProperties($nodeData['_properties'])
-        );
-    }
-
-
-    private function mapRelationship(array $relationshipData): Relationship
-    {
-        return new Relationship(
-            type: $relationshipData['_type'] ?? '',
-            properties: $this->mapProperties($relationshipData['_properties'] ?? [])
-        );
-    }
-
     private function mapPath(array $pathData): Path
     {
         $nodes = [];
@@ -106,7 +113,25 @@ class OGM
 
     private function mapProperties(array $properties): array
     {
-        return array_map([$this, 'map'], $properties);
+
+        $mappedProperties = [];
+
+        foreach ($properties as $key => $value) {
+            if (is_array($value) && isset($value['$type'], $value['_value'])) {
+                $mappedProperties[$key] = $this->map($value);
+            } elseif (is_scalar($value)) {
+                $mappedProperties[$key] = $value;
+            } elseif (is_array($value) && !isset($value['$type'])) {
+                $mappedProperties[$key] = $this->map(['$type' => 'Map', '_value' => $value]);
+            } else {
+                error_log("Invalid property format for key: {$key} => " . json_encode($value, JSON_THROW_ON_ERROR));
+
+                throw new \InvalidArgumentException("Invalid property format for key: {$key}");
+            }
+        }
+
+        return $mappedProperties;
     }
+
 
 }

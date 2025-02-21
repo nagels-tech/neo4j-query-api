@@ -19,12 +19,14 @@ class BasicAuthentication implements AuthenticateInterface
     }
 
 
+    #[\Override]
     public function authenticate(RequestInterface $request): RequestInterface
     {
         $authHeader = $this->getHeader();
         return $request->withHeader('Authorization', $authHeader);
     }
 
+    #[\Override]
     public function getHeader(): string
     {
         return 'Basic ' . base64_encode($this->username . ':' . $this->password);
@@ -32,6 +34,7 @@ class BasicAuthentication implements AuthenticateInterface
     /**
      * @psalm-suppress UnusedMethod
      */
+    #[\Override]
     public function getType(): string
     {
         return 'Basic';

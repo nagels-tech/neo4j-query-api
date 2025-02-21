@@ -2,7 +2,6 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
-
 use Neo4j\QueryAPI\OGM;
 use PHPUnit\Framework\TestCase;
 
@@ -14,6 +13,7 @@ class Neo4jOGMTest extends TestCase
     /** @psalm-suppress PropertyNotSetInConstructor */
     private OGM $ogm;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -55,29 +55,40 @@ class Neo4jOGMTest extends TestCase
     // More tests...
     public function testWithPath(): void
     {
-        // Flattened structure to match expected input
         $pathData = [
             '$type' => 'Path',
             '_value' => [
                 [
                     '$type' => 'Node',
-                    '_value' => ['name' => ['_value' => 'A']],
+                    '_value' => [
+                        '_labels' => ['Person'],
+                        '_properties' => [
+                            'name' => ['_value' => 'A'],  // ✅ Now correctly wrapped
+                        ],
+                    ],
                 ],
                 [
                     '$type' => 'Relationship',
-                    '_value' => ['_type' => 'FRIENDS', '_properties' => []],
+                    '_value' => [
+                        '_type' => 'FRIENDS',
+                        '_properties' => [],
+                    ],
                 ],
                 [
                     '$type' => 'Node',
-                    '_value' => ['name' => ['_value' => 'B']],
+                    '_value' => [
+                        '_labels' => ['Person'],
+                        '_properties' => [
+                            'name' => ['_value' => 'B'],  // ✅ Now correctly wrapped
+                        ],
+                    ],
                 ],
             ]
         ];
 
-        // Now this will work with map()
         $path = $this->ogm->map($pathData);
 
-        // Continue with assertions
+        // Assertions
         $this->assertCount(2, $path->getNodes());
         $this->assertCount(1, $path->getRelationships());
         $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);

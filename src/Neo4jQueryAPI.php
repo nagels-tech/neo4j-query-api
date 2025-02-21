@@ -13,17 +13,13 @@ use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
-class Neo4jQueryAPI
+final class Neo4jQueryAPI
 {
     public function __construct(
-
         private ClientInterface     $client,
         private ResponseParser      $responseParser,
         private Neo4jRequestFactory $requestFactory,
-
-
-    )
-    {
+    ) {
 
     }
 
@@ -118,4 +114,3 @@ class Neo4jQueryAPI
         throw new \RuntimeException('Request failed: ' . $e->getMessage(), 0, $e);
     }
 }
-

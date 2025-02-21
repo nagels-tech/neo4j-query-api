@@ -26,11 +26,13 @@ class Bookmarks implements \Countable, JsonSerializable
         return $this->bookmarks;
     }
 
+    #[\Override]
     public function count(): int
     {
         return count($this->bookmarks);
     }
 
+    #[\Override]
     public function jsonSerialize(): array
     {
         return $this->bookmarks;

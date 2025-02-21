@@ -5,7 +5,7 @@ namespace Neo4j\QueryAPI;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Enums\AccessMode;
 
-class Configuration
+final class Configuration
 {
     public function __construct(
         public readonly string     $baseUri,
