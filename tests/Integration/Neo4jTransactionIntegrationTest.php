@@ -101,7 +101,6 @@ class Neo4jTransactionIntegrationTest extends TestCase
 
         $tsx->rollback();
 
-        // Ensure the node is not in the database
         $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(0, $results);
     }
@@ -110,7 +109,7 @@ class Neo4jTransactionIntegrationTest extends TestCase
     {
         $tsx = $this->api->beginTransaction();
 
-        $name = 'committed_' . mt_rand(1, 100000);
+        $name = 'committed_' . (string) mt_rand(1, 100000);
         $tsx->run("CREATE (x:Person {name: \$name})", ['name' => $name]);
 
         $results = $this->api->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
@@ -125,7 +124,7 @@ class Neo4jTransactionIntegrationTest extends TestCase
     {
         $tsx = $this->api->beginTransaction();
 
-        $name = 'rollback_' . mt_rand(1, 100000);
+        $name = 'rollback_' .(string) mt_rand(1, 100000);
         $tsx->run("CREATE (x:Person {name: \$name})", ['name' => $name]);
 
         $results = $tsx->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);

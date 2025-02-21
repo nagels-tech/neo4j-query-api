@@ -3,7 +3,6 @@
 namespace Neo4j\QueryAPI\Tests\Integration;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use Neo4j\QueryAPI\Exception\Neo4jException;
@@ -19,7 +18,6 @@ use Neo4j\QueryAPI\OGM;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
 use Nyholm\Psr7\Factory\Psr17Factory;
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Enums\AccessMode;
 use Neo4j\QueryAPI\ResponseParser;
@@ -27,12 +25,8 @@ use Neo4j\QueryAPI\Configuration;
 use GuzzleHttp\Psr7\Response;
 use RuntimeException;
 
-/**
- *  @api
- */
-class Neo4jQueryAPIIntegrationTest extends TestCase
+final class Neo4jQueryAPIIntegrationTest extends TestCase
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
     private Neo4jQueryAPI $api;
 
     #[\Override]
