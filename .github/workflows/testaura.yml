@@ -1,31 +1,21 @@
-name: PHP Tests
+name: Test Neo4j Aura
 
 on:
   push:
-  workflow_dispatch:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual trigger
 
 concurrency:
-  group: ${{ github.ref }}
+  group: neo4j-aura-test-main
   cancel-in-progress: true
 
 jobs:
-  tests:
-    services:
-      neo4j:
-        image: neo4j:latest
-        ports:
-          - 7474:7474
-          - 7687:7687
-        env:
-          NEO4J_AUTH: neo4j/password
-        options: >-
-          --health-cmd "wget --no-verbose --tries=1 --spider localhost:7474 || exit 1"
-          --health-interval 10s
-          --health-retries 5
-          --health-timeout 5s
-
-    name: Run PHPUnit Tests
+  tests-aura:
+    name: Run PHPUnit Tests with Neo4j Aura
     runs-on: ubuntu-latest
+
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -46,9 +36,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-progress --prefer-dist
 
-      - name: Run Tests without phpunit.xml
+      - name: Run Tests
         env:
-          NEO4J_ADDRESS: "http://localhost:7474"
-          NEO4J_USERNAME: "neo4j"
-          NEO4J_PASSWORD: "password"
+          NEO4J_ADDRESS: ${{ secrets.NEO4J_ADDRESS }}
+          NEO4J_USERNAME: ${{ secrets.NEO4J_USERNAME }}
+          NEO4J_PASSWORD: ${{ secrets.NEO4J_PASSWORD }}
         run: vendor/bin/phpunit --configuration phpunit.dist.xml
