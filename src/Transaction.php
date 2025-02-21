@@ -7,12 +7,8 @@ use Neo4j\QueryAPI\Results\ResultSet;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
-use stdClass;
 
-/**
- *  @api
- */
-class Transaction
+final class Transaction
 {
     public function __construct(
         private ClientInterface $client,
@@ -25,7 +21,6 @@ class Transaction
 
     /**
      * Execute a Cypher query within the transaction.
-     * @api
      * @param string $query The Cypher query to be executed.
      * @param array $parameters Parameters for the query.
      * @return ResultSet The result rows in ResultSet format.
@@ -35,7 +30,7 @@ class Transaction
     {
         $request = $this->requestFactory->buildTransactionRunRequest($query, $parameters, $this->transactionId, $this->clusterAffinity);
 
-        $response = null; // ✅ Ensures response is always defined
+        $response = null;
 
         try {
             $response = $this->client->sendRequest($request);
@@ -50,18 +45,12 @@ class Transaction
         return $this->responseParser->parseRunQueryResponse($response);
     }
 
-    /**
-     * @api
-     */
     public function commit(): void
     {
         $request = $this->requestFactory->buildCommitRequest($this->transactionId, $this->clusterAffinity);
         $this->client->sendRequest($request);
     }
 
-    /**
-     * @api
-     */
     public function rollback(): void
     {
         $request = $this->requestFactory->buildRollbackRequest($this->transactionId, $this->clusterAffinity);
@@ -75,7 +64,6 @@ class Transaction
      */
     private function handleRequestException(RequestExceptionInterface $e): void
     {
-        // ✅ Corrected: Check if exception has a response
         $response = method_exists($e, 'getResponse') ? $e->getResponse() : null;
 
         if ($response instanceof ResponseInterface) {

@@ -15,15 +15,9 @@ use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use RuntimeException;
 
-/**
- *  @api
- */
-class Neo4jRequestFactoryTest extends TestCase
+final class Neo4jRequestFactoryTest extends TestCase
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
     private RequestFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $psr17Factory;
-
-    /** @psalm-suppress PropertyNotSetInConstructor */
     private StreamFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $streamFactory;
 
 

@@ -2,9 +2,9 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use http\Client;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
@@ -86,7 +86,7 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
         $queryCounters = $result->getQueryCounters();
 
         $this->assertNotNull($queryCounters);
-        $this->assertEquals(1, $queryCounters->getNodesCreated());
+        $this->assertEquals(1, $queryCounters->nodesCreated);
     }
 
     public function testCreateBookmarks(): void
@@ -397,7 +397,7 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
             ]);
         } catch (\Throwable $e) {
             $this->assertInstanceOf(Neo4jException::class, $e);
-            $this->assertEquals('Neo.ClientError.Statement.ParameterMissing', $e->getErrorCode());
+            $this->assertEquals('Neo.ClientError.Statement.ParameterMissing', $e->errorCode);
             $this->assertEquals('Expected parameter(s): invalidParam', $e->getMessage());
         }
     }

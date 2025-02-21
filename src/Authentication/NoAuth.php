@@ -4,10 +4,7 @@ namespace Neo4j\QueryAPI\Authentication;
 
 use Psr\Http\Message\RequestInterface;
 
-/**
- *  @api
- */
-class NoAuth implements AuthenticateInterface
+final class NoAuth implements AuthenticateInterface
 {
     #[\Override]
     public function getHeader(): string

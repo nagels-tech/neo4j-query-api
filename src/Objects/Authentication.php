@@ -7,10 +7,7 @@ use Neo4j\QueryAPI\Authentication\BasicAuthentication;
 use Neo4j\QueryAPI\Authentication\BearerAuthentication;
 use Neo4j\QueryAPI\Authentication\NoAuth;
 
-/**
- *  @api
- */
-class Authentication
+final class Authentication
 {
     public static function basic(string $username, string $password): AuthenticateInterface
     {
