@@ -35,6 +35,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
     /** @psalm-suppress PropertyNotSetInConstructor */
     protected ResponseParser $parser;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

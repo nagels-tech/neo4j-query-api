@@ -24,7 +24,7 @@ class ResultSet implements IteratorAggregate, Countable
     public function __construct(
         private readonly array $rows,
         private readonly ?ResultCounters $counters = null,
-        private readonly Bookmarks $bookmarks ,
+        private readonly Bookmarks $bookmarks,
         private readonly ?ProfiledQueryPlan $profiledQueryPlan,
         private readonly AccessMode $accessMode
     ) {
@@ -33,6 +33,7 @@ class ResultSet implements IteratorAggregate, Countable
     /**
      * @return Traversable<int, ResultRow>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->rows);
@@ -51,6 +52,7 @@ class ResultSet implements IteratorAggregate, Countable
     /**
      * @api
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->rows);

@@ -14,6 +14,7 @@ class BearerAuthentication implements AuthenticateInterface
         $this->token = $token;
     }
 
+    #[\Override]
     public function authenticate(RequestInterface $request): RequestInterface
     {
         $authHeader = 'Bearer ' . $this->token;
@@ -21,12 +22,14 @@ class BearerAuthentication implements AuthenticateInterface
     }
 
 
+    #[\Override]
     public function getHeader(): string
     {
         return 'Bearer ' . $this->token;
     }
 
 
+    #[\Override]
     public function getType(): string
     {
         return 'Bearer';

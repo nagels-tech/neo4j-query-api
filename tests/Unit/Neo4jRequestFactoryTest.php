@@ -14,6 +14,7 @@ use GuzzleHttp\Psr7\Utils;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use RuntimeException;
+
 /**
  *  @api
  */
@@ -33,9 +34,10 @@ class Neo4jRequestFactoryTest extends TestCase
     /**
      * @throws Exception
      */
-
+    #[\Override]
     protected function setUp(): void
     {
+        parent::setUp();
         $this->psr17Factory = $this->createMock(RequestFactoryInterface::class);
         $this->streamFactory = $this->createMock(StreamFactoryInterface::class);
 
@@ -45,9 +47,6 @@ class Neo4jRequestFactoryTest extends TestCase
         $auth = Authentication::fromEnvironment();
         $this->authHeader = $auth->getHeader();
     }
-
-
-
 
     /**
      * Test for buildRunQueryRequest
@@ -227,7 +226,6 @@ class Neo4jRequestFactoryTest extends TestCase
      * Test createRequest without Authorization header
      */
     public function testCreateRequestWithoutAuthorizationHeader(): void
-
     {
         $cypher = 'MATCH (n) RETURN n';
         $parameters = ['param1' => 'value1'];

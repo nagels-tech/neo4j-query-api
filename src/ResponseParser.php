@@ -12,8 +12,9 @@ use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Results\ResultRow;
 use RuntimeException;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
+use Neo4j\QueryAPI\Objects\Point;
 
-class ResponseParser
+final class ResponseParser
 {
     public function __construct(private readonly OGM $ogm)
     {
@@ -52,11 +53,40 @@ class ResponseParser
     /**
      * @return list<ResultRow>
      */
+    /**
+     * @param list<string> $fields
+     * @param list<array<array-key, mixed>> $values
+     * @return list<ResultRow>
+     */
     private function mapRows(array $fields, array $values): array
     {
-        $rows = array_map(fn($row) => new ResultRow($row), $values);
-        return array_values($rows);
+        return array_map(
+            fn (array $row): ResultRow => new ResultRow(
+                array_combine(
+                    $fields,
+                    array_map([$this, 'formatOGMOutput'], $row)
+                ) ?: [] // Ensure array_combine never returns false
+            ),
+            $values
+        );
     }
+
+    /**
+     * Ensures mapped output follows expected format
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    private function formatOGMOutput(mixed $value): mixed
+    {
+        if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
+            return $this->ogm->map($value);
+        }
+
+        return $value;
+    }
+
+
 
 
     private function buildCounters(array $countersData): ResultCounters
@@ -97,18 +127,14 @@ class ResponseParser
         /**
          * @var array<string, mixed> $mappedArguments
          */
-        $mappedArguments = array_map(function (array $value): mixed {
-            if (
-                isset($value['$type'], $value['_value']) &&
-                is_string($value['$type'])
-            ) {
-                return $this->ogm->map([
-                    '$type' => $value['$type'],
-                    '_value' => $value['_value']
-                ]);
+        $mappedArguments = array_map(function (mixed $value): mixed {
+            if (is_array($value) && isset($value['$type']) && isset($value['_value'])) {
+                return $this->ogm->map($value);
             }
+
             return $value;
         }, $queryPlanData['arguments'] ?? []);
+
 
         $queryArguments = new ProfiledQueryPlanArguments(
             globalMemory: $mappedArguments['GlobalMemory'] ?? null,

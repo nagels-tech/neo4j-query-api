@@ -11,6 +11,7 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\Node;
+use Neo4j\QueryAPI\Objects\Point;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Objects\ResultCounters;
@@ -34,6 +35,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     /** @psalm-suppress PropertyNotSetInConstructor */
     private Neo4jQueryAPI $api;
 
+    #[\Override]
     public function setUp(): void
     {
         parent::setUp();
@@ -226,11 +228,11 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         $handler = HandlerStack::create($mockSack);
         $client = new Client(['handler' => $handler]);
 
-        $neo4jAddress = is_string(getenv('NEO4J_ADDRESS')) ? getenv('NEO4J_ADDRESS') : '';
-
-        if ($neo4jAddress === '') {
+        $neo4jAddress = getenv('NEO4J_ADDRESS');
+        if (!is_string($neo4jAddress) || trim($neo4jAddress) === '') {
             throw new RuntimeException('NEO4J_ADDRESS is not set.');
         }
+
 
         $auth = Authentication::fromEnvironment();
 
@@ -246,7 +248,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         );
 
 
-$result = $api->run($query);
+        $result = $api->run($query);
 
         $plan = $result->getProfiledQueryPlan();
         $this->assertNotNull($plan, "The result of the query should not be null.");
@@ -726,7 +728,7 @@ $result = $api->run($query);
     {
         $expected = new ResultSet(
             [
-                new ResultRow(['n.Point' => 'SRID=4979;POINT (1.2 3.4 4.2)']),
+                new ResultRow(['n.Point' => new Point(1.2, 3.4, 4.2, 4979)]),
             ],
             new ResultCounters(
                 containsUpdates: true,
@@ -760,7 +762,7 @@ $result = $api->run($query);
     {
         $expected = new ResultSet(
             [
-                new ResultRow(['n.Point' => 'SRID=7203;POINT (10.5 20.7)']),
+                new ResultRow(['n.Point' => new Point(10.5, 20.7, null, 7203)]),
             ],
             new ResultCounters(
                 containsUpdates: true,
@@ -793,7 +795,7 @@ $result = $api->run($query);
     {
         $expected = new ResultSet(
             [
-                new ResultRow(['n.Point' => 'SRID=9157;POINT (10.5 20.7 30.9)']),
+                new ResultRow(['n.Point' => new Point(10.5, 20.7, 30.9, 9157)]),
             ],
             new ResultCounters(
                 containsUpdates: true,
@@ -820,7 +822,8 @@ $result = $api->run($query);
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
         $bookmarks = $results->getBookmarks() ?: [];
-        $this->assertCount(1, $bookmarks); }
+        $this->assertCount(1, $bookmarks);
+    }
 
     public function testWithNode(): void
     {
@@ -864,7 +867,8 @@ $result = $api->run($query);
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
         $bookmarks = $results->getBookmarks() ?: [];
-        $this->assertCount(1, $bookmarks);    }
+        $this->assertCount(1, $bookmarks);
+    }
 
     public function testWithPath(): void
     {
@@ -913,7 +917,8 @@ $result = $api->run($query);
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
         $bookmarks = $results->getBookmarks() ?: [];
-        $this->assertCount(1, $bookmarks);    }
+        $this->assertCount(1, $bookmarks);
+    }
 
 
     public function testWithMap(): void
@@ -945,7 +950,8 @@ $result = $api->run($query);
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
         $bookmarks = $results->getBookmarks() ?: [];
-        $this->assertCount(1, $bookmarks);    }
+        $this->assertCount(1, $bookmarks);
+    }
 
     public function testWithRelationship(): void
     {
@@ -1004,5 +1010,6 @@ $result = $api->run($query);
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
         $bookmarks = $results->getBookmarks() ?: [];
-        $this->assertCount(1, $bookmarks);    }
+        $this->assertCount(1, $bookmarks);
+    }
 }
