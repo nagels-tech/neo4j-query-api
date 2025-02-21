@@ -7,19 +7,30 @@ use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @api
  */
 class Neo4jTransactionIntegrationTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private Neo4jQueryAPI $api;
 
     /**
      * @throws GuzzleException
      */
+    #[\Override]
     public function setUp(): void
     {
+        parent::setUp();
+
+        $address = is_string(getenv('NEO4J_ADDRESS')) ? getenv('NEO4J_ADDRESS') : '';
+
+        if ($address === '') {
+            throw new RuntimeException('NEO4J_ADDRESS is not set.');
+        }
+
         $this->api = $this->initializeApi();
         $this->clearDatabase();
         $this->populateTestData();
@@ -30,10 +41,13 @@ class Neo4jTransactionIntegrationTest extends TestCase
      */
     private function initializeApi(): Neo4jQueryAPI
     {
-        return Neo4jQueryAPI::login(
-            getenv('NEO4J_ADDRESS'),
-            Authentication::fromEnvironment(),
-        );
+        $address = getenv('NEO4J_ADDRESS');
+
+        if ($address === false) {
+            throw new RuntimeException('NEO4J_ADDRESS is not set in the environment.');
+        }
+
+        return Neo4jQueryAPI::login($address, Authentication::fromEnvironment());
     }
 
     /**
@@ -49,7 +63,7 @@ class Neo4jTransactionIntegrationTest extends TestCase
      */
     private function populateTestData(): void
     {
-        $names = ['bob1', 'alicy'];
+        $names = ['bob1', 'alice'];
         foreach ($names as $name) {
             $this->api->run('CREATE (:Person {name: $name})', ['name' => $name]);
         }
@@ -80,7 +94,7 @@ class Neo4jTransactionIntegrationTest extends TestCase
     {
         $tsx = $this->api->beginTransaction();
 
-        $name = 'rollback_' . mt_rand(1, 100000);
+        $name = 'rollback_' . ((string) mt_rand(1, 100000));
         $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
         $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
         $this->assertCount(1, $results);

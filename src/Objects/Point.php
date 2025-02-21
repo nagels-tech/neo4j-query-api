@@ -72,7 +72,6 @@ class Point
      */
     public function __toString(): string
     {
-        $zValue = $this->z !== null ? " {$this->z}" : "";
-        return "SRID={$this->srid};POINT ({$this->x} {$this->y}{$zValue})";
+        return "SRID={$this->srid};POINT ({$this->x} {$this->y})";
     }
 }

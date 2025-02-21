@@ -3,6 +3,7 @@
 namespace Neo4j\QueryAPI\Tests\Unit;
 
 use Neo4j\QueryAPI\Results\ResultSet;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
@@ -16,14 +17,15 @@ use Psr\Http\Message\ResponseInterface;
  */
 class TransactionUnitTest extends TestCase
 {
-    private ClientInterface $client;
-    private Neo4jRequestFactory $requestFactory;
-    private ResponseParser $responseParser;
+    private MockObject $client;
+    private MockObject $requestFactory;
+    private MockObject $responseParser;
     private Transaction $transaction;
 
     private string $transactionId = 'txn123';
     private string $clusterAffinity = 'leader';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = $this->createMock(ClientInterface::class);
@@ -39,7 +41,7 @@ class TransactionUnitTest extends TestCase
         );
     }
 
-    public function testRunCallsBuildTransactionRunRequest()
+    public function testRunCallsBuildTransactionRunRequest(): void
     {
         $query = "CREATE (:Person {name: \$name})";
         $parameters = ['name' => 'Alice'];
@@ -68,7 +70,7 @@ class TransactionUnitTest extends TestCase
         $this->assertSame($mockResultSet, $result);
     }
 
-    public function testCommitCallsBuildCommitRequest()
+    public function testCommitCallsBuildCommitRequest(): void
     {
         $mockRequest = $this->createMock(RequestInterface::class);
 
@@ -84,7 +86,7 @@ class TransactionUnitTest extends TestCase
         $this->transaction->commit();
     }
 
-    public function testRollbackCallsBuildRollbackRequest()
+    public function testRollbackCallsBuildRollbackRequest(): void
     {
         $mockRequest = $this->createMock(RequestInterface::class);
 
