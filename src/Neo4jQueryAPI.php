@@ -11,14 +11,16 @@ use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
-class Neo4jQueryAPI
+final class Neo4jQueryAPI
 {
     public function __construct(
-        private ClientInterface $client,
-        private ResponseParser $responseParser,
-        private Neo4jRequestFactory $requestFactory
+        private ClientInterface     $client,
+        private ResponseParser      $responseParser,
+        private Neo4jRequestFactory $requestFactory,
     ) {
+
     }
 
     /**
@@ -45,7 +47,6 @@ class Neo4jQueryAPI
     }
 
 
-
     /**
      * Executes a Cypher query.
      */
@@ -53,14 +54,20 @@ class Neo4jQueryAPI
     {
         $request = $this->requestFactory->buildRunQueryRequest($cypher, $parameters);
 
+        $response = null;
+
         try {
             $response = $this->client->sendRequest($request);
         } catch (RequestExceptionInterface $e) {
             $this->handleRequestException($e);
         }
+        if ($response === null) {
+            throw new \RuntimeException('Failed to get a response');
+        }
 
         return $this->responseParser->parseRunQueryResponse($response);
     }
+
 
     /**
      * Starts a transaction.
@@ -69,14 +76,22 @@ class Neo4jQueryAPI
     {
         $request = $this->requestFactory->buildBeginTransactionRequest();
 
+        $response = null;
+
         try {
             $response = $this->client->sendRequest($request);
         } catch (RequestExceptionInterface $e) {
             $this->handleRequestException($e);
         }
 
+        if ($response === null) {
+            throw new \RuntimeException('No response received for transaction request');
+        }
+
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
-        $responseData = json_decode($response->getBody(), true);
+        $body = $response->getBody()->getContents();
+
+        $responseData = json_decode($body, true);
         $transactionId = $responseData['transaction']['id'];
 
         return new Transaction(
@@ -88,19 +103,14 @@ class Neo4jQueryAPI
         );
     }
 
+
     /**
      * Handles request exceptions by parsing error details and throwing a Neo4jException.
      *
      * @throws Neo4jException
      */
-    private function handleRequestException(RequestExceptionInterface $e): void
+    public function handleRequestException(RequestExceptionInterface $e): void
     {
-        $response = $e->getResponse();
-        if ($response instanceof ResponseInterface) {
-            $errorResponse = json_decode((string)$response->getBody(), true);
-            throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
-        }
-
-        throw new Neo4jException(['message' => $e->getMessage()], 500, $e);
+        throw new \RuntimeException('Request failed: ' . $e->getMessage(), 0, $e);
     }
 }

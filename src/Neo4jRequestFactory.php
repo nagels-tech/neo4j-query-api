@@ -56,23 +56,25 @@ class Neo4jRequestFactory
     {
         $request = $this->psr17Factory->createRequest('POST', $this->configuration->baseUri . $uri);
 
-        $payload = [
-            'parameters' => empty($parameters) ? new \stdClass() : $parameters,
-            'includeCounters' => $this->configuration->includeCounters
-        ];
+        $payload = [];
+
+        if ($this->configuration->includeCounters) {
+            $payload['includeCounters'] = true;
+        }
 
         if ($this->configuration->accessMode === AccessMode::READ) {
             $payload['accessMode'] = AccessMode::READ;
         }
 
-        if ($cypher) {
+        if ($cypher !== null && $cypher !== '') {
             $payload['statement'] = $cypher;
         }
 
-        if ($parameters) {
+        if ($parameters !== null && $parameters !== []) {
             $payload['parameters'] = $parameters;
         }
 
+        /** @psalm-suppress RedundantCondition */
         if ($this->configuration->bookmarks !== null) {
             $payload['bookmarks'] = $this->configuration->bookmarks;
         }
@@ -80,7 +82,7 @@ class Neo4jRequestFactory
         $request = $request->withHeader('Content-Type', 'application/json');
         $request = $request->withHeader('Accept', 'application/vnd.neo4j.query');
 
-        $body = json_encode($payload);
+        $body = json_encode($payload, JSON_THROW_ON_ERROR);
 
         $stream = $this->streamFactory->createStream($body);
 
