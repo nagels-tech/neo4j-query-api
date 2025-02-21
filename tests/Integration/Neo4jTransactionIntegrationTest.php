@@ -69,30 +69,76 @@ class Neo4jTransactionIntegrationTest extends TestCase
         }
     }
 
-    //    public function testTransactionCommit(): void
-    //    {
-    //        // Begin a transaction
-    //        $tsx = $this->api->beginTransaction();
-    //
-    //        // Generate a unique name
-    //        $name = (string) mt_rand(1, 100000);
-    //
-    //        // Run a query within the transaction
-    //        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
-    //
-    //        // Verify the record is not yet committed
-    //        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-    //        $this->assertCount(0, $results, 'Record should not exist before commit.');
-    //
-    //        // Run the same query within the transaction and verify it's in the transaction
-    //        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-    //        $this->assertCount(1, $results, 'Record should exist within the transaction.');
-    //
-    //        // Commit the transaction
-    //        $tsx->commit();
-    //
-    //        // Verify the record is now committed
-    //        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
-    //        $this->assertCount(1, $results, 'Record should exist after commit.');
-    //    }
+    public function testTransactionCommit(): void
+    {
+
+        $tsx = $this->api->beginTransaction();
+
+        $name = (string)mt_rand(1, 100000);
+
+        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
+
+        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+
+        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results);
+
+        $tsx->commit();
+
+        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results); // Updated to expect 1 result
+    }
+
+    public function testTransactionRollback(): void
+    {
+        $tsx = $this->api->beginTransaction();
+
+        $name = 'rollback_' . ((string) mt_rand(1, 100000));
+        $tsx->run("CREATE (x:Human {name: \$name})", ['name' => $name]);
+        $results = $tsx->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results);
+
+        $tsx->rollback();
+
+        // Ensure the node is not in the database
+        $results = $this->api->run("MATCH (x:Human {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+    }
+
+    public function testCreateNodeAndCommit(): void
+    {
+        $tsx = $this->api->beginTransaction();
+
+        $name = 'committed_' . mt_rand(1, 100000);
+        $tsx->run("CREATE (x:Person {name: \$name})", ['name' => $name]);
+
+        $results = $this->api->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+
+        $tsx->commit();
+        $results = $this->api->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results);
+    }
+
+    public function testCreateNodeAndRollback(): void
+    {
+        $tsx = $this->api->beginTransaction();
+
+        $name = 'rollback_' . mt_rand(1, 100000);
+        $tsx->run("CREATE (x:Person {name: \$name})", ['name' => $name]);
+
+        $results = $tsx->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(1, $results);
+
+        $results = $this->api->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+
+        $tsx->rollback();
+        $results = $this->api->run("MATCH (x:Person {name: \$name}) RETURN x", ['name' => $name]);
+        $this->assertCount(0, $results);
+    }
+
+
+
 }

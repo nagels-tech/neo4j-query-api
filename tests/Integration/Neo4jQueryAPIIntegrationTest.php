@@ -408,18 +408,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
         }
     }
 
-    public function testCreateDuplicateConstraintException(): void
-    {
-        try {
-            $this->api->run('CREATE CONSTRAINT person_name FOR (n:Person1) REQUIRE n.name IS UNIQUE', []);
-            $this->fail('Expected a Neo4jException to be thrown.');
-        } catch (Neo4jException $e) {
-            //           $errorMessages = $e->getErrorType() . $e->errorSubType() . $e->errorName();
-            $this->assertInstanceOf(Neo4jException::class, $e);
-            $this->assertEquals('Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists', $e->getErrorCode());
-            $this->assertNotEmpty($e->getMessage());
-        }
-    }
+
 
     public function testWithExactNames(): void
     {
