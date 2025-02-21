@@ -22,9 +22,6 @@ final class Neo4jQueryAPI
     ) {
     }
 
-    /**
-     * @api
-     */
     public static function login(string $address, AuthenticateInterface $auth = null): self
     {
         $client = Psr18ClientDiscovery::find();

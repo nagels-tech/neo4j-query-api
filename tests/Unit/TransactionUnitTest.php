@@ -12,10 +12,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * @api
- */
-class TransactionUnitTest extends TestCase
+final class TransactionUnitTest extends TestCase
 {
     private MockObject $client;
     private MockObject $requestFactory;

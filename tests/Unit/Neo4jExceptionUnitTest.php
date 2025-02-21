@@ -6,10 +6,7 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 
-/**
- *  @api
- */
-class Neo4jExceptionUnitTest extends TestCase
+final class Neo4jExceptionUnitTest extends TestCase
 {
     /**
      * Test the constructor and property initialization.
@@ -24,10 +21,10 @@ class Neo4jExceptionUnitTest extends TestCase
 
         $exception = new Neo4jException($errorDetails);
 
-        $this->assertSame('Neo.ClientError.Statement.SyntaxError', $exception->getErrorCode());
-        $this->assertSame('ClientError', $exception->getType());
-        $this->assertSame('Statement', $exception->getSubType());
-        $this->assertSame('SyntaxError', $exception->getName());
+        $this->assertSame('Neo.ClientError.Statement.SyntaxError', $exception->errorCode);
+        $this->assertSame('ClientError', $exception->errorType);
+        $this->assertSame('Statement', $exception->errorSubType);
+        $this->assertSame('SyntaxError', $exception->errorName);
         $this->assertSame('Invalid syntax near ...', $exception->getMessage());
         $this->assertSame(0, $exception->getCode());
     }
@@ -39,10 +36,10 @@ class Neo4jExceptionUnitTest extends TestCase
     {
         $exception = new Neo4jException([]);
 
-        $this->assertSame('Neo.UnknownError', $exception->getErrorCode());
-        $this->assertSame('UnknownError', $exception->getType());
-        $this->assertNull($exception->getSubType());
-        $this->assertNull($exception->getName());
+        $this->assertSame('Neo.UnknownError', $exception->errorCode);
+        $this->assertSame('UnknownError', $exception->errorType);
+        $this->assertNull($exception->errorSubType);
+        $this->assertNull($exception->errorName);
         $this->assertSame('An unknown error occurred.', $exception->getMessage());
         $this->assertSame(0, $exception->getCode());
     }
@@ -64,10 +61,10 @@ class Neo4jExceptionUnitTest extends TestCase
 
         $exception = Neo4jException::fromNeo4jResponse($response);
 
-        $this->assertSame('Neo.ClientError.Transaction.InvalidRequest', $exception->getErrorCode());
-        $this->assertSame('ClientError', $exception->getType());
-        $this->assertSame('Transaction', $exception->getSubType());
-        $this->assertSame('InvalidRequest', $exception->getName());
+        $this->assertSame('Neo.ClientError.Transaction.InvalidRequest', $exception->errorCode);
+        $this->assertSame('ClientError', $exception->errorType);
+        $this->assertSame('Transaction', $exception->errorSubType);
+        $this->assertSame('InvalidRequest', $exception->errorName);
         $this->assertSame('Transaction error occurred.', $exception->getMessage());
         $this->assertSame(0, $exception->getCode());
     }
@@ -81,10 +78,10 @@ class Neo4jExceptionUnitTest extends TestCase
 
         $exception = Neo4jException::fromNeo4jResponse($response);
 
-        $this->assertSame('Neo.UnknownError', $exception->getErrorCode());
-        $this->assertSame('UnknownError', $exception->getType());
-        $this->assertNull($exception->getSubType());
-        $this->assertNull($exception->getName());
+        $this->assertSame('Neo.UnknownError', $exception->errorCode);
+        $this->assertSame('UnknownError', $exception->errorType);
+        $this->assertNull($exception->errorSubType);
+        $this->assertNull($exception->errorName);
         $this->assertSame(0, $exception->getCode());
     }
 
@@ -97,10 +94,10 @@ class Neo4jExceptionUnitTest extends TestCase
 
         $exception = Neo4jException::fromNeo4jResponse($response);
 
-        $this->assertSame('Neo.UnknownError', $exception->getErrorCode());
-        $this->assertSame('UnknownError', $exception->getType());
-        $this->assertNull($exception->getSubType(), "Expected 'getSubType()' to return null for null response");
-        $this->assertNull($exception->getName(), "Expected 'getName()' to return null for null response");
+        $this->assertSame('Neo.UnknownError', $exception->errorCode);
+        $this->assertSame('UnknownError', $exception->errorType);
+        $this->assertNull($exception->errorSubType, "Expected 'getSubType()' to return null for null response");
+        $this->assertNull($exception->errorName, "Expected 'getName()' to return null for null response");
         $this->assertSame(0, $exception->getCode());
     }
 
@@ -120,6 +117,6 @@ class Neo4jExceptionUnitTest extends TestCase
         $exception = new Neo4jException($errorDetails, $errorDetails['statusCode'], $previousException);
 
         $this->assertSame($previousException, $exception->getPrevious());
-        $this->assertSame('Unauthorized', $exception->getName());
+        $this->assertSame('Unauthorized', $exception->errorName);
     }
 }

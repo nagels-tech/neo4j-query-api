@@ -5,12 +5,8 @@ namespace Neo4j\QueryAPI\Tests\Integration;
 use Neo4j\QueryAPI\OGM;
 use PHPUnit\Framework\TestCase;
 
-/**
- *  @api
- */
-class Neo4jOGMTest extends TestCase
+final class Neo4jOGMTest extends TestCase
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
     private OGM $ogm;
 
     #[\Override]
@@ -36,7 +32,6 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals('Ayush', $node->getProperties()['name']['_value']);
     }
 
-    // Example of using $ogm in another test
     public function testWithSimpleRelationship(): void
     {
         // Mapping the Relationship
@@ -51,8 +46,6 @@ class Neo4jOGMTest extends TestCase
         $relationship = $this->ogm->map($relationshipData);
         $this->assertEquals('FRIENDS', $relationship->getType());
     }
-
-    // More tests...
     public function testWithPath(): void
     {
         $pathData = [
@@ -63,7 +56,7 @@ class Neo4jOGMTest extends TestCase
                     '_value' => [
                         '_labels' => ['Person'],
                         '_properties' => [
-                            'name' => ['_value' => 'A'],  // ✅ Now correctly wrapped
+                            'name' => ['_value' => 'A'],
                         ],
                     ],
                 ],
@@ -79,7 +72,7 @@ class Neo4jOGMTest extends TestCase
                     '_value' => [
                         '_labels' => ['Person'],
                         '_properties' => [
-                            'name' => ['_value' => 'B'],  // ✅ Now correctly wrapped
+                            'name' => ['_value' => 'B'],
                         ],
                     ],
                 ],

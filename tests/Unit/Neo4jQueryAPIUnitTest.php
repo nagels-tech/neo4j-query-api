@@ -4,7 +4,6 @@ namespace Neo4j\QueryAPI\Tests\Unit;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use http\Client;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
@@ -21,18 +20,12 @@ use RuntimeException;
 use Neo4j\QueryAPI\Configuration;
 use Nyholm\Psr7\Response;
 
-/**
- *  @api
- */
-class Neo4jQueryAPIUnitTest extends TestCase
+final class Neo4jQueryAPIUnitTest extends TestCase
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
     private OGM $ogm;
 
-    /** @psalm-suppress PropertyNotSetInConstructor */
     protected string $address;
 
-    /** @psalm-suppress PropertyNotSetInConstructor */
     protected ResponseParser $parser;
 
     #[\Override]

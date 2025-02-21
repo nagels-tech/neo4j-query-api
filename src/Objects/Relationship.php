@@ -6,10 +6,7 @@ namespace Neo4j\QueryAPI\Objects;
  * Represents a relationship in a Neo4j graph, with a type and associated properties.
  */
 
-/**
- *  @api
- */
-class Relationship
+final class Relationship
 {
     /**
      * @var string The type of the relationship (e.g., "FRIENDS_WITH", "WORKS_FOR").
@@ -22,8 +19,7 @@ class Relationship
     private array $properties;
 
     /**
-     * Relationship constructor.
-     *
+     * Relationship constructor
      * @param string $type The type of the relationship.
      * @param array<string, mixed> $properties Associative array of properties for the relationship.
      */
@@ -34,8 +30,7 @@ class Relationship
     }
 
     /**
-     * Get the type of the relationship.
-     * @api
+     * Get the type of the relationship
      * @return string The type of the relationship.
      */
     public function getType(): string
@@ -45,7 +40,6 @@ class Relationship
 
     /**
      * Get the properties of the relationship.
-     * @api
      * @return array<string, mixed> Associative array of properties.
      */
     public function getProperties(): array

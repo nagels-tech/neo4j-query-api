@@ -9,12 +9,8 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-/**
- * @api
- */
-class Neo4jTransactionIntegrationTest extends TestCase
+final class Neo4jTransactionIntegrationTest extends TestCase
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
     private Neo4jQueryAPI $api;
 
     /**

@@ -8,10 +8,7 @@ use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\Objects\Path;
 use InvalidArgumentException;
 
-/**
- *  @api
- */
-class OGM
+final class OGM
 {
     /**
      * @param array<array-key, mixed> $data
@@ -57,43 +54,17 @@ class OGM
     {
         return new Node(
             labels: $nodeData['_labels'] ?? [],
-            properties: $this->mapProperties($nodeData['_properties'] ?? []) // ✅ Fix: Ensure properties exist
+            properties: $this->mapProperties($nodeData['_properties'] ?? [])
         );
     }
 
     private function mapRelationship(array $relationshipData): Relationship
     {
         return new Relationship(
-            type: $relationshipData['_type'] ?? 'UNKNOWN',  // ✅ Fix: Default to 'UNKNOWN'
+            type: $relationshipData['_type'] ?? 'UNKNOWN',
             properties: $this->mapProperties($relationshipData['_properties'] ?? [])
         );
     }
-
-
-    public static function parseWKT(string $wkt): Point
-    {
-        $sridPos = strpos($wkt, ';');
-        if ($sridPos === false) {
-            throw new \InvalidArgumentException("Invalid WKT format: missing ';'");
-        }
-        $sridPart = substr($wkt, 0, $sridPos);
-        $srid = (int)str_replace('SRID=', '', $sridPart);
-
-        $pointPos = strpos($wkt, 'POINT');
-        if ($pointPos === false) {
-            throw new \InvalidArgumentException("Invalid WKT format: missing 'POINT'");
-        }
-        $pointPart = substr($wkt, $pointPos + 6);
-
-        $pointPart = str_replace('Z', '', $pointPart);
-        $pointPart = trim($pointPart, ' ()');
-        $coordinates = explode(' ', $pointPart);
-
-        [$x, $y, $z] = array_pad(array_map('floatval', $coordinates), 3, 0.0);
-
-        return new Point($x, $y, $z, $srid);
-    }
-
 
     private function mapPath(array $pathData): Path
     {
