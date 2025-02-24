@@ -4,11 +4,13 @@ namespace Neo4j\QueryAPI;
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
+use http\Exception\RuntimeException;
+use Neo4j\QueryAPI\Exception\Neo4jException;
 use Psr\Http\Client\ClientInterface;
 use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Results\ResultSet;
-use RuntimeException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Client\RequestExceptionInterface;
 
 final class Neo4jQueryAPI
@@ -47,23 +49,25 @@ final class Neo4jQueryAPI
     {
         $request = $this->requestFactory->buildRunQueryRequest($cypher, $parameters);
 
+        $response = $this->client->sendRequest($request);
+
         try {
             $response = $this->client->sendRequest($request);
         } catch (RequestExceptionInterface $e) {
-            throw new RuntimeException('Request failed: ' . $e->getMessage(), 0, $e);
+            $this->handleRequestException($e);
         }
-
         return $this->responseParser->parseRunQueryResponse($response);
     }
 
     public function beginTransaction(): Transaction
     {
         $request = $this->requestFactory->buildBeginTransactionRequest();
+        $response = $this->client->sendRequest($request);
 
         try {
             $response = $this->client->sendRequest($request);
         } catch (RequestExceptionInterface $e) {
-            throw new RuntimeException('Request failed: ' . $e->getMessage(), 0, $e);
+            $this->handleRequestException($e);
         }
 
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
@@ -78,5 +82,25 @@ final class Neo4jQueryAPI
             $clusterAffinity,
             $transactionId
         );
+    }
+
+
+
+    /**
+     * Handles request exceptions by parsing error details and throwing a Neo4jException.
+     *
+     * @throws Neo4jException
+     */
+    private function handleRequestException(RequestExceptionInterface $e): void
+    {
+        // ✅ Corrected: Check if exception has a response
+        $response = method_exists($e, 'getResponse') ? $e->getResponse() : null;
+
+        if ($response instanceof ResponseInterface) {
+            $errorResponse = json_decode((string)$response->getBody(), true);
+            throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
+        }
+
+        throw new Neo4jException(['message' => $e->getMessage()], 500, $e);
     }
 }
