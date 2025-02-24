@@ -7,12 +7,12 @@ use Neo4j\QueryAPI\Objects\Node;
 use Neo4j\QueryAPI\Objects\Relationship;
 use PHPUnit\Framework\TestCase;
 
-class PathUnitTest extends TestCase
+final class PathUnitTest extends TestCase
 {
     private Path $path;
     private array $nodes;
     private array $relationships;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->nodes = [
@@ -21,7 +21,7 @@ class PathUnitTest extends TestCase
         ];
 
         $this->relationships = [
-            new Relationship('KNOWS', ['since' => 2020], $this->nodes[0], $this->nodes[1])
+            new Relationship('KNOWS', ['since' => 2020])
         ];
 
         $this->path = new Path($this->nodes, $this->relationships);

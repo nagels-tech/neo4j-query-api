@@ -1,14 +1,14 @@
 <?php
 
-namespace Neo4j\QueryAPI\Tests\Unit\Objects;
+namespace Neo4j\QueryAPI\Tests\Unit\objects;
 
 use Neo4j\QueryAPI\Objects\Relationship;
 use PHPUnit\Framework\TestCase;
 
-class RelationshipUnitTest extends TestCase
+final class RelationshipUnitTest extends TestCase
 {
     private Relationship $relationship;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->relationship = new Relationship('FRIENDS_WITH', ['since' => 2020]);

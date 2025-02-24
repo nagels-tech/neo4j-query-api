@@ -5,10 +5,10 @@ namespace Neo4j\QueryAPI\Tests\Unit\objects;
 use Neo4j\QueryAPI\Objects\Point;
 use PHPUnit\Framework\TestCase;
 
-class PointUnitTest extends TestCase
+final class PointUnitTest extends TestCase
 {
     private Point $point;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->point = new Point(1.5, 2.5, 3.5, 4326);

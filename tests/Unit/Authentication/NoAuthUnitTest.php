@@ -6,11 +6,11 @@ use Neo4j\QueryAPI\Authentication\NoAuth;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-class NoAuthUnitTest extends TestCase
+final class NoAuthUnitTest extends TestCase
 {
     private NoAuth $auth;
     private RequestInterface $requestMock;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->auth = new NoAuth();

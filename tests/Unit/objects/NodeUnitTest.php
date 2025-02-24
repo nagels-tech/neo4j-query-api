@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 class NodeUnitTest extends TestCase
 {
     private Node $node;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->node = new Node(['Label1', 'Label2'], ['key1' => 'value1', 'key2' => 42]);
