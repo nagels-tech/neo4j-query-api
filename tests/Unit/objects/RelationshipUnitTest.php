@@ -1,4 +1,5 @@
 <?php
+
 namespace Neo4j\QueryAPI\Tests\Unit\Objects;
 
 use Neo4j\QueryAPI\Objects\Relationship;
