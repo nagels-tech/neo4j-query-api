@@ -421,7 +421,6 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
 
-        // Ensure results are not empty
         $this->assertNotEmpty(iterator_to_array($results), 'No results returned from query.');
 
         $filteredResults = array_values(array_filter(
