@@ -14,17 +14,24 @@ class Authentication
 {
     public static function basic(string $username, string $password): AuthenticateInterface
     {
+        $username = $username ?: 'defaultUsername';
+        $password = $password ?: 'defaultPassword';
+
         return new BasicAuthentication($username, $password);
     }
 
 
     public static function fromEnvironment(): AuthenticateInterface
     {
-        $username = getenv("NEO4J_USERNAME") ?: '';
-        $password = getenv("NEO4J_PASSWORD") ?: '';
+        $username = getenv("NEO4J_USERNAME");
+        $password = getenv("NEO4J_PASSWORD");
 
-        return new BasicAuthentication($username, $password);
+        return new BasicAuthentication(
+            $username !== false ? $username : null,
+            $password !== false ? $password : null
+        );
     }
+
 
 
 

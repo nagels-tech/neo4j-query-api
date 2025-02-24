@@ -11,13 +11,10 @@ use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\ResultCounters;
 use Traversable;
 
-// Make sure to include the Bookmarks class
-
 /**
  * @api
- * @template TKey of array-key
  * @template TValue
- * @implements IteratorAggregate<TKey, TValue>
+ * @implements IteratorAggregate<int, ResultRow>
  */
 class ResultSet implements IteratorAggregate, Countable
 {
@@ -25,23 +22,23 @@ class ResultSet implements IteratorAggregate, Countable
      * @param list<ResultRow> $rows
      */
     public function __construct(
-        private readonly array     $rows,
-        private readonly ?ResultCounters     $counters = null,
-        private readonly Bookmarks          $bookmarks,
+        private readonly array $rows,
+        private readonly ?ResultCounters $counters = null,
+        private readonly Bookmarks $bookmarks,
         private readonly ?ProfiledQueryPlan $profiledQueryPlan,
-        private readonly AccessMode          $accessMode
+        private readonly AccessMode $accessMode
     ) {
-
-
     }
 
     /**
      * @return Traversable<int, ResultRow>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->rows);
     }
+
     public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
@@ -55,6 +52,7 @@ class ResultSet implements IteratorAggregate, Countable
     /**
      * @api
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->rows);
@@ -69,18 +67,9 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return $this->accessMode;
     }
+
     public function getData(): array
     {
         return $this->rows;
     }
-
-
-    //    public function getImpersonatedUser(): ?ImpersonatedUser
-    //    {
-    //
-    //    }
-
-
-
-
 }

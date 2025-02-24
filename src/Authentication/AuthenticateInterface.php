@@ -9,6 +9,8 @@ use Psr\Http\Message\RequestInterface;
  */
 interface AuthenticateInterface
 {
+    public function getHeader(): string;
+    public function getType(): string;
     /**
      * Authenticates the request by returning a new instance of the request with the authentication information attached.
      */

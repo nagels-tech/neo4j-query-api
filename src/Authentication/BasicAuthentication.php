@@ -14,16 +14,19 @@ class BasicAuthentication implements AuthenticateInterface
 
     public function __construct(?string $username = null, ?string $password = null)
     {
-        $this->username = $username ?? getenv("NEO4J_USERNAME") ?: '';
-        $this->password = $password ?? getenv("NEO4J_PASSWORD") ?: '';
+        $this->username = $username ?? (is_string($envUser = getenv("NEO4J_USERNAME")) ? $envUser : '');
+        $this->password = $password ?? (is_string($envPass = getenv("NEO4J_PASSWORD")) ? $envPass : '');
     }
 
+
+    #[\Override]
     public function authenticate(RequestInterface $request): RequestInterface
     {
         $authHeader = $this->getHeader();
         return $request->withHeader('Authorization', $authHeader);
     }
 
+    #[\Override]
     public function getHeader(): string
     {
         return 'Basic ' . base64_encode($this->username . ':' . $this->password);
@@ -31,6 +34,7 @@ class BasicAuthentication implements AuthenticateInterface
     /**
      * @psalm-suppress UnusedMethod
      */
+    #[\Override]
     public function getType(): string
     {
         return 'Basic';
