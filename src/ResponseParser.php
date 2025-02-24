@@ -12,7 +12,6 @@ use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Results\ResultRow;
 use RuntimeException;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
-use Neo4j\QueryAPI\Objects\Point;
 
 final class ResponseParser
 {

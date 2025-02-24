@@ -6,10 +6,8 @@ namespace Neo4j\QueryAPI\Objects;
  * Represents a path in a Neo4j graph, consisting of nodes and relationships.
  */
 
-/**
- *  @api
- */
-class Path
+
+final class Path
 {
     /**
      * @var Node[] Array of nodes in the path.
@@ -35,7 +33,6 @@ class Path
 
     /**
      * Get the nodes in the path.
-     * @api
      * @return Node[] Array of nodes.
      */
     public function getNodes(): array
@@ -45,7 +42,6 @@ class Path
 
     /**
      * Get the relationships in the path.
-     * @api
      * @return Relationship[] Array of relationships.
      */
     public function getRelationships(): array

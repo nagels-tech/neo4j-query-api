@@ -4,15 +4,12 @@ namespace Neo4j\QueryAPI\Exception;
 
 use Exception;
 
-/**
- * @api
- */
-class Neo4jException extends Exception
+final class Neo4jException extends Exception
 {
-    private readonly string $errorCode;
-    private readonly ?string $errorType;
-    private readonly ?string $errorSubType;
-    private readonly ?string $errorName;
+    public readonly string $errorCode;
+    public readonly ?string $errorType;
+    public readonly ?string $errorSubType;
+    public readonly ?string $errorName;
 
     public function __construct(
         array       $errorDetails = [],
@@ -31,7 +28,6 @@ class Neo4jException extends Exception
 
     /**
      * Create a Neo4jException instance from a Neo4j error response array.
-     *
      * @param array $response The error response from Neo4j.
      * @param \Throwable|null $exception Optional previous exception for chaining.
      * @return self
@@ -44,23 +40,4 @@ class Neo4jException extends Exception
         return new self($errorDetails, previous: $exception);
     }
 
-    public function getErrorCode(): string
-    {
-        return $this->errorCode;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->errorType;
-    }
-
-    public function getSubType(): ?string
-    {
-        return $this->errorSubType;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->errorName;
-    }
 }

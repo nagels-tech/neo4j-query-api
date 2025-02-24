@@ -2,10 +2,7 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-/**
- *  @api
- */
-class ProfiledQueryPlanArguments
+final class ProfiledQueryPlanArguments
 {
     public function __construct(
         public readonly ?int    $globalMemory = null,
