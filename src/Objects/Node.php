@@ -22,7 +22,7 @@ class Node
     private array $properties;
 
     /**
-     * Node constructor.
+     * Node constructor
      *
      * @param string[] $labels Array of labels for the node.
      * @param array<string, mixed> $properties Associative array of properties.
