@@ -7,6 +7,12 @@
         </testsuite>
     </testsuites>
 
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
+
 <!--
     &lt;!&ndash; Logging &ndash;&gt;
     <logging>
