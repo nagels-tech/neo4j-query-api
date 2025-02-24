@@ -4,7 +4,7 @@ namespace Neo4j\QueryAPI\Tests\Integration;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use http\Client;
+use GuzzleHttp\Client;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
