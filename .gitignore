@@ -15,3 +15,6 @@ test
 .php-cs-fixer.cache
 
 
+coverage
+
+composer.lock
