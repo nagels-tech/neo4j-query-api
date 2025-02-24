@@ -93,7 +93,6 @@ final class Neo4jQueryAPI
      */
     private function handleRequestException(RequestExceptionInterface $e): void
     {
-        // ✅ Corrected: Check if exception has a response
         $response = method_exists($e, 'getResponse') ? $e->getResponse() : null;
 
         if ($response instanceof ResponseInterface) {

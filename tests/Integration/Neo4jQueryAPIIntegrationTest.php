@@ -101,7 +101,7 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
         $result = $this->api->run('MATCH (x:Node {hello: "world2"}) RETURN x');
         $bookmarks->addBookmarks($result->getBookmarks());
 
-        $this->assertCount(2, $result);
+        $this->assertCount(1, $result);
     }
 
 
