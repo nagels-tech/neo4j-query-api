@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-app
+    volumes:
+      - .:/var/www
+    networks:
+      - mynetwork
+
+  # Neo4j Service (Optional, if you need Neo4j)
+  neo4j:
+    image: neo4j:latest
+    container_name: neo4j
+    environment:
+      - NEO4J_AUTH=neo4j/password
+    ports:
+      - "7474:7474"   # Web interface
+      - "7687:7687"   # Bolt protocol
+    networks:
+      - mynetwork
+
+# Define a network for communication between containers
+networks:
+  mynetwork:
+    driver: bridge
