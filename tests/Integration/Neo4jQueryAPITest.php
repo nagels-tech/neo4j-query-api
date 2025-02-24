@@ -8,20 +8,19 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Configuration;
 
-/** @psalm-suppress UnusedClass */
-class Neo4jQueryAPITest extends TestCase
+final class Neo4jQueryAPITest extends TestCase
 {
-    public function testLoginWithValidConfiguration()
+    public function testLoginWithValidConfiguration(): void
     {
         $config = new Configuration(baseUri: 'http://valid.address');
 
-        $api = Neo4jQueryAPI::login('http://myaddress', Authentication::fromEnvironment(), $config);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Address (http://valid.address) as argument is different from address in configuration (http://myaddress)');
 
-        $this->assertInstanceOf(Neo4jQueryAPI::class, $api);
-        $this->assertEquals('http://valid.address', $api->getConfig()->baseUri);
+        Neo4jQueryAPI::login('http://myaddress', Authentication::fromEnvironment(), $config);
     }
 
-    public function testLoginWithNullConfiguration()
+    public function testLoginWithNullConfiguration(): void
     {
         $config = null;
 
@@ -31,7 +30,7 @@ class Neo4jQueryAPITest extends TestCase
         $this->assertEquals('http://myaddress', $api->getConfig()->baseUri);
     }
 
-    public function testConfigOnly()
+    public function testConfigOnly(): void
     {
         $config = new Configuration(baseUri: 'http://valid.address');
 

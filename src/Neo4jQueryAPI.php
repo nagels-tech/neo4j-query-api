@@ -2,18 +2,19 @@
 
 namespace Neo4j\QueryAPI;
 
-use GuzzleHttp\Client;
-use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+use http\Exception\RuntimeException;
+use InvalidArgumentException;
 use Neo4j\QueryAPI\Exception\Neo4jException;
+use Psr\Http\Client\ClientInterface;
+use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Results\ResultSet;
-use Neo4j\QueryAPI\Configuration;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Client\RequestExceptionInterface;
 
-class Neo4jQueryAPI
+final class Neo4jQueryAPI
 {
     private Configuration $config;
 
@@ -31,26 +32,37 @@ class Neo4jQueryAPI
      */
     public static function login(string $address = null, ?AuthenticateInterface $auth = null, ?Configuration $config = null): self
     {
-        $client = new Client();
-        $config = $config ?? new Configuration(baseUri: $address);
+        $config = $config ?? new Configuration(baseUri: $address ?? '');
+        if (
+            trim($config->baseUri) !== '' &&
+            $address !== null &&
+            trim($address) !== '' &&
+            $config->baseUri !== $address
+        ) {
+            throw new InvalidArgumentException(sprintf('Address (%s) as argument is different from address in configuration (%s)', $config->baseUri, $address));
+        }
 
+        $client = Psr18ClientDiscovery::find();
 
-        /* if the user now passes a config object without an address it will break.
-
-$config = new Configuration(database: 'mydb');
-
-QueryApi::login('http://myaddress', Authentication::fromEnvironment(), $config);*/
         return new self(
             client: $client,
             responseParser: new ResponseParser(new OGM()),
             requestFactory: new Neo4jRequestFactory(
-                psr17Factory: new Psr17Factory(),
-                streamFactory: new Psr17Factory(),
+                psr17Factory: Psr17FactoryDiscovery::findRequestFactory(),
+                streamFactory: Psr17FactoryDiscovery::findStreamFactory(),
                 configuration: $config,
                 auth: $auth ?? Authentication::fromEnvironment()
             ),
             config: $config
         );
+    }
+
+    /**
+     * @api
+     */
+    public function create(Configuration $configuration, AuthenticateInterface $auth = null): self
+    {
+        return self::login(auth: $auth, config: $configuration);
     }
 
     public function getConfig(): Configuration
@@ -73,9 +85,7 @@ QueryApi::login('http://myaddress', Authentication::fromEnvironment(), $config);
 
         return $this->responseParser->parseRunQueryResponse($response);
     }
-    /**
-     * Starts a transaction.
-     */
+
     public function beginTransaction(): Transaction
     {
         $request = $this->requestFactory->buildBeginTransactionRequest();
@@ -87,7 +97,8 @@ QueryApi::login('http://myaddress', Authentication::fromEnvironment(), $config);
         }
 
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
-        $responseData = json_decode($response->getBody(), true);
+        $body = $response->getBody()->getContents();
+        $responseData = json_decode($body, true);
         $transactionId = $responseData['transaction']['id'];
 
         return new Transaction(
@@ -99,15 +110,17 @@ QueryApi::login('http://myaddress', Authentication::fromEnvironment(), $config);
         );
     }
 
-
     /**
      * Handles request exceptions by parsing error details and throwing a Neo4jException.
      *
      * @throws Neo4jException
+     *
+     * @return never
      */
     private function handleRequestException(RequestExceptionInterface $e): void
     {
-        $response = $e->getResponse();
+        $response = method_exists($e, 'getResponse') ? $e->getResponse() : null;
+
         if ($response instanceof ResponseInterface) {
             $errorResponse = json_decode((string) $response->getBody(), true);
             throw Neo4jException::fromNeo4jResponse($errorResponse, $e);

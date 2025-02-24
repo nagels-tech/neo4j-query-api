@@ -2,43 +2,46 @@
 
 namespace Neo4j\QueryAPI\Tests\Unit;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
+use http\Client;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\Bookmarks;
-use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\OGM;
-use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
-use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\ResponseParser;
-use Neo4j\QueryAPI\Enums\AccessMode;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Neo4j\QueryAPI\Configuration;
-use Neo4j\QueryAPI\loginConfig;
+use Nyholm\Psr7\Response;
 
 /**
  *  @api
  */
 class Neo4jQueryAPIUnitTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private OGM $ogm;
+
+    /** @psalm-suppress PropertyNotSetInConstructor */
     protected string $address;
+
+    /** @psalm-suppress PropertyNotSetInConstructor */
     protected ResponseParser $parser;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->address = getenv('NEO4J_ADDRESS');
+        $address = getenv('NEO4J_ADDRESS');
+        $this->address = is_string($address) ? $address : '';
 
         $this->ogm = new OGM();
         $this->parser = new ResponseParser($this->ogm);
@@ -53,39 +56,32 @@ class Neo4jQueryAPIUnitTest extends TestCase
     #[DoesNotPerformAssertions]
     public function testRunSuccess(): void
     {
-        $mock = new MockHandler([
-            new Response(200, [], '{"data": {"fields": ["hello"], "values": [[{"$type": "String", "_value": "world"}]]}}'),
+        $mockHandler = new MockHandler([
+            new Response(200, [], '{"data": {"fields": ["hello"], "values": [[{"$type": "String", "_value": "world"}]]}}')
         ]);
 
-        $handlerStack = HandlerStack::create($mock);
-        $client = new Client(['handler' => $handlerStack]);
+        $handler = HandlerStack::create($mockHandler);
+        $client = new \GuzzleHttp\Client(['handler' => $handler]);
 
-        $loginConfig = Authentication::fromEnvironment();
-        $queryConfig = new Configuration($this->address);
+        $neo4jQueryAPI = new Neo4jQueryAPI(
+            $client,
+            $this->parser,
+            new Neo4jRequestFactory(
+                Psr17FactoryDiscovery::findRequestFactory(),
+                Psr17FactoryDiscovery::findStreamFactory(),
+                new Configuration($this->address),
+                Authentication::fromEnvironment()
+            )
+        );
 
-        $responseParser = $this->createMock(ResponseParser::class);
-
-        $neo4jQueryAPI = new Neo4jQueryAPI($client, $responseParser, new Neo4jRequestFactory(
-            new Psr17Factory(),
-            new Psr17Factory(),
-            $queryConfig,
-            $loginConfig
-        ));
-
-        $cypherQuery = 'MATCH (n:Person) RETURN n LIMIT 5';
-        $neo4jQueryAPI->run($cypherQuery);
+        $neo4jQueryAPI->run('MATCH (n:Person) RETURN n LIMIT 5');
     }
-
-
 
     public function testParseValidResponse(): void
     {
         $mockStream = $this->createMock(StreamInterface::class);
         $mockStream->method('getContents')->willReturn(json_encode([
-            'data' => [
-                'fields' => ['name'],
-                'values' => [['Alice'], ['Bob']],
-            ],
+            'data' => ['fields' => ['name'], 'values' => [['Alice'], ['Bob']]],
             'counters' => ['nodesCreated' => 2],
             'bookmarks' => ['bm1'],
             'accessMode' => 'WRITE'
@@ -115,10 +111,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
     {
         $mockStream = $this->createMock(StreamInterface::class);
         $mockStream->method('getContents')->willReturn(json_encode([
-            'data' => [
-                'fields' => [],
-                'values' => []
-            ],
+            'data' => ['fields' => [], 'values' => []],
             'accessMode' => 'WRITE'
         ]));
 
@@ -128,14 +121,12 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $result = $this->parser->parseRunQueryResponse($mockResponse);
         $this->assertInstanceOf(ResultSet::class, $result);
     }
+
     public function testParseBookmarks(): void
     {
         $mockStream = $this->createMock(StreamInterface::class);
         $mockStream->method('getContents')->willReturn(json_encode([
-            'data' => [
-                'fields' => [],
-                'values' => []
-            ],
+            'data' => ['fields' => [], 'values' => []],
             'bookmarks' => ['bm1', 'bm2', 'bm3']
         ]));
 
@@ -143,14 +134,11 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $mockResponse->method('getBody')->willReturn($mockStream);
 
         $result = $this->parser->parseRunQueryResponse($mockResponse);
-
         $this->assertInstanceOf(ResultSet::class, $result);
 
         $bookmarks = $result->getBookmarks();
-
         $this->assertInstanceOf(Bookmarks::class, $bookmarks);
         $this->assertCount(3, $bookmarks->getBookmarks());
         $this->assertEquals(['bm1', 'bm2', 'bm3'], $bookmarks->getBookmarks());
     }
-
 }
