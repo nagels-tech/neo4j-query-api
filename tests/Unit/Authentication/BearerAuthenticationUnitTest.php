@@ -6,11 +6,11 @@ use Neo4j\QueryAPI\Authentication\BearerAuthentication;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-class BearerAuthenticationUnitTest extends TestCase
+final class BearerAuthenticationUnitTest extends TestCase
 {
     private BearerAuthentication $auth;
     private RequestInterface $requestMock;
-
+    #[\Override]
     protected function setUp(): void
     {
         $this->auth = new BearerAuthentication('testToken');

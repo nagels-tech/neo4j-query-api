@@ -12,6 +12,7 @@ final class BasicAuthenticationUnitTest extends TestCase
     private BasicAuthentication $auth;
     private MockObject $requestMock;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->auth = new BasicAuthentication('testUser', 'testPass');

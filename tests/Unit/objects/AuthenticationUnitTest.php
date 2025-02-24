@@ -8,7 +8,7 @@ use Neo4j\QueryAPI\Authentication\BearerAuthentication;
 use Neo4j\QueryAPI\Authentication\NoAuth;
 use PHPUnit\Framework\TestCase;
 
-class AuthenticationUnitTest extends TestCase
+final class AuthenticationUnitTest extends TestCase
 {
     public function testBasicReturnsBasicAuthenticationInstance(): void
     {
