@@ -3,7 +3,6 @@
 namespace Neo4j\QueryAPI\Tests\Unit;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -11,34 +10,39 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\Bookmarks;
-use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\OGM;
-use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\ResponseParser;
-use Neo4j\QueryAPI\Enums\AccessMode;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Neo4j\QueryAPI\Configuration;
-use Neo4j\QueryAPI\loginConfig;
+use Neo4j\QueryAPI\ResponseParserInterface;
 
 /**
  *  @api
  */
 class Neo4jQueryAPIUnitTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
+    private OGM $ogm;
+
+    /** @psalm-suppress PropertyNotSetInConstructor */
     protected string $address;
+
+    /** @psalm-suppress PropertyNotSetInConstructor */
     protected ResponseParser $parser;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->address = getenv('NEO4J_ADDRESS');
+        $address = getenv('NEO4J_ADDRESS');
+        $this->address = is_string($address) ? $address : '';
 
         $this->ogm = new OGM();
         $this->parser = new ResponseParser($this->ogm);

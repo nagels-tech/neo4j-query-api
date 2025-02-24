@@ -12,6 +12,7 @@ use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Results\ResultRow;
 use RuntimeException;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
+use Neo4j\QueryAPI\Objects\Point;
 
 class ResponseParser
 {
@@ -49,20 +50,44 @@ class ResponseParser
         return $data;
     }
 
-    private function mapRows(array $keys, array $values): array
+    /**
+     * @return list<ResultRow>
+     */
+    /**
+     * @param list<string> $fields
+     * @param list<array<array-key, mixed>> $values
+     * @return list<ResultRow>
+     */
+    private function mapRows(array $fields, array $values): array
     {
-        return array_map(function ($row) use ($keys) {
-            $mapped = [];
-            foreach ($keys as $index => $key) {
-                $fieldData = $row[$index] ?? null;
-                if (is_string($fieldData)) {
-                    $fieldData = ['$type' => 'String', '_value' => $fieldData];
-                }
-                $mapped[$key] = $this->ogm->map($fieldData);
-            }
-            return new ResultRow($mapped);
-        }, $values);
+        return array_map(
+            fn (array $row): ResultRow => new ResultRow(
+                array_combine(
+                    $fields,
+                    array_map([$this, 'formatOGMOutput'], $row)
+                ) ?: [] // Ensure array_combine never returns false
+            ),
+            $values
+        );
     }
+
+    /**
+     * Ensures mapped output follows expected format
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    private function formatOGMOutput(mixed $value): mixed
+    {
+        if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
+            return $this->ogm->map($value);
+        }
+
+        return $value;
+    }
+
+
+
 
     private function buildCounters(array $countersData): ResultCounters
     {
@@ -95,16 +120,21 @@ class ResponseParser
 
     private function buildProfiledQueryPlan(?array $queryPlanData): ?ProfiledQueryPlan
     {
-        if (!$queryPlanData) {
+        if ($queryPlanData === null || empty($queryPlanData)) {
             return null;
         }
 
-        $mappedArguments = array_map(function ($value) {
-            if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
+        /**
+         * @var array<string, mixed> $mappedArguments
+         */
+        $mappedArguments = array_map(function (mixed $value): mixed {
+            if (is_array($value) && isset($value['$type']) && isset($value['_value'])) {
                 return $this->ogm->map($value);
             }
+
             return $value;
         }, $queryPlanData['arguments'] ?? []);
+
 
         $queryArguments = new ProfiledQueryPlanArguments(
             globalMemory: $mappedArguments['GlobalMemory'] ?? null,
@@ -128,7 +158,11 @@ class ResponseParser
             planner: $mappedArguments['planner'] ?? null,
             rows: $mappedArguments['Rows'] ?? null
         );
-        $children = array_map(fn ($child) => $this->buildProfiledQueryPlan($child), $queryPlanData['children'] ?? []);
+
+        $children = array_map(
+            fn (array $child): ?ProfiledQueryPlan => $this->buildProfiledQueryPlan($child),
+            $queryPlanData['children'] ?? []
+        );
 
         return new ProfiledQueryPlan(
             $queryPlanData['dbHits'] ?? 0,
@@ -144,4 +178,5 @@ class ResponseParser
             $queryPlanData['identifiers'] ?? []
         );
     }
+
 }
