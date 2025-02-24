@@ -4,7 +4,6 @@ namespace Neo4j\QueryAPI;
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
-use http\Exception\RuntimeException;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Psr\Http\Client\ClientInterface;
 use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
