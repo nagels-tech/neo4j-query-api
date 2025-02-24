@@ -402,8 +402,6 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
         }
     }
 
-
-
     public function testWithExactNames(): void
     {
         $expected = new ResultSet(
@@ -428,7 +426,7 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $filteredResults = array_values(array_filter(
             iterator_to_array($results),
-            fn ($row) => isset($row['data']['n.name']) && in_array($row['data']['n.name'], ['bob1', 'alicy'], true)
+            fn (ResultRow $row) => in_array($row['n.name'] ?? '', ['bob1', 'alicy'], true)
         ));
 
         $this->assertEquals(iterator_to_array($expected), $filteredResults);

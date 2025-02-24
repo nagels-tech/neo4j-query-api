@@ -49,8 +49,6 @@ final class Neo4jQueryAPI
     {
         $request = $this->requestFactory->buildRunQueryRequest($cypher, $parameters);
 
-        $response = $this->client->sendRequest($request);
-
         try {
             $response = $this->client->sendRequest($request);
         } catch (RequestExceptionInterface $e) {
@@ -90,6 +88,8 @@ final class Neo4jQueryAPI
      * Handles request exceptions by parsing error details and throwing a Neo4jException.
      *
      * @throws Neo4jException
+     *
+     * @return never
      */
     private function handleRequestException(RequestExceptionInterface $e): void
     {
