@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Enums\AccessMode;
 
-final class Configuration
+class Configuration
 {
     /**
      * Constructor for Configuration class.
