@@ -13,6 +13,7 @@ use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\OGM;
 use Neo4j\QueryAPI\ResponseParser;
+use Neo4j\QueryAPI\Results\ResultSet;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 
@@ -40,7 +41,7 @@ final class ProfiledQueryPlanIntegrationTest extends TestCase
     {
         $query = "PROFILE MATCH (n:Person) RETURN n.name";
         $result = $this->api->run($query);
-        $this->assertNotNull($result->getProfiledQueryPlan(), "Profiled query plan not found");
+        $this->assertNotNull($result->profiledQueryPlan, "Profiled query plan not found");
     }
 
     public function testProfileCreateQueryExistence(): void
@@ -59,7 +60,7 @@ final class ProfiledQueryPlanIntegrationTest extends TestCase
         ";
 
         $result = $this->api->run($query);
-        $this->assertNotNull($result->getProfiledQueryPlan(), "Profiled query plan not found");
+        $this->assertNotNull($result->profiledQueryPlan, "Profiled query plan not found");
     }
 
     public function testProfileCreateMovieQueryExistence(): void
@@ -77,7 +78,7 @@ final class ProfiledQueryPlanIntegrationTest extends TestCase
         ";
 
         $result = $this->api->run($query);
-        $this->assertNotNull($result->getProfiledQueryPlan(), "Profiled query plan not found");
+        $this->assertNotNull($result->profiledQueryPlan, "Profiled query plan not found");
     }
 
     public function testProfileCreateFriendsQueryExistence(): void
@@ -89,6 +90,6 @@ final class ProfiledQueryPlanIntegrationTest extends TestCase
         ";
 
         $result = $this->api->run($query);
-        $this->assertNotNull($result->getProfiledQueryPlan(), "Profiled query plan not found");
+        $this->assertNotNull($result->profiledQueryPlan, "Profiled query plan not found");
     }
 }
