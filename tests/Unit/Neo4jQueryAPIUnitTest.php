@@ -136,7 +136,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $result = $this->parser->parseRunQueryResponse($mockResponse);
         $this->assertInstanceOf(ResultSet::class, $result);
 
-        $bookmarks = $result->getBookmarks();
+        $bookmarks = $result->bookmarks;
         $this->assertInstanceOf(Bookmarks::class, $bookmarks);
         $this->assertCount(3, $bookmarks->getBookmarks());
         $this->assertEquals(['bm1', 'bm2', 'bm3'], $bookmarks->getBookmarks());
