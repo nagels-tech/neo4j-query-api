@@ -38,10 +38,6 @@ class ResultSet implements IteratorAggregate, Countable
         return new ArrayIterator($this->rows);
     }
 
-    public function getProfiledQueryPlan(): ?ProfiledQueryPlan
-    {
-        return $this->profiledQueryPlan;
-    }
     public function getQueryCounters(): ?ResultCounters
     {
         return $this->counters;
@@ -54,4 +50,23 @@ class ResultSet implements IteratorAggregate, Countable
         return count($this->rows);
     }
 
+    public function getBookmarks(): ?Bookmarks
+    {
+        return $this->bookmarks;
+    }
+
+    public function getAccessMode(): ?AccessMode
+    {
+        return $this->accessMode;
+    }
+
+    public function getData(): array
+    {
+        return $this->rows;
+    }
+
+    public function getProfiledQueryPlan(): ?ProfiledQueryPlan
+    {
+        return $this->profiledQueryPlan;
+    }
 }

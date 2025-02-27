@@ -30,4 +30,15 @@ class Relationship
         $this->properties = $properties;
     }
 
+    public function getType(): string
+    {
+        return $this->type;
+    }
+
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
+
+
 }
