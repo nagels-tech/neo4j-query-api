@@ -51,7 +51,8 @@
     "scripts": {
         "cs": "vendor/bin/php-cs-fixer fix --dry-run --diff --allow-risky=yes",
         "cs:fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
-        "psalm": "vendor/bin/psalm --no-cache --show-info=true"
+        "psalm": "vendor/bin/psalm --no-cache --show-info=true",
+        "phpunit" : "vendor/bin/phpunit"
     }
 
 }
