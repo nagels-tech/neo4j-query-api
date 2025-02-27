@@ -5,6 +5,7 @@ namespace Neo4j\QueryAPI\Tests\Integration;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use Http\Discovery\Psr17Factory;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
@@ -17,7 +18,7 @@ use Neo4j\QueryAPI\Objects\ResultCounters;
 use Neo4j\QueryAPI\OGM;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
-use Nyholm\Psr7\Factory\Psr17Factory;
+
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Enums\AccessMode;
 use Neo4j\QueryAPI\ResponseParser;

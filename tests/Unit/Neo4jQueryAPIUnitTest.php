@@ -4,6 +4,7 @@ namespace Neo4j\QueryAPI\Tests\Unit;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use http\Client;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
@@ -19,7 +20,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Neo4j\QueryAPI\Configuration;
-use Nyholm\Psr7\Response;
+
 
 /**
  *  @api
