@@ -31,15 +31,6 @@ class Node
     }
 
     /**
-     * Get the labels of the node.
-     * @return string[] Array of labels.
-     */
-    public function getLabels(): array
-    {
-        return $this->labels;
-    }
-
-    /**
      * Get the properties of the node.
      * @return array<string, mixed> Associative array of properties.
      */
