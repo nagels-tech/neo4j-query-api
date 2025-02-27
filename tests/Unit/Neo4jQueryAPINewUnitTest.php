@@ -82,7 +82,7 @@ final class Neo4jQueryAPINewUnitTest extends TestCase
         $this->invokeMethod($this->api, 'handleRequestException', [$mockException]);
     }
 
-    private function invokeMethod($object, string $methodName, array $parameters = []):array
+    private function invokeMethod($object, string $methodName, array $parameters = []): array
     {
         $reflection = new \ReflectionClass(get_class($object));
         $method = $reflection->getMethod($methodName);
