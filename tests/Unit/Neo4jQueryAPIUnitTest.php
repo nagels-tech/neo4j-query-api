@@ -21,7 +21,6 @@ use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Neo4j\QueryAPI\Configuration;
 
-
 /**
  *  @api
  */
