@@ -1,21 +1,18 @@
 <?php
 
-namespace Neo4j\QueryAPI\Tests\Unit\srcfiles;
+namespace Neo4j\QueryAPI\Tests\Unit;
 
+use Neo4j\QueryAPI\Exception\Neo4jException;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\OGM;
 use Neo4j\QueryAPI\ResponseParser;
 use Neo4j\QueryAPI\Results\ResultSet;
-use Neo4j\QueryAPI\Objects\ResultCounters;
-use Neo4j\QueryAPI\Objects\Bookmarks;
-use Neo4j\QueryAPI\Enums\AccessMode;
-use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
-use Neo4j\QueryAPI\Exception\Neo4jException;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
-class ResponseParserUnitTest extends TestCase
+final class ResponseParserUnitTest extends TestCase
 {
     private ResponseParser $parser;
     private OGM $ogmMock;
@@ -48,13 +45,23 @@ class ResponseParserUnitTest extends TestCase
         $this->parser->parseRunQueryResponse($this->responseMock);
     }
 
+
     public function testParseRunQueryResponseThrowsExceptionOnInvalidData(): void
     {
-        $this->responseMock->method('getStatusCode')->willReturn(200);
-        $this->responseMock->method('getBody')->willReturn($this->streamMock);
-        $this->streamMock->method('getContents')->willReturn(json_encode([]));
+        $this->responseMock->expects($this->once())
+            ->method('getStatusCode')
+            ->willReturn(200);
+
+        $this->responseMock->expects($this->once())
+            ->method('getBody')
+            ->willReturn($this->streamMock);
+
+        $this->streamMock->expects($this->once())
+            ->method('getContents')
+            ->willReturn(json_encode([]));
 
         $this->expectException(RuntimeException::class);
+
         $this->parser->parseRunQueryResponse($this->responseMock);
     }
 

@@ -14,7 +14,7 @@ use RuntimeException;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\Objects\Point;
 
-class ResponseParser
+final class ResponseParser
 {
     public function __construct(private readonly OGM $ogm)
     {

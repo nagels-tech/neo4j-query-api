@@ -39,7 +39,6 @@ class OGM
 
     private function parsePoint(string $value): Point
     {
-        // Match SRID and coordinate values
         if (preg_match('/SRID=(\d+);POINT(?: Z)? \(([-\d.]+) ([-\d.]+)(?: ([-\d.]+))?\)/', $value, $matches)) {
             $srid = (int) $matches[1];
             $x = (float) $matches[2];
@@ -57,14 +56,14 @@ class OGM
     {
         return new Node(
             labels: $nodeData['_labels'] ?? [],
-            properties: $this->mapProperties($nodeData['_properties'] ?? []) // ✅ Fix: Ensure properties exist
+            properties: $this->mapProperties($nodeData['_properties'] ?? [])
         );
     }
 
     private function mapRelationship(array $relationshipData): Relationship
     {
         return new Relationship(
-            type: $relationshipData['_type'] ?? 'UNKNOWN',  // ✅ Fix: Default to 'UNKNOWN'
+            type: $relationshipData['_type'] ?? 'UNKNOWN',
             properties: $this->mapProperties($relationshipData['_properties'] ?? [])
         );
     }
