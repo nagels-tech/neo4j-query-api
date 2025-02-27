@@ -1,6 +1,6 @@
-Neo4jQueryAPI client
+# Neo4jQueryAPI client
 
-The Neo4j QueryAPI client is for developers and data engineers who want to interact programmatically with Neo4j databases — running queries, handling results, and managing database configurations. It offers:
+## Interact programmatically with Top Graph Technology
 
 - Easy configuration to pick and choose drivers
 - An intuitive API for smooth query execution
@@ -11,10 +11,6 @@ The Neo4j QueryAPI client is for developers and data engineers who want to inter
 - It does not supports Bolt, Rather compatible with HTTP, and auto-routed drivers
 
 
-
-# Query API
-
-A PHP client for Neo4j, a graph database.
 
 ## Installation
 
@@ -27,6 +23,7 @@ composer require this-repo/neo4j-client
 ## Usage
 
 ### Connecting to Neo4j
+
 
 ```php
 use Neo4j\QueryAPI\Neo4jQueryAPI;
@@ -84,26 +81,25 @@ vendor/bin/phpunit
 
 Cypher values and types map to these php types and classes:
 
-| Cypher             |        PHP        |
-|--------------------|:-----------------:|
-| Single name        |                   |
-| Integer            |   ``` * int ```   |
-| Float              |  ``` * float ```  |
-| Boolean            |  ``` * bool ```   |
-| Null               |  ``` * null ```   |
-| String             | ``` * string  ``` |
-| Array              |                   |
-| Date               |                   |
-| Duration           |                   |
-| 2D Point           |                   |
-| 3D Point           |                   |
-| Cartesian 2D Point |                   |
-| Cartesian 3D Point |                   |
-| Node               |                   |
-| Path               |                   |
-| Map                |                   |
-| Exact name         |                   |
-| Bookmarks          |        Yes        |
+| Cypher             |                         PHP                         |
+|--------------------|:---------------------------------------------------:|
+| List               |                    ```* array```                    |
+| Integer            |                    ``` * int ```                    |
+| Float              |                   ``` * float ```                   |
+| Boolean            |                   ``` * bool ```                    |
+| Null               |                   ``` * null ```                    |
+| String             |                  ``` * string  ```                  |
+| Array              |                    ```* array```                    |
+| Local DateTime     |                                                     |
+| Local Time         |                                                     |
+| Zoned DateTime     |                                                     |
+| Zoned Time         |                                                     |
+| Duration           | ``` * string  ``` (will be upgraded in version 1.1) |
+| WGS 84 2D Point    | ``` * string  ``` (will be upgraded in version 1.1) |
+| WGS 84 3D Point    | ``` * string  ``` (will be upgraded in version 1.1) |
+| Cartesian 2D Point | ``` * string  ``` (will be upgraded in version 1.1) |
+| Cartesian 3D Point | ``` * string  ``` (will be upgraded in version 1.1) |
+| Map                |                  ``` * string  ```                  |
 
 ## Diving deeper:
 
@@ -130,7 +126,7 @@ If you discover any security-related issues, please email *security@nagels.tech*
 
 ## Credits
 
-- [Your Name](https://github.com/your-github-username)
+- Created with ❤️ by Nagels
 - [All Contributors](https://github.com/your-repo/neo4j-client/graphs/contributors)
 
 ## License
