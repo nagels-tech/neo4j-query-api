@@ -47,7 +47,7 @@ class Neo4jOGMTest extends TestCase
         ];
 
         $relationship = $this->ogm->map($relationshipData);
-        $this->assertEquals('FRIENDS', $relationship->getType());
+        $this->assertEquals('FRIENDS', $relationship->type);
     }
 
     public function testWithPath(): void
@@ -85,10 +85,10 @@ class Neo4jOGMTest extends TestCase
 
         $path = $this->ogm->map($pathData);
 
-        $this->assertCount(2, $path->getNodes());
-        $this->assertCount(1, $path->getRelationships());
-        $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);
-        $this->assertEquals('B', $path->getNodes()[1]->getProperties()['name']['_value']);
+        $this->assertCount(2, $path->nodes);
+        $this->assertCount(1, $path->relationships);
+        $this->assertEquals('A', $path->nodes[0]->getProperties()['name']['_value']);
+        $this->assertEquals('B', $path->nodes[1]->getProperties()['name']['_value']);
     }
 
 }

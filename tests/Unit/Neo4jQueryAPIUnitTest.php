@@ -71,7 +71,8 @@ class Neo4jQueryAPIUnitTest extends TestCase
                 Psr17FactoryDiscovery::findStreamFactory(),
                 new Configuration($this->address),
                 Authentication::fromEnvironment()
-            )
+            ),
+            new Configuration($this->address)
         );
 
         $neo4jQueryAPI->run('MATCH (n:Person) RETURN n LIMIT 5');
