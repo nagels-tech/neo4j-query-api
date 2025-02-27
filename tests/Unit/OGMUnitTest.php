@@ -67,8 +67,8 @@ class OGMUnitTest extends TestCase
 
         $result = $this->ogm->map($data);
         $this->assertInstanceOf(Node::class, $result);
-        $this->assertSame(['Person'], $result->getLabels());
-        $this->assertSame(['name' => 'Alice'], $result->getProperties());
+        $this->assertSame(['Person'], $result->labels);
+        $this->assertSame(['name' => 'Alice'], $result->properties);
     }
 
     public function testMapRelationship(): void
@@ -80,8 +80,8 @@ class OGMUnitTest extends TestCase
 
         $result = $this->ogm->map($data);
         $this->assertInstanceOf(Relationship::class, $result);
-        $this->assertSame('KNOWS', $result->getType());
-        $this->assertSame(['since' => 2020], $result->getProperties());
+        $this->assertSame('KNOWS', $result->type);
+        $this->assertSame(['since' => 2020], $result->properties);
     }
 
     public function testMapPoint(): void
@@ -90,9 +90,9 @@ class OGMUnitTest extends TestCase
         $result = $this->ogm->map($data);
 
         $this->assertInstanceOf(Point::class, $result);
-        $this->assertSame(30.0, $result->getX());
-        $this->assertSame(10.0, $result->getY());
-        $this->assertSame(4326, $result->getSrid());
+        $this->assertSame(30.0, $result->x);
+        $this->assertSame(10.0, $result->y);
+        $this->assertSame(4326, $result->srid);
     }
 
     public function testParseWKT(): void
@@ -101,10 +101,10 @@ class OGMUnitTest extends TestCase
         $result = OGM::parseWKT($wkt);
 
         $this->assertInstanceOf(Point::class, $result);
-        $this->assertSame(10.0, $result->getX());
-        $this->assertSame(20.0, $result->getY());
-        $this->assertSame(30.0, $result->getZ());
-        $this->assertSame(4326, $result->getSrid());
+        $this->assertSame(10.0, $result->x);
+        $this->assertSame(20.0, $result->y);
+        $this->assertSame(30.0, $result->z);
+        $this->assertSame(4326, $result->srid);
     }
 
     public function testInvalidWKTThrowsException(): void

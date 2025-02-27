@@ -3,6 +3,9 @@
 namespace Neo4j\QueryAPI\Tests\Integration;
 
 use Neo4j\QueryAPI\Enums\AccessMode;
+use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Objects\Authentication;
+use Neo4j\QueryAPI\Objects\Node;
 use Neo4j\QueryAPI\Objects\Point;
 use Neo4j\QueryAPI\Results\ResultRow;
 use Neo4j\QueryAPI\Results\ResultSet;
@@ -44,7 +47,6 @@ final class DataTypesIntegrationTest extends TestCase
         $bookmarks = $results->getBookmarks() ?? new Bookmarks([]);
         $this->assertCount(1, $bookmarks);
     }
-
     public function testWithSingleName(): void
     {
         $expected = new ResultSet(
@@ -61,10 +63,16 @@ final class DataTypesIntegrationTest extends TestCase
             'name' => 'bob1'
         ]);
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertEquals($expected->counters, $results->counters);
+
+        $filteredResults = array_slice(iterator_to_array($results), 0, 1);
+        $this->assertEquals(iterator_to_array($expected), $filteredResults);
+
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
+
+
 
     public function testWithInteger(): void
     {
@@ -87,9 +95,9 @@ final class DataTypesIntegrationTest extends TestCase
             'age' => 30
         ]);
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -115,9 +123,9 @@ final class DataTypesIntegrationTest extends TestCase
             'height' => 1.75
         ]);
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -142,9 +150,9 @@ final class DataTypesIntegrationTest extends TestCase
             'middleName' => null
         ]);
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -169,9 +177,9 @@ final class DataTypesIntegrationTest extends TestCase
             'isActive' => true
         ]);
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -196,9 +204,9 @@ final class DataTypesIntegrationTest extends TestCase
             'name' => 'Alice'
         ]);
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -253,9 +261,9 @@ final class DataTypesIntegrationTest extends TestCase
             ['date' => "2024-12-11T11:00:00Z"]
         );
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -282,9 +290,9 @@ final class DataTypesIntegrationTest extends TestCase
             ['duration' => 'P14DT16H12M'],
         );
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -316,9 +324,9 @@ final class DataTypesIntegrationTest extends TestCase
         );
 
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -350,9 +358,9 @@ final class DataTypesIntegrationTest extends TestCase
         );
 
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -383,9 +391,9 @@ final class DataTypesIntegrationTest extends TestCase
         );
 
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -417,9 +425,9 @@ final class DataTypesIntegrationTest extends TestCase
         );
 
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -462,9 +470,9 @@ final class DataTypesIntegrationTest extends TestCase
         );
 
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -512,9 +520,9 @@ final class DataTypesIntegrationTest extends TestCase
         );
 
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -545,9 +553,9 @@ final class DataTypesIntegrationTest extends TestCase
         );
 
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -605,9 +613,9 @@ final class DataTypesIntegrationTest extends TestCase
         );
 
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $this->assertEquals($expected->counters, $results->counters);
         $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->getBookmarks() ?: [];
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 }
