@@ -86,7 +86,7 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
         $queryCounters = $result->getQueryCounters();
 
         $this->assertNotNull($queryCounters);
-        $this->assertEquals(1, $queryCounters->getNodesCreated());
+        $this->assertEquals(1, $queryCounters->nodesCreated);
     }
 
     public function testCreateBookmarks(): void
