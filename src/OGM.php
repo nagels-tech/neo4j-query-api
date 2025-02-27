@@ -43,7 +43,7 @@ class OGM
             $srid = (int) $matches[1];
             $x = (float) $matches[2];
             $y = (float) $matches[3];
-            $z = isset($matches[4]) ? (float) $matches[4] : null; // Handle optional Z coordinate
+            $z = isset($matches[4]) ? (float) $matches[4] : null;
 
             return new Point($x, $y, $z, $srid);
         }
