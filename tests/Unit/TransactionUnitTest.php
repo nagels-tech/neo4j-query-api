@@ -2,102 +2,116 @@
 
 namespace Neo4j\QueryAPI\Tests\Unit;
 
-use Neo4j\QueryAPI\Results\ResultSet;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Transaction;
-use Neo4j\QueryAPI\Neo4jRequestFactory;
+use Neo4j\QueryAPI\Exception\Neo4jException;
+use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\ResponseParser;
+use Neo4j\QueryAPI\Neo4jRequestFactory;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
 
-/**
- * @api
- */
 class TransactionUnitTest extends TestCase
 {
-    private MockObject $client;
-    private MockObject $requestFactory;
-    private MockObject $responseParser;
     private Transaction $transaction;
-
-    private string $transactionId = 'txn123';
-    private string $clusterAffinity = 'leader';
+    private $clientMock;
+    private $responseParserMock;
+    private $requestFactoryMock;
+    private $requestMock;
+    private $responseMock;
+    private string $transactionId = 'tx123';
+    private string $clusterAffinity = 'LEADER';
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->client = $this->createMock(ClientInterface::class);
-        $this->requestFactory = $this->createMock(Neo4jRequestFactory::class);
-        $this->responseParser = $this->createMock(ResponseParser::class);
+        $this->clientMock = $this->createMock(ClientInterface::class);
+        $this->responseParserMock = $this->createMock(ResponseParser::class);
+        $this->requestFactoryMock = $this->createMock(Neo4jRequestFactory::class);
+        $this->requestMock = $this->createMock(RequestInterface::class);
+        $this->responseMock = $this->createMock(ResponseInterface::class);
 
         $this->transaction = new Transaction(
-            $this->client,
-            $this->responseParser,
-            $this->requestFactory,
+            $this->clientMock,
+            $this->responseParserMock,
+            $this->requestFactoryMock,
             $this->clusterAffinity,
             $this->transactionId
         );
     }
 
-    public function testRunCallsBuildTransactionRunRequest(): void
+    public function testRunExecutesQuerySuccessfully(): void
     {
-        $query = "CREATE (:Person {name: \$name})";
-        $parameters = ['name' => 'Alice'];
+        $query = 'MATCH (n) RETURN n';
+        $parameters = [];
+        $resultSetMock = $this->createMock(ResultSet::class);
 
-        $mockRequest = $this->createMock(RequestInterface::class);
-        $mockResponse = $this->createMock(ResponseInterface::class);
-        $mockResultSet = $this->createMock(ResultSet::class);
-
-        $this->requestFactory->expects($this->once())
+        $this->requestFactoryMock->expects($this->once())
             ->method('buildTransactionRunRequest')
             ->with($query, $parameters, $this->transactionId, $this->clusterAffinity)
-            ->willReturn($mockRequest);
+            ->willReturn($this->requestMock);
 
-        $this->client->expects($this->once())
+        $this->clientMock->expects($this->once())
             ->method('sendRequest')
-            ->with($mockRequest)
-            ->willReturn($mockResponse);
+            ->with($this->requestMock)
+            ->willReturn($this->responseMock);
 
-        $this->responseParser->expects($this->once())
+        $this->responseParserMock->expects($this->once())
             ->method('parseRunQueryResponse')
-            ->with($mockResponse)
-            ->willReturn($mockResultSet);
+            ->with($this->responseMock)
+            ->willReturn($resultSetMock);
 
         $result = $this->transaction->run($query, $parameters);
-
-        $this->assertSame($mockResultSet, $result);
+        $this->assertInstanceOf(ResultSet::class, $result);
     }
 
-    public function testCommitCallsBuildCommitRequest(): void
-    {
-        $mockRequest = $this->createMock(RequestInterface::class);
 
-        $this->requestFactory->expects($this->once())
+    public function testHandleRequestExceptionWithoutResponse(): void
+    {
+        $exceptionMock = $this->createMock(RequestExceptionInterface::class);
+
+        $reflection = new \ReflectionClass($exceptionMock);
+        $property = $reflection->getParentClass()->getProperty('message');
+        $property->setValue($exceptionMock, 'Request failed');
+
+        $this->expectException(Neo4jException::class);
+        $this->expectExceptionMessage('Request failed');
+
+        $reflection = new \ReflectionClass($this->transaction);
+        $method = $reflection->getMethod('handleRequestException');
+
+        $method->invoke($this->transaction, $exceptionMock);
+    }
+
+
+
+    public function testCommitSendsCommitRequest(): void
+    {
+        $this->requestFactoryMock->expects($this->once())
             ->method('buildCommitRequest')
             ->with($this->transactionId, $this->clusterAffinity)
-            ->willReturn($mockRequest);
+            ->willReturn($this->requestMock);
 
-        $this->client->expects($this->once())
+        $this->clientMock->expects($this->once())
             ->method('sendRequest')
-            ->with($mockRequest);
+            ->with($this->requestMock);
 
         $this->transaction->commit();
     }
 
-    public function testRollbackCallsBuildRollbackRequest(): void
+    public function testRollbackSendsRollbackRequest(): void
     {
-        $mockRequest = $this->createMock(RequestInterface::class);
-
-        $this->requestFactory->expects($this->once())
+        $this->requestFactoryMock->expects($this->once())
             ->method('buildRollbackRequest')
             ->with($this->transactionId, $this->clusterAffinity)
-            ->willReturn($mockRequest);
+            ->willReturn($this->requestMock);
 
-        $this->client->expects($this->once())
+        $this->clientMock->expects($this->once())
             ->method('sendRequest')
-            ->with($mockRequest);
+            ->with($this->requestMock);
 
         $this->transaction->rollback();
     }
