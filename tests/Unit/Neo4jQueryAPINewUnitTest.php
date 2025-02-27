@@ -1,21 +1,20 @@
 <?php
 
-namespace Neo4j\QueryAPI\Tests\Unit\srcfiles;
+namespace Neo4j\QueryAPI\Tests\Unit;
 
+use Neo4j\QueryAPI\Configuration;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
-use Neo4j\QueryAPI\Configuration;
-use Neo4j\QueryAPI\ResponseParser;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
+use Neo4j\QueryAPI\ResponseParser;
 use Neo4j\QueryAPI\Results\ResultSet;
-use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Client\RequestExceptionInterface;
 
-final class Neo4jQueryAPI_UnitTest extends TestCase
+final class Neo4jQueryAPINewUnitTest extends TestCase
 {
     private Neo4jQueryAPI $api;
     private ClientInterface $clientMock;
@@ -72,7 +71,6 @@ final class Neo4jQueryAPI_UnitTest extends TestCase
 
         $result = $this->api->run($cypher, $parameters);
 
-        // Ensure the returned result is the expected ResultSet
         $this->assertSame($mockResultSet, $result);
     }
 
@@ -84,7 +82,7 @@ final class Neo4jQueryAPI_UnitTest extends TestCase
         $this->invokeMethod($this->api, 'handleRequestException', [$mockException]);
     }
 
-    private function invokeMethod($object, string $methodName, array $parameters = [])
+    private function invokeMethod($object, string $methodName, array $parameters = []):array
     {
         $reflection = new \ReflectionClass(get_class($object));
         $method = $reflection->getMethod($methodName);

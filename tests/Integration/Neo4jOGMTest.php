@@ -23,7 +23,6 @@ class Neo4jOGMTest extends TestCase
 
     public function testWithNode(): void
     {
-        // Ensure the property $ogm is referenced
         $nodeData = [
             '$type' => 'Node',
             '_value' => [
@@ -36,10 +35,9 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals('Ayush', $node->getProperties()['name']['_value']);
     }
 
-    // Example of using $ogm in another test
     public function testWithSimpleRelationship(): void
     {
-        // Mapping the Relationship
+
         $relationshipData = [
             '$type' => 'Relationship',
             '_value' => [
@@ -52,7 +50,6 @@ class Neo4jOGMTest extends TestCase
         $this->assertEquals('FRIENDS', $relationship->getType());
     }
 
-    // More tests...
     public function testWithPath(): void
     {
         $pathData = [
@@ -63,7 +60,7 @@ class Neo4jOGMTest extends TestCase
                     '_value' => [
                         '_labels' => ['Person'],
                         '_properties' => [
-                            'name' => ['_value' => 'A'],  // ✅ Now correctly wrapped
+                            'name' => ['_value' => 'A'],
                         ],
                     ],
                 ],
@@ -79,7 +76,7 @@ class Neo4jOGMTest extends TestCase
                     '_value' => [
                         '_labels' => ['Person'],
                         '_properties' => [
-                            'name' => ['_value' => 'B'],  // ✅ Now correctly wrapped
+                            'name' => ['_value' => 'B'],
                         ],
                     ],
                 ],
@@ -88,7 +85,6 @@ class Neo4jOGMTest extends TestCase
 
         $path = $this->ogm->map($pathData);
 
-        // Assertions
         $this->assertCount(2, $path->getNodes());
         $this->assertCount(1, $path->getRelationships());
         $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);

@@ -35,7 +35,7 @@ class Transaction
     {
         $request = $this->requestFactory->buildTransactionRunRequest($query, $parameters, $this->transactionId, $this->clusterAffinity);
 
-        $response = null; // ✅ Ensures response is always defined
+        $response = null;
 
         try {
             $response = $this->client->sendRequest($request);
@@ -75,7 +75,6 @@ class Transaction
      */
     private function handleRequestException(RequestExceptionInterface $e): void
     {
-        // ✅ Corrected: Check if exception has a response
         $response = method_exists($e, 'getResponse') ? $e->getResponse() : null;
 
         if ($response instanceof ResponseInterface) {
