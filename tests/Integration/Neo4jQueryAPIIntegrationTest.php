@@ -114,5 +114,5 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
             $this->assertEquals('Expected parameter(s): invalidParam', $e->getMessage());
         }
     }
-    
+
 }

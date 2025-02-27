@@ -16,14 +16,24 @@ use Neo4j\QueryAPI\ResponseParser;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
 
-class ProfiledQueryPlanIntegrationTest extends TestCase
+final class ProfiledQueryPlanIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-        $this->api = $this->initializeApi();
+
+        $neo4jAddress = getenv('NEO4J_ADDRESS');
+        if (!is_string($neo4jAddress) || trim($neo4jAddress) === '') {
+            throw new \RuntimeException('NEO4J_ADDRESS is not set or is invalid.');
+        }
+
+        $this->api = Neo4jQueryAPI::create(
+            new Configuration(baseUri: $neo4jAddress),
+            Authentication::fromEnvironment()
+        );
     }
 
     public function testProfileExistence(): void

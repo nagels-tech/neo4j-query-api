@@ -20,14 +20,11 @@ final class Neo4jQueryAPI
         private ClientInterface $client,
         private ResponseParser $responseParser,
         private Neo4jRequestFactory $requestFactory,
-        private ?Configuration $config
+        private Configuration $config
     ) {
 
     }
 
-    /**
-     * @api
-     */
     public static function login(string $address = null, ?AuthenticateInterface $auth = null, ?Configuration $config = null): self
     {
         $config = $config ?? new Configuration(baseUri: $address ?? '');
@@ -55,18 +52,17 @@ final class Neo4jQueryAPI
         );
     }
 
-    /**
-     * @api
-     */
-    public function create(Configuration $configuration, AuthenticateInterface $auth = null): self
+    public static function create(Configuration $configuration, AuthenticateInterface $auth = null): self
     {
         return self::login(auth: $auth, config: $configuration);
     }
+
 
     public function getConfig(): Configuration
     {
         return $this->config;
     }
+
 
     /**
      * Executes a Cypher query.
