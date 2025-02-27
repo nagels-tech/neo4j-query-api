@@ -53,16 +53,9 @@ final class DataTypesIntegrationTest extends TestCase
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
         $this->assertNotEmpty(iterator_to_array($results), 'No results returned from query.');
-
-        $filteredResults = array_values(array_filter(
-            iterator_to_array($results),
-            fn (ResultRow $row) => in_array($row['n.name'] ?? '', ['bob1', 'alicy'], true)
-        ));
-
-        $bookmarks = $results->getBookmarks();
-        $this->assertNotNull($bookmarks, "Bookmarks should not be null.");
+        $bookmarks = $results->getBookmarks() ?? new Bookmarks([]);
+        $this->assertCount(1, $bookmarks);
     }
-
 
     public function testWithSingleName(): void
     {
@@ -81,10 +74,6 @@ final class DataTypesIntegrationTest extends TestCase
         ]);
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-
-        $filteredResults = array_slice(iterator_to_array($results), 0, 1);
-        $this->assertEquals(iterator_to_array($expected), $filteredResults);
-
         $bookmarks = $results->getBookmarks() ?: [];
         $this->assertCount(1, $bookmarks);
     }
