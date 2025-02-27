@@ -5,8 +5,12 @@ namespace Neo4j\QueryAPI\Tests\Integration;
 use Neo4j\QueryAPI\OGM;
 use PHPUnit\Framework\TestCase;
 
-final class Neo4jOGMTest extends TestCase
+/**
+ *  @api
+ */
+class Neo4jOGMTest extends TestCase
 {
+    /** @psalm-suppress PropertyNotSetInConstructor */
     private OGM $ogm;
 
     #[\Override]
@@ -31,9 +35,9 @@ final class Neo4jOGMTest extends TestCase
         $this->assertEquals('Ayush', $node->getProperties()['name']['_value']);
     }
 
-
     public function testWithSimpleRelationship(): void
     {
+
         $relationshipData = [
             '$type' => 'Relationship',
             '_value' => [
@@ -43,10 +47,9 @@ final class Neo4jOGMTest extends TestCase
         ];
 
         $relationship = $this->ogm->map($relationshipData);
-        $this->assertEquals('FRIENDS', $relationship->getType());
+        $this->assertEquals('FRIENDS', $relationship->type);
     }
 
-    // More tests...
     public function testWithPath(): void
     {
         $pathData = [
@@ -82,10 +85,10 @@ final class Neo4jOGMTest extends TestCase
 
         $path = $this->ogm->map($pathData);
 
-        $this->assertCount(2, $path->getNodes());
-        $this->assertCount(1, $path->getRelationships());
-        $this->assertEquals('A', $path->getNodes()[0]->getProperties()['name']['_value']);
-        $this->assertEquals('B', $path->getNodes()[1]->getProperties()['name']['_value']);
+        $this->assertCount(2, $path->nodes);
+        $this->assertCount(1, $path->relationships);
+        $this->assertEquals('A', $path->nodes[0]->getProperties()['name']['_value']);
+        $this->assertEquals('B', $path->nodes[1]->getProperties()['name']['_value']);
     }
 
 }

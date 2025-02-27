@@ -8,9 +8,6 @@ use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\Objects\Path;
 use InvalidArgumentException;
 
-/**
- *  @api
- */
 class OGM
 {
     /**
@@ -57,14 +54,14 @@ class OGM
     {
         return new Node(
             labels: $nodeData['_labels'] ?? [],
-            properties: $this->mapProperties($nodeData['_properties'] ?? []) // ✅ Fix: Ensure properties exist
+            properties: $this->mapProperties($nodeData['_properties'] ?? [])
         );
     }
 
     private function mapRelationship(array $relationshipData): Relationship
     {
         return new Relationship(
-            type: $relationshipData['_type'] ?? 'UNKNOWN',  // ✅ Fix: Default to 'UNKNOWN'
+            type: $relationshipData['_type'] ?? 'UNKNOWN',
             properties: $this->mapProperties($relationshipData['_properties'] ?? [])
         );
     }

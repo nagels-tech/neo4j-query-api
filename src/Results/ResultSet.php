@@ -12,7 +12,6 @@ use Neo4j\QueryAPI\Objects\ResultCounters;
 use Traversable;
 
 /**
- * @api
  * @template TValue
  * @implements IteratorAggregate<int, ResultRow>
  */
