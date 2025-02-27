@@ -5,10 +5,6 @@ namespace Neo4j\QueryAPI\Objects;
 /**
  * Represents a point with x, y, z coordinates, and SRID (Spatial Reference System Identifier).
  */
-/**
- *  @api
- */
-
 class Point
 {
     /**
@@ -23,46 +19,6 @@ class Point
         public float|null $z,
         public int $srid,
     ) {
-    }
-
-    /**
-     * Get the x coordinate of the point.
-     * @api
-     * @return float x coordinate value.
-     */
-    public function getX(): float
-    {
-        return $this->x;
-    }
-
-    /**
-     * Get the y coordinate of the point.
-     * @api
-     * @return float y coordinate value.
-     */
-    public function getY(): float
-    {
-        return $this->y;
-    }
-
-    /**
-     * Get the z coordinate of the point.
-     * @api
-     * @return float|null z coordinate value, or null if not applicable.
-     */
-    public function getZ(): float|null
-    {
-        return $this->z;
-    }
-
-    /**
-     * Get the SRID (Spatial Reference System Identifier) of the point.
-     * @api
-     * @return int SRID value.
-     */
-    public function getSrid(): int
-    {
-        return $this->srid;
     }
 
     /**

@@ -4,7 +4,6 @@ namespace Neo4j\QueryAPI;
 
 use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
-use http\Exception\RuntimeException;
 use InvalidArgumentException;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 use Psr\Http\Client\ClientInterface;
@@ -16,20 +15,15 @@ use Psr\Http\Client\RequestExceptionInterface;
 
 final class Neo4jQueryAPI
 {
-    private Configuration $config;
-
     public function __construct(
         private ClientInterface $client,
         private ResponseParser $responseParser,
         private Neo4jRequestFactory $requestFactory,
-        ?Configuration $config = null
+        private Configuration $config
     ) {
-        $this->config = $config ?? new Configuration(baseUri: 'http://myaddress'); // Default configuration if not provided
+
     }
 
-    /**
-     * @api
-     */
     public static function login(string $address = null, ?AuthenticateInterface $auth = null, ?Configuration $config = null): self
     {
         $config = $config ?? new Configuration(baseUri: $address ?? '');
@@ -57,18 +51,17 @@ final class Neo4jQueryAPI
         );
     }
 
-    /**
-     * @api
-     */
-    public function create(Configuration $configuration, AuthenticateInterface $auth = null): self
+    public static function create(Configuration $configuration, AuthenticateInterface $auth = null): self
     {
         return self::login(auth: $auth, config: $configuration);
     }
+
 
     public function getConfig(): Configuration
     {
         return $this->config;
     }
+
 
     /**
      * Executes a Cypher query.
@@ -122,7 +115,7 @@ final class Neo4jQueryAPI
         $response = method_exists($e, 'getResponse') ? $e->getResponse() : null;
 
         if ($response instanceof ResponseInterface) {
-            $errorResponse = json_decode((string) $response->getBody(), true);
+            $errorResponse = json_decode((string)$response->getBody(), true);
             throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
         }
 
