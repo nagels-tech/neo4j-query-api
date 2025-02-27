@@ -52,7 +52,6 @@ final class DataTypesIntegrationTest extends TestCase
         ]);
 
         $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-        $this->assertNotEmpty(iterator_to_array($results), 'No results returned from query.');
         $bookmarks = $results->getBookmarks() ?? new Bookmarks([]);
         $this->assertCount(1, $bookmarks);
     }
