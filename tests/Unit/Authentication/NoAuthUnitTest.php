@@ -2,37 +2,32 @@
 
 namespace Neo4j\QueryAPI\Tests\Unit\Authentication;
 
-use DG\BypassFinals;
 use Neo4j\QueryAPI\Authentication\NoAuth;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-final class NoAuthUnitTest extends TestCase
+class NoAuthUnitTest extends TestCase
 {
-    private NoAuth $auth;
-    private RequestInterface $requestMock;
-
-    #[\Override]
-    protected function setUp(): void
+    public function testGetHeaderReturnsEmptyString()
     {
-        BypassFinals::enable();
-
-        $this->auth = new NoAuth();
-        $this->requestMock = $this->createMock(RequestInterface::class);
+        $auth = new NoAuth();
+        $this->assertSame('', $auth->getHeader());
     }
 
-    public function testAuthenticateReturnsUnmodifiedRequest(): void
+    public function testGetTypeReturnsNoAuth()
     {
-        $this->assertSame($this->requestMock, $this->auth->authenticate($this->requestMock));
+        $auth = new NoAuth();
+        $this->assertSame('NoAuth', $auth->getType());
     }
 
-    public function testGetHeaderReturnsEmptyString(): void
+    public function testAuthenticateReturnsSameRequest()
     {
-        $this->assertEquals('', $this->auth->getHeader());
-    }
 
-    public function testGetTypeReturnsNoAuth(): void
-    {
-        $this->assertEquals('NoAuth', $this->auth->getType());
+        $requestMock = $this->createMock(RequestInterface::class);
+
+        $auth = new NoAuth();
+        $result = $auth->authenticate($requestMock);
+
+        $this->assertSame($requestMock, $result);
     }
 }
