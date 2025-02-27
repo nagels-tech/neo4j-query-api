@@ -34,12 +34,6 @@ final class ResultRow implements ArrayAccess, Countable, IteratorAggregate
         return $this->data[$offset];
     }
 
-    public function get(string $row): mixed
-    {
-        return $this->offsetGet($row);
-    }
-
-
 
     #[\Override]
     public function offsetExists($offset): bool
