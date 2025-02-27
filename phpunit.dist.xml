@@ -19,5 +19,9 @@
         <log type="testdox" target="php://stdout" />
     </logging>
 -->
+
+<!--    <env name="NEO4J_ADDRESS" value="<put your address here>"/>-->
+<!--    <env name="NEO4J_USERNAME" value="<put your name here>"/>-->
+<!--    <env name="NEO4J_PASSWORD" value="<put your password here>"/>-->
     <!-- No need to set sensitive information here -->
 </phpunit>

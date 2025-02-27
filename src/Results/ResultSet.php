@@ -12,7 +12,6 @@ use Neo4j\QueryAPI\Objects\ResultCounters;
 use Traversable;
 
 /**
- * @api
  * @template TValue
  * @implements IteratorAggregate<int, ResultRow>
  */
@@ -43,10 +42,12 @@ class ResultSet implements IteratorAggregate, Countable
     {
         return $this->profiledQueryPlan;
     }
+    public function getQueryCounters(): ?ResultCounters
+    {
+        return $this->counters;
+    }
 
-    /**
-     * @api
-     */
+
     #[\Override]
     public function count(): int
     {
