@@ -8,7 +8,7 @@ The Neo4j QueryAPI client is for developers and data engineers who want to inter
 - Built and tested under close collaboration with the official Neo4j driver team
 - Easier to start with, just need a client to any neo4j instance
 - Fully typed with Psalm and CS fixed for code quality
-- It does not Supports Bolt, Rather compatible with HTTP, and auto-routed drivers
+- It does not supports Bolt, Rather compatible with HTTP, and auto-routed drivers
 
 
 

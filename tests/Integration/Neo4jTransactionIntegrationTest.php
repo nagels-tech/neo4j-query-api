@@ -3,10 +3,10 @@
 namespace Neo4j\QueryAPI\Tests\Integration;
 
 use Exception;
-use Neo4j\QueryAPI\Configuration;
 use Neo4j\QueryAPI\Objects\Authentication;
 use GuzzleHttp\Exception\GuzzleException;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -15,26 +15,14 @@ use RuntimeException;
  */
 class Neo4jTransactionIntegrationTest extends TestCase
 {
-    private Neo4jQueryAPI $api;
+    use CreatesQueryAPI;
 
-    /**
-     * @throws GuzzleException
-     */
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
-        $neo4jAddress = getenv('NEO4J_ADDRESS');
-        if (!is_string($neo4jAddress) || trim($neo4jAddress) === '') {
-            throw new \RuntimeException('NEO4J_ADDRESS is not set or is invalid.');
-        }
-
-        $this->api = Neo4jQueryAPI::create(
-            new Configuration(baseUri: $neo4jAddress),
-            Authentication::fromEnvironment()
-        );
-
+        $this->createQueryAPI();
         $this->api = $this->initializeApi();
         $this->clearDatabase();
         $this->populateTestData();
