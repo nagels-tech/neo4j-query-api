@@ -2,72 +2,51 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use Neo4j\QueryAPI\Configuration;
+use Neo4j\QueryAPI\Objects\Authentication;
+use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Enums\AccessMode;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 
-class AccessModesIntegrationTest extends TestCase
+final class AccessModesIntegrationTest extends TestCase
 {
-    private Neo4jQueryAPI $api;
+    use CreatesQueryAPI;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
-        $this->api = new Neo4jQueryAPI();
+
+        $this->createQueryAPI();
     }
 
+    #[DoesNotPerformAssertions]
     public function testRunWithWriteAccessMode(): void
     {
-        $result = $this->api->run(
-            "CREATE (n:Person {name: 'Alice'}) RETURN n",
-            [],
-            'neo4j',
-            null,
-            null,
-            AccessMode::WRITE
-        );
-        $this->assertNotNull($result);
+        $this->api->run("CREATE (n:Person {name: 'Alice'}) RETURN n");
     }
 
+    #[DoesNotPerformAssertions]
     public function testRunWithReadAccessMode(): void
     {
-        $result = $this->api->run(
-            "MATCH (n) RETURN COUNT(n)",
-            [],
-            'neo4j',
-            null,
-            null,
-            AccessMode::READ
-        );
-        $this->assertNotNull($result);
+        $this->createQueryAPI(AccessMode::READ);
+        $this->api->run("MATCH (n) RETURN COUNT(n)");
     }
 
     public function testReadModeWithWriteQuery(): void
     {
+        $this->createQueryAPI(AccessMode::READ);
         $this->expectException(Neo4jException::class);
-        $this->api->run(
-            "CREATE (n:Test {name: 'Test Node'})",
-            [],
-            'neo4j',
-            new Bookmarks([]),
-            null,
-            AccessMode::READ
-        );
+        $this->api->run("CREATE (n:Test {name: 'Test Node'})");
     }
 
+    #[DoesNotPerformAssertions]
     public function testWriteModeWithReadQuery(): void
     {
-        $result = $this->api->run(
-            "MATCH (n:Test) RETURN n",
-            [],
-            'neo4j',
-            null,
-            null,
-            AccessMode::WRITE
-        );
-        $this->assertNotNull($result);
+        $this->api->run("MATCH (n:Test) RETURN n");
     }
 }
-
