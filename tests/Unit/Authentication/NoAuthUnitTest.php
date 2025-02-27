@@ -12,7 +12,7 @@ final class NoAuthUnitTest extends TestCase
     private NoAuth $auth;
     private RequestInterface $requestMock;
 
-     #[\Override]
+    #[\Override]
     protected function setUp(): void
     {
         BypassFinals::enable();
