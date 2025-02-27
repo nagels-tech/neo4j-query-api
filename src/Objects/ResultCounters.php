@@ -2,9 +2,6 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-/**
- * @api
- */
 class ResultCounters
 {
     public function __construct(

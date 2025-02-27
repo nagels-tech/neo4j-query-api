@@ -2,39 +2,19 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
-use Neo4j\QueryAPI\Configuration;
-use Neo4j\QueryAPI\Neo4jQueryAPI;
-use Neo4j\QueryAPI\Neo4jRequestFactory;
-use Neo4j\QueryAPI\Objects\Authentication;
-use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
-use Neo4j\QueryAPI\OGM;
-use Neo4j\QueryAPI\ResponseParser;
-use Neo4j\QueryAPI\Results\ResultSet;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
 use PHPUnit\Framework\TestCase;
 
 final class ProfiledQueryPlanIntegrationTest extends TestCase
 {
-    private Neo4jQueryAPI $api;
+    use CreatesQueryAPI;
 
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
-        $neo4jAddress = getenv('NEO4J_ADDRESS');
-        if (!is_string($neo4jAddress) || trim($neo4jAddress) === '') {
-            throw new \RuntimeException('NEO4J_ADDRESS is not set or is invalid.');
-        }
-
-        $this->api = Neo4jQueryAPI::create(
-            new Configuration(baseUri: $neo4jAddress),
-            Authentication::fromEnvironment()
-        );
+        $this->createQueryAPI();
     }
 
     public function testProfileExistence(): void
