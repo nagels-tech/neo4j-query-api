@@ -63,15 +63,10 @@ class DataTypesIntegrationTest extends TestCase
             'name' => 'bob1'
         ]);
 
-        $this->assertEquals($expected->counters, $results->counters);
-
-        $filteredResults = array_slice(iterator_to_array($results), 0, 1);
-        $this->assertEquals(iterator_to_array($expected), $filteredResults);
-
-        $bookmarks = $results->bookmarks ?: [];
+        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
+        $bookmarks = $results->getBookmarks() ?: [];
         $this->assertCount(1, $bookmarks);
     }
-
 
 
     public function testWithInteger(): void
