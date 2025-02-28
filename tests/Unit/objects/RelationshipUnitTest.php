@@ -5,7 +5,7 @@ namespace Neo4j\QueryAPI\Tests\Unit\objects;
 use Neo4j\QueryAPI\Objects\Relationship;
 use PHPUnit\Framework\TestCase;
 
-class RelationshipUnitTest extends TestCase
+final class RelationshipUnitTest extends TestCase
 {
     private Relationship $relationship;
     #[\Override]

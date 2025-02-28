@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 /**
  *  @api
  */
-class OGMUnitTest extends TestCase
+final class OGMUnitTest extends TestCase
 {
     private OGM $ogm;
 

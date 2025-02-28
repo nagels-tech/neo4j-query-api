@@ -5,7 +5,7 @@ namespace Neo4j\QueryAPI\Tests\Unit\objects;
 use Neo4j\QueryAPI\Objects\Node;
 use PHPUnit\Framework\TestCase;
 
-class NodeUnitTest extends TestCase
+final class NodeUnitTest extends TestCase
 {
     private Node $node;
     #[\Override]

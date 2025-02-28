@@ -20,7 +20,7 @@ use RuntimeException;
 /**
  *  @api
  */
-class Neo4jRequestFactoryTest extends TestCase
+final class Neo4jRequestFactoryTest extends TestCase
 {
     /** @psalm-suppress PropertyNotSetInConstructor */
     private RequestFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $psr17Factory;

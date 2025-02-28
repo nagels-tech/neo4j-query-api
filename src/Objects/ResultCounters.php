@@ -2,7 +2,7 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-class ResultCounters
+final class ResultCounters
 {
     public function __construct(
         public readonly bool $containsUpdates = false,

@@ -6,7 +6,7 @@ namespace Neo4j\QueryAPI\Objects;
  * Represents a path in a Neo4j graph, consisting of nodes and relationships.
  */
 
-class Path
+final class Path
 {
     /**
      * @var Node[] Array of nodes in the path.

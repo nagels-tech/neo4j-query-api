@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 /**
  *  @api
  */
-class ResultRowTest extends TestCase
+final class ResultRowTest extends TestCase
 {
     public function testArrayAccessGet(): void
     {

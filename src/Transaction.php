@@ -12,7 +12,7 @@ use stdClass;
 /**
  *  @api
  */
-class Transaction
+final class Transaction
 {
     public function __construct(
         private ClientInterface $client,

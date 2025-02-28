@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 /**
  *  @api
  */
-class Neo4jOGMTest extends TestCase
+final class Neo4jOGMTest extends TestCase
 {
     /** @psalm-suppress PropertyNotSetInConstructor */
     private OGM $ogm;
