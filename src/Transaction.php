@@ -9,23 +9,20 @@ use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use stdClass;
 
-/**
- *  @api
- */
 final class Transaction
 {
     public function __construct(
-        private ClientInterface $client,
-        private ResponseParser $responseParser,
-        private Neo4jRequestFactory $requestFactory,
-        private string $clusterAffinity,
-        private string $transactionId
+        private readonly ClientInterface     $client,
+        private readonly ResponseParser      $responseParser,
+        private readonly Neo4jRequestFactory $requestFactory,
+        private readonly string              $clusterAffinity,
+        private readonly string              $transactionId
     ) {
     }
 
     /**
      * Execute a Cypher query within the transaction.
-     * @api
+     *
      * @param string $query The Cypher query to be executed.
      * @param array $parameters Parameters for the query.
      * @return ResultSet The result rows in ResultSet format.
@@ -50,18 +47,12 @@ final class Transaction
         return $this->responseParser->parseRunQueryResponse($response);
     }
 
-    /**
-     * @api
-     */
     public function commit(): void
     {
         $request = $this->requestFactory->buildCommitRequest($this->transactionId, $this->clusterAffinity);
         $this->client->sendRequest($request);
     }
 
-    /**
-     * @api
-     */
     public function rollback(): void
     {
         $request = $this->requestFactory->buildRollbackRequest($this->transactionId, $this->clusterAffinity);

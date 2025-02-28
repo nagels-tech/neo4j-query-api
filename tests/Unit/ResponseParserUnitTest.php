@@ -7,6 +7,7 @@ use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 use Neo4j\QueryAPI\OGM;
 use Neo4j\QueryAPI\ResponseParser;
 use Neo4j\QueryAPI\Results\ResultSet;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -15,15 +16,13 @@ use RuntimeException;
 final class ResponseParserUnitTest extends TestCase
 {
     private ResponseParser $parser;
-    private OGM $ogmMock;
-    private ResponseInterface $responseMock;
-    private StreamInterface $streamMock;
+    private ResponseInterface&MockObject $responseMock;
+    private StreamInterface&MockObject $streamMock;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->ogmMock = $this->createMock(OGM::class);
-        $this->parser = new ResponseParser($this->ogmMock);
+        $this->parser = new ResponseParser($this->createMock(OGM::class));
         $this->responseMock = $this->createMock(ResponseInterface::class);
         $this->streamMock = $this->createMock(StreamInterface::class);
     }

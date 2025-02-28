@@ -21,13 +21,8 @@ use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Neo4j\QueryAPI\Configuration;
 
-/**
- *  @api
- */
 final class Neo4jQueryAPIUnitTest extends TestCase
 {
-    private OGM $ogm;
-
     protected string $address;
 
     protected ResponseParser $parser;
@@ -40,8 +35,7 @@ final class Neo4jQueryAPIUnitTest extends TestCase
         $address = getenv('NEO4J_ADDRESS');
         $this->address = is_string($address) ? $address : '';
 
-        $this->ogm = new OGM();
-        $this->parser = new ResponseParser($this->ogm);
+        $this->parser = new ResponseParser(new OGM());
     }
 
     public function testCorrectClientSetup(): void

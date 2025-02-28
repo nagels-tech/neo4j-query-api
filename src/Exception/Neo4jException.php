@@ -4,10 +4,7 @@ namespace Neo4j\QueryAPI\Exception;
 
 use Exception;
 
-/**
- * @api
- */
-class Neo4jException extends Exception
+final class Neo4jException extends Exception
 {
     private readonly string $errorCode;
     private readonly ?string $errorType;

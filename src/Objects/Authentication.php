@@ -31,4 +31,9 @@ final class Authentication
     {
         return new BearerAuthentication($token);
     }
+
+    public static function noAuth(): NoAuth
+    {
+        return new NoAuth();
+    }
 }

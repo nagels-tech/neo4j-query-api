@@ -99,6 +99,9 @@ final class ProfiledQueryPlanIntegrationTest extends TestCase
         $result = $this->api->run($query);
         $this->assertNotNull($result->profiledQueryPlan, "profiled query plan not found");
         $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
+        if ($body === false) {
+            throw new \UnexpectedValueException('Could not find complex query profile');
+        }
         $mockSack = new MockHandler([
             new Response(200, [], $body),
         ]);
