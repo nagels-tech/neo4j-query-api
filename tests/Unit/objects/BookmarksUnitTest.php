@@ -5,7 +5,7 @@ namespace Neo4j\QueryAPI\Tests\Unit\objects;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 use PHPUnit\Framework\TestCase;
 
-final class BookmarksUnitTest extends TestCase
+class BookmarksUnitTest extends TestCase
 {
     private Bookmarks $bookmarks;
     #[\Override]

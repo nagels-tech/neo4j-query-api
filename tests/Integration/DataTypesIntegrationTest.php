@@ -14,7 +14,7 @@ use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
 use PHPUnit\Framework\TestCase;
 
-final class DataTypesIntegrationTest extends TestCase
+class DataTypesIntegrationTest extends TestCase
 {
     use CreatesQueryAPI;
 

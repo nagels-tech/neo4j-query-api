@@ -15,7 +15,7 @@ use Traversable;
  * @implements ArrayAccess<string, TValue>
  * @implements IteratorAggregate<string, TValue>
  */
-final class ResultRow implements ArrayAccess, Countable, IteratorAggregate
+class ResultRow implements ArrayAccess, Countable, IteratorAggregate
 {
     /** @var array<string, TValue> */
     private array $data;

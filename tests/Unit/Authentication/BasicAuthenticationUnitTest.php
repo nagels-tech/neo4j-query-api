@@ -7,7 +7,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-final class BasicAuthenticationUnitTest extends TestCase
+class BasicAuthenticationUnitTest extends TestCase
 {
     private BasicAuthentication $auth;
     private MockObject $requestMock;

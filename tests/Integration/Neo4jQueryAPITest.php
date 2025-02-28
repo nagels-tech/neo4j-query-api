@@ -8,7 +8,7 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Configuration;
 
-final class Neo4jQueryAPITest extends TestCase
+class Neo4jQueryAPITest extends TestCase
 {
     public function testLoginWithValidConfiguration(): void
     {
