@@ -3,8 +3,7 @@
 namespace Neo4j\QueryAPI\Objects;
 
 /**
- * @psalm-suppress UnusedClass
- * Represents a Person node in the Neo4j graph.
+ * * Represents a Person node in the Neo4j graph.
  */
 final class Person extends Node
 {
