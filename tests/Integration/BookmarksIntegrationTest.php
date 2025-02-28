@@ -8,7 +8,6 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Objects\Bookmarks;
-use Neo4j\QueryAPI\Exception\InvalidBookmarkException;
 
 final class BookmarksIntegrationTest extends TestCase
 {
