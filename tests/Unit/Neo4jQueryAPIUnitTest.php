@@ -26,13 +26,10 @@ use Nyholm\Psr7\Response;
  */
 class Neo4jQueryAPIUnitTest extends TestCase
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
     private OGM $ogm;
 
-    /** @psalm-suppress PropertyNotSetInConstructor */
     protected string $address;
 
-    /** @psalm-suppress PropertyNotSetInConstructor */
     protected ResponseParser $parser;
 
     #[\Override]
