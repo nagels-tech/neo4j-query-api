@@ -2,29 +2,39 @@
 <phpunit bootstrap="tests/bootstrap.php"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         failOnDeprecation="true"
+         failOnNotice="true"
+         failOnPhpunitDeprecation="true"
+         failOnIncomplete="true"
+         failOnEmptyTestSuite="true"
+         failOnRisky="true"
+         failOnSkipped="true"
+         failOnWarning="true"
 >
-    <!-- Test Suite Configuration -->
     <testsuites>
         <testsuite name="Application Test Suite">
-            <directory>./tests</directory> <!-- Path to your tests directory -->
+            <directory>./tests</directory>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory>./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory>./tests/Integration</directory>
         </testsuite>
     </testsuites>
 
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
+    <coverage includeUncoveredFiles="true" pathCoverage="true">
+        <report>
+            <html outputDirectory="coverage/html" lowUpperBound="50" highLowerBound="90"/>
+            <crap4j outputFile="coverage/crap4j.xml" threshold="50"/>
+            <clover outputFile="coverage/clover.xml"/>
+            <php outputFile="coverage/coverage.php"/>
+        </report>
     </coverage>
 
-<!--
-    &lt;!&ndash; Logging &ndash;&gt;
-    <logging>
-        <log type="testdox" target="php://stdout" />
-    </logging>
--->
-
+    <php>
 <!--    <env name="NEO4J_ADDRESS" value="<put your address here>"/>-->
 <!--    <env name="NEO4J_USERNAME" value="<put your name here>"/>-->
 <!--    <env name="NEO4J_PASSWORD" value="<put your password here>"/>-->
-    <!-- No need to set sensitive information here -->
+    </php>
 </phpunit>
