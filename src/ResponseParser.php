@@ -114,13 +114,14 @@ final class ResponseParser
         return AccessMode::tryFrom($accessModeData) ?? AccessMode::WRITE;
     }
 
-    private function buildProfiledQueryPlan(?array $queryPlanData): ?ProfiledQueryPlan
+    private function buildProfiledQueryPlan(mixed $queryPlanData): ?ProfiledQueryPlan
     {
-        if (!$queryPlanData) {
+        if (! is_array($queryPlanData)) {
             return null;
         }
 
-        $mappedArguments = array_map(function ($value) {
+        /** @var array<array-key, mixed> $mappedArguments */
+        $mappedArguments = array_map(function (mixed $value): mixed {
             if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
                 return $this->ogm->map($value);
             }
@@ -149,7 +150,7 @@ final class ResponseParser
             planner: $mappedArguments['planner'] ?? null,
             rows: $mappedArguments['Rows'] ?? null
         );
-        $children = array_map(fn ($child) => $this->buildProfiledQueryPlan($child), $queryPlanData['children'] ?? []);
+        $children = array_map(fn (mixed $child): ?ProfiledQueryPlan => $this->buildProfiledQueryPlan($child), $queryPlanData['children'] ?? []);
 
         return new ProfiledQueryPlan(
             $queryPlanData['dbHits'] ?? 0,

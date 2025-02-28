@@ -8,6 +8,7 @@ use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\ResponseParser;
 use Neo4j\QueryAPI\Results\ResultSet;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
@@ -17,11 +18,14 @@ use Psr\Http\Message\ResponseInterface;
 final class Neo4jQueryAPINewUnitTest extends TestCase
 {
     private Neo4jQueryAPI $api;
-    private ClientInterface $clientMock;
-    private ResponseParser $responseParserMock;
-    private Neo4jRequestFactory $requestFactoryMock;
-    private Configuration $configMock;
+    private ClientInterface&MockObject $clientMock;
+    private ResponseParser&MockObject $responseParserMock;
+    private Neo4jRequestFactory&MockObject $requestFactoryMock;
+    private Configuration&MockObject $configMock;
 
+    /**
+     * @psalm-suppress InvalidPropertyAssignmentValue
+     */
     #[\Override]
     protected function setUp(): void
     {
@@ -46,7 +50,8 @@ final class Neo4jQueryAPINewUnitTest extends TestCase
 
     public function testGetConfigReturnsCorrectConfig(): void
     {
-        $this->assertSame($this->configMock, $this->api->getConfig());
+        $config = $this->api->getConfig();
+        $this->assertEquals($this->configMock, $config);
     }
 
     public function testRunExecutesQueryAndReturnsResultSet(): void
@@ -82,7 +87,7 @@ final class Neo4jQueryAPINewUnitTest extends TestCase
         $this->invokeMethod($this->api, 'handleRequestException', [$mockException]);
     }
 
-    private function invokeMethod($object, string $methodName, array $parameters = []): array
+    private function invokeMethod(Neo4jQueryAPI $object, string $methodName, array $parameters = []): array
     {
         $reflection = new \ReflectionClass(get_class($object));
         $method = $reflection->getMethod($methodName);

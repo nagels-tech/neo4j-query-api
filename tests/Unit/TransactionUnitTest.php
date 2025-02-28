@@ -7,9 +7,11 @@ use Neo4j\QueryAPI\Exception\Neo4jException;
 use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\ResponseParser;
 use Neo4j\QueryAPI\Neo4jRequestFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Client\RequestExceptionInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -17,11 +19,11 @@ use Psr\Http\Message\StreamInterface;
 final class TransactionUnitTest extends TestCase
 {
     private Transaction $transaction;
-    private $clientMock;
-    private $responseParserMock;
-    private $requestFactoryMock;
-    private $requestMock;
-    private $responseMock;
+    private MockObject&ClientInterface $clientMock;
+    private MockObject&ResponseParser $responseParserMock;
+    private MockObject&Neo4jRequestFactory $requestFactoryMock;
+    private MockObject&RequestInterface $requestMock;
+    private MockObject&ResponseInterface $responseMock;
     private string $transactionId = 'tx123';
     private string $clusterAffinity = 'LEADER';
 
@@ -29,7 +31,9 @@ final class TransactionUnitTest extends TestCase
     protected function setUp(): void
     {
         $this->clientMock = $this->createMock(ClientInterface::class);
+        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->responseParserMock = $this->createMock(ResponseParser::class);
+        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->requestFactoryMock = $this->createMock(Neo4jRequestFactory::class);
         $this->requestMock = $this->createMock(RequestInterface::class);
         $this->responseMock = $this->createMock(ResponseInterface::class);

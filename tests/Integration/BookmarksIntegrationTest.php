@@ -27,7 +27,7 @@ final class BookmarksIntegrationTest extends TestCase
     {
         $result = $this->api->run('CREATE (x:Node {hello: "world"})');
 
-        $bookmarks = $result->bookmarks ?? new Bookmarks([]);
+        $bookmarks = $result->bookmarks;
 
         $result = $this->api->run('CREATE (x:Node {hello: "world2"})');
         $bookmarks->addBookmarks($result->bookmarks);

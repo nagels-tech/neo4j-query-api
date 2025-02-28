@@ -6,9 +6,6 @@ use Exception;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 
-/**
- *  @api
- */
 final class Neo4jExceptionUnitTest extends TestCase
 {
     /**

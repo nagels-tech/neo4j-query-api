@@ -6,7 +6,7 @@ namespace Neo4j\QueryAPI\Objects;
  * Represents a Neo4j Node with labels and properties.
  */
 
-class Node
+final class Node
 {
     /**
      * Node constructor

@@ -14,7 +14,8 @@
         "friendsofphp/php-cs-fixer": "^3.68",
         "vimeo/psalm": "^6.8",
         "dg/bypass-finals": "^1.9",
-        "psalm/plugin-phpunit": "^0.19.2"
+        "psalm/plugin-phpunit": "^0.19.2",
+        "psalm/plugin-mockery": "^1.2"
     },
 
     "autoload": {

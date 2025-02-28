@@ -29,9 +29,7 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
 
     public function testParseRunQueryResponse(): void
     {
-        $query = 'CREATE (n:TestNode {name: "Test"}) RETURN n';
-        $response = $this->api->run($query);
-        $bookmarks = $response->bookmarks ?? new Bookmarks([]);
+        $response = $this->api->run('CREATE (n:TestNode {name: "Test"}) RETURN n');
 
         $this->assertEquals(new ResultSet(
             rows: [
@@ -48,7 +46,7 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
                 propertiesSet: 1,
                 labelsAdded: 1
             ),
-            bookmarks: $bookmarks,
+            bookmarks: $response->bookmarks,
             profiledQueryPlan: null,
             accessMode: AccessMode::WRITE
         ), $response);

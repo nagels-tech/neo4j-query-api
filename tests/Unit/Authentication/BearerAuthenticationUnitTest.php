@@ -3,13 +3,14 @@
 namespace Neo4j\QueryAPI\Tests\Unit\Authentication;
 
 use Neo4j\QueryAPI\Authentication\BearerAuthentication;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
 final class BearerAuthenticationUnitTest extends TestCase
 {
     private BearerAuthentication $auth;
-    private RequestInterface $requestMock;
+    private RequestInterface&MockObject $requestMock;
     #[\Override]
     protected function setUp(): void
     {
