@@ -15,8 +15,7 @@ use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use RuntimeException;
 
-
-class Neo4jRequestFactoryTest extends TestCase
+final class Neo4jRequestFactoryTest extends TestCase
 {
     private RequestFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $psr17Factory;
     private StreamFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $streamFactory;

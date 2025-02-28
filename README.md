@@ -1,5 +1,15 @@
 # Neo4j Query API client
 
+## Badges
+
+![License](https://img.shields.io/github/license/nagels-tech/neo4j-query-api)
+![Tests](https://github.com/nagels-tech/neo4j-query-api/actions/workflows/tests.yml/badge.svg)
+![Version](https://img.shields.io/github/v/release/nagels-tech/neo4j-query-api)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2cb8a1e71ed04987b1c763a09e196c84)](https://app.codacy.com/gh/nagels-tech/neo4j-query-api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+![Code Coverage](https://img.shields.io/codecov/c/github/nagels-tech/neo4j-query-api)
+![Downloads](https://img.shields.io/packagist/dt/nagels-tech/neo4j-query-api)
+
+
 ## Interact programmatically with Top Graph Technology
 
 - Easy to start with, just build your client in one line and start running queries
@@ -148,3 +158,13 @@ If you discover any security-related issues, please email *security@nagels.tech*
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
+
+
+## Badges
+
+![License](https://img.shields.io/github/license/nagels-tech/neo4j-query-api)
+![Tests](https://github.com/nagels-tech/neo4j-query-api/actions/workflows/tests.yml/badge.svg)
+![Version](https://img.shields.io/github/v/release/nagels-tech/neo4j-query-api)
+![Code Quality](https://img.shields.io/codeclimate/maintainability/nagels-tech/neo4j-query-api)
+![Code Coverage](https://img.shields.io/codecov/c/github/nagels-tech/neo4j-query-api)
+![Downloads](https://img.shields.io/packagist/dt/nagels-tech/neo4j-query-api)
