@@ -5,7 +5,9 @@ Thank you for your interest in contributing to the Neo4j QueryAPI PHP Client! We
 ## Getting Started
 
 1. **Fork the Repository**\
-   Click the "Fork" button at the top right of the repository page.
+     
+    
+Click the "Fork" button at the top right of the repository page.
 
 2. **Clone Your Fork**
 
@@ -15,23 +17,29 @@ Thank you for your interest in contributing to the Neo4j QueryAPI PHP Client! We
    ```
 
 3. **Set Up the Environment**
+ 
 
-    - Ensure you have PHP installed (compatible with PHP < 7.1).
-    - Install dependencies using Composer:
+
+   - Ensure you have PHP installed (compatible with PHP < 8.1).
+   - Install dependencies using Composer:
+
+   ```bash
+    composer install
+   ```
+
+- Copy the `phpunit.dist.xml` file to `phpunit.xml` and configure the necessary environment variables like `NEO4J_ADDRESS`, `NEO4J_USERNAME`, `NEO4J_PASSWORD`.
+
+
+
+
+4. **Run Tests**
+
+
+   - Ensure you have PHP installed (compatible with PHP < 8.1).
+   - Install dependencies using Composer:
 
    ```bash
    composer install
-   ```
-
-    - Copy the `phpunit.dist.xml` file to `phpunit.xml` and configure the necessary environment variables like `NEO4J_ADDRESS`, `NEO4J_USERNAME`, `NEO4J_PASSWORD`.
-   
-
-
-4. **Run Tests**\
-   Our tests use PHPUnit. To run tests:
-
-   ```bash
-  composer/phpunit
    ```
 
 ## Code Guidelines
