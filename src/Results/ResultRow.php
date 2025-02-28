@@ -52,7 +52,10 @@ class ResultRow implements ArrayAccess, Countable, IteratorAggregate
         throw new BadMethodCallException("You can't Unset {$offset}.");
 
     }
-
+    public function get(string $row): mixed
+    {
+        return $this->offsetGet($row);
+    }
     #[\Override]
     public function count(): int
     {
