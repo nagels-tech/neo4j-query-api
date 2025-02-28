@@ -16,17 +16,19 @@ class RelationshipUnitTest extends TestCase
 
     public function testGetTypeReturnsCorrectType(): void
     {
-        $this->assertEquals('FRIENDS_WITH', $this->relationship->getType());
+        $relationship = $this->relationship;
+        $this->assertEquals('FRIENDS_WITH', $relationship->type);
     }
 
     public function testGetPropertiesReturnsCorrectArray(): void
     {
-        $this->assertEquals(['since' => 2020], $this->relationship->getProperties());
+        $relationship = $this->relationship;
+        $this->assertEquals(['since' => 2020], $relationship->properties);
     }
 
     public function testEmptyPropertiesByDefault(): void
     {
         $relationship = new Relationship('KNOWS');
-        $this->assertEquals([], $relationship->getProperties());
+        $this->assertEquals([], $relationship->properties);
     }
 }

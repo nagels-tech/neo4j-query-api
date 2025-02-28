@@ -30,14 +30,4 @@ class Path
         $this->relationships = $relationships;
     }
 
-    public function getNodes(): array
-    {
-        return $this->nodes;
-    }
-
-    public function getRelationships(): array
-    {
-        return $this->relationships;
-    }
-
 }

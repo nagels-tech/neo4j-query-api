@@ -26,11 +26,6 @@ class Authentication
         );
     }
 
-    public static function noAuth(): AuthenticateInterface
-    {
-        return new NoAuth();
-    }
-
 
     public static function bearer(string $token): AuthenticateInterface
     {

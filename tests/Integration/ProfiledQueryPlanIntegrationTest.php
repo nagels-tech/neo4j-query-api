@@ -14,6 +14,7 @@ use Http\Discovery\Psr17Factory;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
+use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
 use PHPUnit\Framework\TestCase;
 
@@ -96,7 +97,7 @@ class ProfiledQueryPlanIntegrationTest extends TestCase
     ";
 
         $result = $this->api->run($query);
-        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+        $this->assertNotNull($result->profiledQueryPlan, "profiled query plan not found");
         $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
         $mockSack = new MockHandler([
             new Response(200, [], $body),
@@ -120,12 +121,12 @@ class ProfiledQueryPlanIntegrationTest extends TestCase
 
         $result = $api->run($query);
 
-        $plan = $result->getProfiledQueryPlan();
+        $plan = $result->profiledQueryPlan;
         $this->assertNotNull($plan, "The result of the query should not be null.");
 
         $expected = require __DIR__ . '/../resources/expected/complex-query-profile.php';
 
-        $this->assertEquals($expected->getProfiledQueryPlan(), $plan, "Profiled query plan does not match the expected value.");
+        $this->assertEquals($expected->profiledQueryPlan, $plan, "Profiled query plan does not match the expected value.");
     }
     public function testProfileCreateActedInRelationships(): void
     {
@@ -137,14 +138,14 @@ class ProfiledQueryPlanIntegrationTest extends TestCase
     ";
 
         $result = $this->api->run($query);
-        $this->assertNotNull($result->getProfiledQueryPlan(), "profiled query plan not found");
+        $this->assertNotNull($result->profiledQueryPlan, "profiled query plan not found");
     }
 
     public function testChildQueryPlanExistence(): void
     {
         $result = $this->api->run("PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name");
 
-        $profiledQueryPlan = $result->getProfiledQueryPlan();
+        $profiledQueryPlan = $result->profiledQueryPlan;
         $this->assertNotNull($profiledQueryPlan);
         $this->assertNotEmpty($profiledQueryPlan->children);
 

@@ -43,8 +43,8 @@ class DataTypesIntegrationTest extends TestCase
             'names' => ['bob1', 'alicy']
         ]);
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-        $bookmarks = $results->getBookmarks() ?? new Bookmarks([]);
+        $this->assertEquals($expected->counters, $results->counters);
+        $bookmarks = $results->bookmarks ?? new Bookmarks([]);
         $this->assertCount(1, $bookmarks);
     }
     public function testWithSingleName(): void
@@ -63,8 +63,8 @@ class DataTypesIntegrationTest extends TestCase
             'name' => 'bob1'
         ]);
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertEquals($expected->counters, $results->counters);
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 
@@ -228,8 +228,8 @@ class DataTypesIntegrationTest extends TestCase
             ['names' => ['bob1', 'alicy']]
         );
 
-        $this->assertEquals($expected->getQueryCounters(), $results->getQueryCounters());
-        $bookmarks = $results->getBookmarks() ?: [];
+        $this->assertEquals($expected->counters, $results->counters);
+        $bookmarks = $results->bookmarks ?: [];
         $this->assertCount(1, $bookmarks);
     }
 

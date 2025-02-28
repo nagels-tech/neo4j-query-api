@@ -16,7 +16,8 @@ class BookmarksUnitTest extends TestCase
 
     public function testGetBookmarksReturnsCorrectArray(): void
     {
-        $this->assertEquals(['bookmark1', 'bookmark2'], $this->bookmarks->getBookmarks());
+        $bookmarks = $this->bookmarks;
+        $this->assertEquals(['bookmark1', 'bookmark2'], $bookmarks->bookmarks);
     }
 
     public function testAddBookmarksMergesUniqueValues(): void
@@ -24,13 +25,15 @@ class BookmarksUnitTest extends TestCase
         $newBookmarks = new Bookmarks(['bookmark1', 'bookmark2', 'bookmark3']);
         $this->bookmarks->addBookmarks($newBookmarks);
 
-        $this->assertEquals(['bookmark1', 'bookmark2', 'bookmark3'], array_values($this->bookmarks->getBookmarks()));
+        $bookmarks = $this->bookmarks;
+        $this->assertEquals(['bookmark1', 'bookmark2', 'bookmark3'], array_values($bookmarks->bookmarks));
     }
 
     public function testAddBookmarksDoesNothingWhenNullIsPassed(): void
     {
         $this->bookmarks->addBookmarks(null);
-        $this->assertEquals(['bookmark1', 'bookmark2'], $this->bookmarks->getBookmarks());
+        $bookmarks = $this->bookmarks;
+        $this->assertEquals(['bookmark1', 'bookmark2'], $bookmarks->bookmarks);
     }
 
     public function testCountReturnsCorrectNumber(): void
