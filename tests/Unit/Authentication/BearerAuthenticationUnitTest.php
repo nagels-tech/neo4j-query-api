@@ -6,7 +6,7 @@ use Neo4j\QueryAPI\Authentication\BearerAuthentication;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-final class BearerAuthenticationUnitTest extends TestCase
+class BearerAuthenticationUnitTest extends TestCase
 {
     private BearerAuthentication $auth;
     private RequestInterface $requestMock;

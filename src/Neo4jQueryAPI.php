@@ -13,7 +13,7 @@ use Neo4j\QueryAPI\Results\ResultSet;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Client\RequestExceptionInterface;
 
-final class Neo4jQueryAPI
+class Neo4jQueryAPI
 {
     public function __construct(
         private ClientInterface $client,

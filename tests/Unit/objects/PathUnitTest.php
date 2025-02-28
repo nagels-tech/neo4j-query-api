@@ -7,7 +7,7 @@ use Neo4j\QueryAPI\Objects\Node;
 use Neo4j\QueryAPI\Objects\Relationship;
 use PHPUnit\Framework\TestCase;
 
-final class PathUnitTest extends TestCase
+class PathUnitTest extends TestCase
 {
     private Path $path;
     private array $nodes;

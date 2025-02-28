@@ -7,7 +7,7 @@ use Neo4j\QueryAPI\Authentication\NoAuth;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 
-final class NoAuthUnitTest extends TestCase
+class NoAuthUnitTest extends TestCase
 {
     private NoAuth $auth;
     private RequestInterface $requestMock;
