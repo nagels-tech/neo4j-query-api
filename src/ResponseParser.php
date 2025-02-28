@@ -13,7 +13,7 @@ use Neo4j\QueryAPI\Results\ResultRow;
 use RuntimeException;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
 
-class ResponseParser
+final class ResponseParser
 {
     public function __construct(private readonly OGM $ogm)
     {
