@@ -2,48 +2,64 @@
 
 namespace Neo4j\QueryAPI;
 
-use GuzzleHttp\Client;
-use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
+use Http\Discovery\Psr17FactoryDiscovery;
+use Http\Discovery\Psr18ClientDiscovery;
+use InvalidArgumentException;
 use Neo4j\QueryAPI\Exception\Neo4jException;
+use Psr\Http\Client\ClientInterface;
+use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Results\ResultSet;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Psr\Http\Client\ClientInterface;
-use Psr\Http\Client\RequestExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
+use Psr\Http\Client\RequestExceptionInterface;
 
 final class Neo4jQueryAPI
 {
     public function __construct(
-        private ClientInterface     $client,
-        private ResponseParser      $responseParser,
+        private ClientInterface $client,
+        private ResponseParser $responseParser,
         private Neo4jRequestFactory $requestFactory,
+        private Configuration $config
     ) {
 
     }
 
-    /**
-     * @api
-     */
-    public static function login(string $address, AuthenticateInterface $auth = null): self
+    public static function login(string $address = null, ?AuthenticateInterface $auth = null, ?Configuration $config = null): self
     {
-        $client = new Client();
+        $config = $config ?? new Configuration(baseUri: $address ?? '');
+        if (
+            trim($config->baseUri) !== '' &&
+            $address !== null &&
+            trim($address) !== '' &&
+            $config->baseUri !== $address
+        ) {
+            throw new InvalidArgumentException(sprintf('Address (%s) as argument is different from address in configuration (%s)', $config->baseUri, $address));
+        }
+
+        $client = Psr18ClientDiscovery::find();
 
         return new self(
             client: $client,
-            responseParser: new ResponseParser(
-                ogm: new OGM()
-            ),
+            responseParser: new ResponseParser(new OGM()),
             requestFactory: new Neo4jRequestFactory(
-                psr17Factory: new Psr17Factory(),
-                streamFactory: new Psr17Factory(),
-                configuration: new Configuration(
-                    baseUri: $address
-                ),
+                psr17Factory: Psr17FactoryDiscovery::findRequestFactory(),
+                streamFactory: Psr17FactoryDiscovery::findStreamFactory(),
+                configuration: $config,
                 auth: $auth ?? Authentication::fromEnvironment()
-            )
+            ),
+            config: $config
         );
+    }
+
+    public static function create(Configuration $configuration, AuthenticateInterface $auth = null): self
+    {
+        return self::login(auth: $auth, config: $configuration);
+    }
+
+
+    public function getConfig(): Configuration
+    {
+        return $this->config;
     }
 
 
@@ -54,29 +70,18 @@ final class Neo4jQueryAPI
     {
         $request = $this->requestFactory->buildRunQueryRequest($cypher, $parameters);
 
-        $response = null;
-
         try {
             $response = $this->client->sendRequest($request);
         } catch (RequestExceptionInterface $e) {
             $this->handleRequestException($e);
-        }
-        if ($response === null) {
-            throw new \RuntimeException('Failed to get a response');
         }
 
         return $this->responseParser->parseRunQueryResponse($response);
     }
 
-
-    /**
-     * Starts a transaction.
-     */
     public function beginTransaction(): Transaction
     {
         $request = $this->requestFactory->buildBeginTransactionRequest();
-
-        $response = null;
 
         try {
             $response = $this->client->sendRequest($request);
@@ -84,13 +89,8 @@ final class Neo4jQueryAPI
             $this->handleRequestException($e);
         }
 
-        if ($response === null) {
-            throw new \RuntimeException('No response received for transaction request');
-        }
-
         $clusterAffinity = $response->getHeaderLine('neo4j-cluster-affinity');
         $body = $response->getBody()->getContents();
-
         $responseData = json_decode($body, true);
         $transactionId = $responseData['transaction']['id'];
 
@@ -103,14 +103,22 @@ final class Neo4jQueryAPI
         );
     }
 
-
     /**
      * Handles request exceptions by parsing error details and throwing a Neo4jException.
      *
      * @throws Neo4jException
+     *
+     * @return never
      */
-    public function handleRequestException(RequestExceptionInterface $e): void
+    private function handleRequestException(RequestExceptionInterface $e): void
     {
-        throw new \RuntimeException('Request failed: ' . $e->getMessage(), 0, $e);
+        $response = method_exists($e, 'getResponse') ? $e->getResponse() : null;
+
+        if ($response instanceof ResponseInterface) {
+            $errorResponse = json_decode((string)$response->getBody(), true);
+            throw Neo4jException::fromNeo4jResponse($errorResponse, $e);
+        }
+
+        throw new Neo4jException(['message' => $e->getMessage()], 500, $e);
     }
 }

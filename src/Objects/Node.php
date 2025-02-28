@@ -6,9 +6,6 @@ namespace Neo4j\QueryAPI\Objects;
  * Represents a Neo4j Node with labels and properties.
  */
 
-/**
- *  @api
- */
 class Node
 {
     /**
@@ -34,18 +31,7 @@ class Node
     }
 
     /**
-     * Get the labels of the node.
-     * @api
-     * @return string[] Array of labels.
-     */
-    public function getLabels(): array
-    {
-        return $this->labels;
-    }
-
-    /**
      * Get the properties of the node.
-     * @api
      * @return array<string, mixed> Associative array of properties.
      */
     public function getProperties(): array
@@ -55,7 +41,6 @@ class Node
 
     /**
      * Convert the Node object to an array representation.
-     * @api
      * @return array Node data as an array.
      */
     public function toArray(): array

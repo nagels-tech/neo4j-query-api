@@ -6,9 +6,6 @@ namespace Neo4j\QueryAPI\Objects;
  * @psalm-suppress UnusedClass
  * Represents a Person node in the Neo4j graph.
  */
-/**
- *  @api
- */
 class Person extends Node
 {
     /**
