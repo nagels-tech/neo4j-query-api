@@ -9,7 +9,7 @@ use Neo4j\QueryAPI\Exception\Neo4jException;
 /**
  *  @api
  */
-class Neo4jExceptionUnitTest extends TestCase
+final class Neo4jExceptionUnitTest extends TestCase
 {
     /**
      * Test the constructor and property initialization.

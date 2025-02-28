@@ -13,7 +13,7 @@ use RuntimeException;
 /**
  * @api
  */
-class Neo4jTransactionIntegrationTest extends TestCase
+final class Neo4jTransactionIntegrationTest extends TestCase
 {
     use CreatesQueryAPI;
 

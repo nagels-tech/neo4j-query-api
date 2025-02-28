@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 /**
  *  @api
  */
-class AuthenticationTest extends TestCase
+final class AuthenticationTest extends TestCase
 {
     public function testBearerToken(): void
     {

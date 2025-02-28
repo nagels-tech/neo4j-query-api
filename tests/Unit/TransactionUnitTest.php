@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 
-class TransactionUnitTest extends TestCase
+final class TransactionUnitTest extends TestCase
 {
     private Transaction $transaction;
     private $clientMock;

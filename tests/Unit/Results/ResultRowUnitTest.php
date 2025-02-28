@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use OutOfBoundsException;
 use BadMethodCallException;
 
-class ResultRowUnitTest extends TestCase
+final class ResultRowUnitTest extends TestCase
 {
     public function testOffsetGetReturnsValue(): void
     {

@@ -24,7 +24,7 @@ use Neo4j\QueryAPI\Configuration;
 /**
  *  @api
  */
-class Neo4jQueryAPIUnitTest extends TestCase
+final class Neo4jQueryAPIUnitTest extends TestCase
 {
     /** @psalm-suppress PropertyNotSetInConstructor */
     private OGM $ogm;

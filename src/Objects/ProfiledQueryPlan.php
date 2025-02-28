@@ -2,7 +2,7 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-class ProfiledQueryPlan
+final class ProfiledQueryPlan
 {
     public function __construct(
         public readonly int $dbHits = 0,

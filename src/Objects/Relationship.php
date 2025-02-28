@@ -6,7 +6,7 @@ namespace Neo4j\QueryAPI\Objects;
  * Represents a relationship in a Neo4j graph, with a type and associated properties.
  */
 
-class Relationship
+final class Relationship
 {
     /**
      * @var string The type of the relationship (e.g., "FRIENDS_WITH", "WORKS_FOR").

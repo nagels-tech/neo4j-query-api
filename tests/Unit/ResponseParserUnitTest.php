@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
-class ResponseParserUnitTest extends TestCase
+final class ResponseParserUnitTest extends TestCase
 {
     private ResponseParser $parser;
     private OGM $ogmMock;
