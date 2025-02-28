@@ -142,8 +142,8 @@ If you discover any security-related issues, please email *security@nagels.tech*
 
 - Created with ❤️ by Nagels
 - [Kiran Chandani](https://www.linkedin.com/in/kiran-chandani-5628a1213/), 
-- [Pratiksha Zalte](https://github.com/p123-stack)
-- [Ghlen Nagels](https://www.linkedin.com/in/ghlen/),
+- [Pratiksha Zalte](https://github.com/p123-stack),
+- [Ghlen Nagels](https://www.linkedin.com/in/ghlen/)
 
 ## License
 
