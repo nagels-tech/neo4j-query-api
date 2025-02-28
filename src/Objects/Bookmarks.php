@@ -4,7 +4,7 @@ namespace Neo4j\QueryAPI\Objects;
 
 use JsonSerializable;
 
-class Bookmarks implements \Countable, JsonSerializable
+final class Bookmarks implements \Countable, JsonSerializable
 {
     public function __construct(public array $bookmarks)
     {

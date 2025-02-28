@@ -7,7 +7,7 @@ use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Objects\Bookmarks;
 
-class BookmarksIntegrationTest extends TestCase
+final class BookmarksIntegrationTest extends TestCase
 {
     use CreatesQueryAPI;
 

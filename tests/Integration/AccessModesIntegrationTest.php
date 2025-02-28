@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Enums\AccessMode;
 use Neo4j\QueryAPI\Exception\Neo4jException;
 
-class AccessModesIntegrationTest extends TestCase
+final class AccessModesIntegrationTest extends TestCase
 {
     use CreatesQueryAPI;
 

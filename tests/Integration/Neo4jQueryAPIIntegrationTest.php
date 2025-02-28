@@ -13,7 +13,7 @@ use Neo4j\QueryAPI\Results\ResultSet;
 use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\Enums\AccessMode;
 
-class Neo4jQueryAPIIntegrationTest extends TestCase
+final class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
 

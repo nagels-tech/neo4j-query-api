@@ -18,7 +18,7 @@ use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
 use PHPUnit\Framework\TestCase;
 
-class ProfiledQueryPlanIntegrationTest extends TestCase
+final class ProfiledQueryPlanIntegrationTest extends TestCase
 {
     use CreatesQueryAPI;
 
