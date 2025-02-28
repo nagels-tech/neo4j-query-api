@@ -8,7 +8,7 @@ use Neo4j\QueryAPI\Objects\Relationship;
 use Neo4j\QueryAPI\Objects\Path;
 use InvalidArgumentException;
 
-class OGM
+final class OGM
 {
     /**
      * @param array<array-key, mixed> $data

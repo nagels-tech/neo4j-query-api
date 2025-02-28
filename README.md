@@ -20,11 +20,11 @@ composer require neo4j-php/query-api
 
 ## Client Installation
 
-If you plan on using the HTTP drivers, make sure you have psr-7, psr-17, and psr-18 implementations included in your project. 
-If you don't have any, you can install them via Composer:
+This client uses the HTTP protocol, make sure you have psr-7, psr-17, and psr-18 implementations included in your project. 
+If you don't have any, you can install one of the many options via Composer:
 
 ```sh
-composer require psr/http-message psr/http-factory psr/http-client
+composer require guzzlehttp/guzzle
 ```
 
 > **_NOTE:_**  PSR-17 and PSR-18 are essential for HTTP client communication. Other compatible clients like Guzzle can also be used.
@@ -121,19 +121,18 @@ Cypher values and types map to these php types and classes:
 | Authentication |    Yes     |
 | Transaction |    Yes     |
 | HTTP |    Yes     |
-| Cluster |  Partly*   |
+| Cluster |  Partly *  |
 | Aura |    Yes     | 
 | Bookmarks |    Yes     |
 | Bolt |     No     |
 
-> **_NOTE:_**  It supports neo4j databases versions > 5.25 or Neo4j Aura (which has QueryAPI enabled.)
 > \* Client side routing is only supported in the Neo4j driver
 
-
+ **_NOTE:_**  *_It supports neo4j databases versions > 5.25 or Neo4j Aura (which has QueryAPI enabled.)_*
 
 ## Contributing
 
-Please see CONTRIBUTING for details.
+Please see [CONTRIBUTING.md](./Contributing.md) for details.
 
 ## Security
 
@@ -142,8 +141,10 @@ If you discover any security-related issues, please email *security@nagels.tech*
 ## Credits
 
 - Created with ❤️ by Nagels
-- [Ghlen Nagels](https://www.linkedin.com/in/ghlen/), [Kiran Chandani](https://www.linkedin.com/in/kiran-chandani-5628a1213/), [Pratiksha Zalte]()
+- [Kiran Chandani](https://www.linkedin.com/in/kiran-chandani-5628a1213/), 
+- [Pratiksha Zalte](https://github.com/p123-stack),
+- [Ghlen Nagels](https://www.linkedin.com/in/ghlen/)
 
 ## License
 
-The MIT License (MIT). Please see License File for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
