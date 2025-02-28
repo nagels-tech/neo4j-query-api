@@ -2,9 +2,6 @@
 
 namespace Neo4j\QueryAPI\Objects;
 
-/**
- *  @api
- */
 class ProfiledQueryPlanArguments
 {
     public function __construct(
