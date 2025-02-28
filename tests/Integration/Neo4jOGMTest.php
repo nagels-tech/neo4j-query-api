@@ -2,15 +2,12 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use Neo4j\QueryAPI\Objects\Path;
 use Neo4j\QueryAPI\OGM;
 use PHPUnit\Framework\TestCase;
 
-/**
- *  @api
- */
-class Neo4jOGMTest extends TestCase
+final class Neo4jOGMTest extends TestCase
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
     private OGM $ogm;
 
     #[\Override]
@@ -84,11 +81,11 @@ class Neo4jOGMTest extends TestCase
         ];
 
         $path = $this->ogm->map($pathData);
+        $this->assertInstanceOf(Path::class, $path);
 
         $this->assertCount(2, $path->nodes);
         $this->assertCount(1, $path->relationships);
         $this->assertEquals('A', $path->nodes[0]->getProperties()['name']['_value']);
         $this->assertEquals('B', $path->nodes[1]->getProperties()['name']['_value']);
     }
-
 }

@@ -8,7 +8,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
-class Neo4jRequestFactory
+final class Neo4jRequestFactory
 {
     public function __construct(
         private RequestFactoryInterface $psr17Factory,
