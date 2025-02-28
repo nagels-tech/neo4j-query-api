@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="tests/bootstrap.php">
+<phpunit bootstrap="tests/bootstrap.php"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+>
     <!-- Test Suite Configuration -->
     <testsuites>
         <testsuite name="Application Test Suite">
