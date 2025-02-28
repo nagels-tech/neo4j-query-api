@@ -17,15 +17,10 @@ use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use RuntimeException;
 
-/**
- *  @api
- */
-final class Neo4jRequestFactoryTest extends TestCase
-{
-    /** @psalm-suppress PropertyNotSetInConstructor */
-    private RequestFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $psr17Factory;
 
-    /** @psalm-suppress PropertyNotSetInConstructor */
+class Neo4jRequestFactoryTest extends TestCase
+{
+    private RequestFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $psr17Factory;
     private StreamFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $streamFactory;
 
 
@@ -252,7 +247,7 @@ final class Neo4jRequestFactoryTest extends TestCase
             $this->psr17Factory,
             $this->streamFactory,
             new Configuration($this->address),
-            new NoAuth(),
+            Authentication::noAuth(),
         );
 
         $request = $factory->buildRunQueryRequest($cypher, $parameters);
