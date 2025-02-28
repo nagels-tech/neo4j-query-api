@@ -84,11 +84,12 @@ class Neo4jOGMTest extends TestCase
         ];
 
         $path = $this->ogm->map($pathData);
+        $nodes = iterator_to_array($path->nodes);
 
-        $this->assertCount(2, $path->nodes);
+        $this->assertCount(2, $nodes);
         $this->assertCount(1, $path->relationships);
-        $this->assertEquals('A', $path->nodes[0]->getProperties()['name']['_value']);
-        $this->assertEquals('B', $path->nodes[1]->getProperties()['name']['_value']);
+        $this->assertEquals('A', $nodes[0]->getProperties()['name']['_value']);
+        $this->assertEquals('B', $nodes[1]->getProperties()['name']['_value']);
     }
 
 }
