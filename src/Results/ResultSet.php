@@ -15,7 +15,7 @@ use Traversable;
  * @template TValue
  * @implements IteratorAggregate<int, ResultRow>
  */
-class ResultSet implements IteratorAggregate, Countable
+final class ResultSet implements IteratorAggregate, Countable
 {
     /**
      * @param list<ResultRow> $rows
