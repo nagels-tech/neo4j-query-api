@@ -1,38 +1,45 @@
-Neo4jQueryAPI client
+# Neo4j Query API client
 
-The Neo4j QueryAPI client is for developers and data engineers who want to interact programmatically with Neo4j databases — running queries, handling results, and managing database configurations. It offers:
+## Interact programmatically with Top Graph Technology
 
-- Easy configuration to pick and choose drivers
-- An intuitive API for smooth query execution
-- Extensibility for custom use cases
+- Easy to start with, just build your client in one line and start running queries
+- Use an intuitive API for smooth query execution
 - Built and tested under close collaboration with the official Neo4j driver team
-- Easier to start with, just need a client to any neo4j instance
 - Fully typed with Psalm and CS fixed for code quality
-- It does not supports Bolt, Rather compatible with HTTP, and auto-routed drivers
+- Uses HTTP under the hood instead of bolt
+- Small, lightweight, well maintained and fully tested codebase
 
-
-
-# Query API
-
-A PHP client for Neo4j, a graph database.
 
 ## Installation
 
 You can install the package via Composer:
 
 ```sh
-composer require this-repo/neo4j-client
+composer require neo4j-php/query-api
 ```
+
+## Client Installation
+
+This client uses the HTTP protocol, make sure you have psr-7, psr-17, and psr-18 implementations included in your project. 
+If you don't have any, you can install one of the many options via Composer:
+
+```sh
+composer require guzzlehttp/guzzle
+```
+
+> **_NOTE:_**  PSR-17 and PSR-18 are essential for HTTP client communication. Other compatible clients like Guzzle can also be used.
+> \* [PSR auto-discovery](https://docs.php-http.org/en/latest/discovery.html) will detect the installed HTTP client automatically.
 
 ## Usage
 
 ### Connecting to Neo4j
 
+
 ```php
 use Neo4j\QueryAPI\Neo4jQueryAPI;
-use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
+use Neo4j\QueryAPI\Objects\Authentication;
 
-$client = Neo4jQueryAPI::login('http://localhost:7474', new AuthenticateInterface('username', 'password'));
+$client = Neo4jQueryAPI::login('http://localhost:7474', Authentication::basic('username', 'password'));
 ```
 
 ### Running a Query
@@ -84,45 +91,48 @@ vendor/bin/phpunit
 
 Cypher values and types map to these php types and classes:
 
-| Cypher             |        PHP        |
-|--------------------|:-----------------:|
-| Single name        |                   |
-| Integer            |   ``` * int ```   |
-| Float              |  ``` * float ```  |
-| Boolean            |  ``` * bool ```   |
-| Null               |  ``` * null ```   |
-| String             | ``` * string  ``` |
-| Array              |                   |
-| Date               |                   |
-| Duration           |                   |
-| 2D Point           |                   |
-| 3D Point           |                   |
-| Cartesian 2D Point |                   |
-| Cartesian 3D Point |                   |
-| Node               |                   |
-| Path               |                   |
-| Map                |                   |
-| Exact name         |                   |
-| Bookmarks          |        Yes        |
+| Cypher             |                         PHP                         |
+|--------------------|:---------------------------------------------------:|
+| List               |                    ```* array```                    |
+| Integer            |                    ``` * int ```                    |
+| Float              |                   ``` * float ```                   |
+| Boolean            |                   ``` * bool ```                    |
+| Null               |                   ``` * null ```                    |
+| String             |                  ``` * string  ```                  |
+| Array              |                    ```* array```                    |
+| Local DateTime     | ``` * string  ``` (will be upgraded in version 1.1) |
+| Local Time         | ``` * string  ``` (will be upgraded in version 1.1) |
+| Zoned DateTime     | ``` * string  ``` (will be upgraded in version 1.1) |
+| Zoned Time         | ``` * string  ``` (will be upgraded in version 1.1) |
+| Duration           | ``` * string  ``` (will be upgraded in version 1.1) |
+| WGS 84 2D Point    |           `Neo4j\QueryAPI\Objects\Point`            |
+| WGS 84 3D Point    |           `Neo4j\QueryAPI\Objects\Point`            |
+| Cartesian 2D Point |           `Neo4j\QueryAPI\Objects\Point`            |
+| Cartesian 3D Point |           `Neo4j\QueryAPI\Objects\Point`            |
+| Map                |                  ``` * array  ```                   |
+| Node               |         ```Neo4j\QueryAPI\Objects\Node ```          |
+| Relationship       |     ```Neo4j\QueryAPI\Objects\Relationship  ```     |
+| Path               |      ```Neo4j\QueryAPI\Objects\Relationship```      |
 
 ## Diving deeper:
 
-| Feature   |      Supported?    | 
-|----------|:-------------:|
-| Authentication |  Yes |
-| Transaction |    Yes   |
-| HTTP | Yes |
-| Cluster |  Yes |
-| Aura |    Partly (recent versions) | 
-| Bookmarks | Yes |
+| Feature   | Supported? | 
+|----------|:----------:|
+| Authentication |    Yes     |
+| Transaction |    Yes     |
+| HTTP |    Yes     |
+| Cluster |  Partly *  |
+| Aura |    Yes     | 
+| Bookmarks |    Yes     |
+| Bolt |     No     |
 
-> **_NOTE:_**  It supports neo4j databases versions > 5.25 (which has QueryAPI enabled.)
+> \* Client side routing is only supported in the Neo4j driver
 
-
+ **_NOTE:_**  *_It supports neo4j databases versions > 5.25 or Neo4j Aura (which has QueryAPI enabled.)_*
 
 ## Contributing
 
-Please see CONTRIBUTING for details.
+Please see [CONTRIBUTING.md](./Contributing.md) for details.
 
 ## Security
 
@@ -130,9 +140,11 @@ If you discover any security-related issues, please email *security@nagels.tech*
 
 ## Credits
 
-- [Your Name](https://github.com/your-github-username)
-- [All Contributors](https://github.com/your-repo/neo4j-client/graphs/contributors)
+- Created with ❤️ by Nagels
+- [Kiran Chandani](https://www.linkedin.com/in/kiran-chandani-5628a1213/), 
+- [Pratiksha Zalte](https://github.com/p123-stack),
+- [Ghlen Nagels](https://www.linkedin.com/in/ghlen/)
 
 ## License
 
-The MIT License (MIT). Please see License File for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
