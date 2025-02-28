@@ -2,6 +2,7 @@
 
 namespace Neo4j\QueryAPI\Tests\Unit\objects;
 
+use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
 use Neo4j\QueryAPI\Objects\Authentication;
 use Neo4j\QueryAPI\Authentication\BasicAuthentication;
 use Neo4j\QueryAPI\Authentication\BearerAuthentication;
@@ -27,7 +28,7 @@ class AuthenticationUnitTest extends TestCase
 
     public function testNoAuthReturnsNoAuthInstance(): void
     {
-        $auth = Authentication::noAuth();
+        $auth = new NoAuth();
         $this->assertInstanceOf(NoAuth::class, $auth);
     }
 

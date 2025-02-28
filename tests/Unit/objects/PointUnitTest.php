@@ -16,22 +16,26 @@ class PointUnitTest extends TestCase
 
     public function testGetXReturnsCorrectValue(): void
     {
-        $this->assertEquals(1.5, $this->point->getX());
+        $point = $this->point;
+        $this->assertEquals(1.5, $point->x);
     }
 
     public function testGetYReturnsCorrectValue(): void
     {
-        $this->assertEquals(2.5, $this->point->getY());
+        $point = $this->point;
+        $this->assertEquals(2.5, $point->y);
     }
 
     public function testGetZReturnsCorrectValue(): void
     {
-        $this->assertEquals(3.5, $this->point->getZ());
+        $point = $this->point;
+        $this->assertEquals(3.5, $point->z);
     }
 
     public function testGetSridReturnsCorrectValue(): void
     {
-        $this->assertEquals(4326, $this->point->getSrid());
+        $point = $this->point;
+        $this->assertEquals(4326, $point->srid);
     }
 
     public function testToStringReturnsCorrectFormat(): void

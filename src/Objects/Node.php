@@ -29,13 +29,5 @@ class Node
             '_properties' => $this->properties,
         ];
     }
-    public function getProperties(): array
-    {
-        return $this->properties;
-    }
 
-    public function getLabels(): array
-    {
-        return $this->labels;
-    }
 }

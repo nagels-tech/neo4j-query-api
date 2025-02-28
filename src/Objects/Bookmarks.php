@@ -6,7 +6,7 @@ use JsonSerializable;
 
 class Bookmarks implements \Countable, JsonSerializable
 {
-    public function __construct(private array $bookmarks)
+    public function __construct(public array $bookmarks)
     {
     }
 
@@ -15,12 +15,6 @@ class Bookmarks implements \Countable, JsonSerializable
         if ($newBookmarks !== null) {
             $this->bookmarks = array_unique(array_merge($this->bookmarks, $newBookmarks->bookmarks));
         }
-    }
-
-
-    public function getBookmarks(): array
-    {
-        return $this->bookmarks;
     }
 
     #[\Override]

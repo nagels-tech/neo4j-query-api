@@ -29,11 +29,13 @@ class PathUnitTest extends TestCase
 
     public function testGetNodesReturnsCorrectArray(): void
     {
-        $this->assertEquals($this->nodes, $this->path->getNodes());
+        $path = $this->path;
+        $this->assertEquals($this->nodes, $path->nodes);
     }
 
     public function testGetRelationshipsReturnsCorrectArray(): void
     {
-        $this->assertEquals($this->relationships, $this->path->getRelationships());
+        $path = $this->path;
+        $this->assertEquals($this->relationships, $path->relationships);
     }
 }

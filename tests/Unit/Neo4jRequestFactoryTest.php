@@ -3,6 +3,8 @@
 namespace Neo4j\QueryAPI\Tests\Unit;
 
 use Exception;
+use Neo4j\QueryAPI\Authentication\AuthenticateInterface;
+use Neo4j\QueryAPI\Authentication\NoAuth;
 use Neo4j\QueryAPI\Configuration;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use PHPUnit\Framework\TestCase;
@@ -250,7 +252,7 @@ class Neo4jRequestFactoryTest extends TestCase
             $this->psr17Factory,
             $this->streamFactory,
             new Configuration($this->address),
-            Authentication::noAuth(),
+            new NoAuth(),
         );
 
         $request = $factory->buildRunQueryRequest($cypher, $parameters);

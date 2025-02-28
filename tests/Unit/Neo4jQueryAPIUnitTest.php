@@ -139,7 +139,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
 
         $bookmarks = $result->bookmarks;
         $this->assertInstanceOf(Bookmarks::class, $bookmarks);
-        $this->assertCount(3, $bookmarks->getBookmarks());
-        $this->assertEquals(['bm1', 'bm2', 'bm3'], $bookmarks->getBookmarks());
+        $this->assertCount(3, $bookmarks->bookmarks);
+        $this->assertEquals(['bm1', 'bm2', 'bm3'], $bookmarks->bookmarks);
     }
 }

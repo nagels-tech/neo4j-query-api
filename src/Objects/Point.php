@@ -31,20 +31,4 @@ class Point
         return "SRID={$this->srid};POINT ({$this->x} {$this->y})";
     }
 
-    public function getX(): float
-    {
-        return $this->x;
-    }
-    public function getY(): float
-    {
-        return $this->y;
-    }
-    public function getZ(): float
-    {
-        return $this->z;
-    }
-    public function getSrid(): float
-    {
-        return $this->srid;
-    }
 }

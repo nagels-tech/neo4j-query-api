@@ -71,7 +71,7 @@ class Neo4jQueryAPIIntegrationTest extends TestCase
     public function testCounters(): void
     {
         $result = $this->api->run('CREATE (x:Node {hello: "world"})');
-        $queryCounters = $result->getQueryCounters();
+        $queryCounters = $result->counters;
 
         $this->assertNotNull($queryCounters);
         $this->assertEquals(1, $queryCounters->nodesCreated);
