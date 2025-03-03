@@ -25,8 +25,7 @@ final class ResultSet implements IteratorAggregate, Countable
         public readonly Bookmarks $bookmarks,
         public readonly AccessMode $accessMode,
         public readonly ?ResultCounters $counters = null,
-        public readonly ?ProfiledQueryPlan $profiledQueryPlan=null
-
+        public readonly ?ProfiledQueryPlan $profiledQueryPlan = null
     ) {
     }
 

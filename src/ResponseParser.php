@@ -29,7 +29,7 @@ final class ResponseParser
         $profiledQueryPlan = $this->buildProfiledQueryPlan($data['profiledQueryPlan'] ?? null);
         $accessMode = $this->getAccessMode($data['accessMode'] ?? '');
 
-        return new ResultSet($rows, $bookmarks, $accessMode,$counters,$profiledQueryPlan);
+        return new ResultSet($rows, $bookmarks, $accessMode, $counters, $profiledQueryPlan);
     }
 
     private function validateAndDecodeResponse(ResponseInterface $response): array
