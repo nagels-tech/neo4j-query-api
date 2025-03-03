@@ -24,4 +24,15 @@ jobs:
         run: composer install --no-progress --prefer-dist
 
       - name: Run Psalm
-        run: vendor/bin/psalm --output-format=github
+        run: vendor/bin/psalm --show-info=true --output-format=github
+
+      - name: Run Psalm
+        id: psalm
+        run: |
+          # Run Psalm and use tee to print output and save it to psalm.log
+          vendor/bin/psalm --no-cache --show-info=true --output-format=github | tee psalm.log || true
+          # If any warnings are found, print a message and exit with a failure code
+          if grep -q "warning" psalm.log; then
+            echo "Warnings detected in Psalm output. Failing build."
+            exit 1
+          fi

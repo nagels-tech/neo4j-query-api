@@ -4,6 +4,7 @@ namespace Neo4j\QueryAPI\Tests\Unit;
 
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use http\Client;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Neo4j\QueryAPI\Neo4jQueryAPI;
@@ -19,20 +20,11 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 use Neo4j\QueryAPI\Configuration;
-use Nyholm\Psr7\Response;
 
-/**
- *  @api
- */
-class Neo4jQueryAPIUnitTest extends TestCase
+final class Neo4jQueryAPIUnitTest extends TestCase
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
-    private OGM $ogm;
-
-    /** @psalm-suppress PropertyNotSetInConstructor */
     protected string $address;
 
-    /** @psalm-suppress PropertyNotSetInConstructor */
     protected ResponseParser $parser;
 
     #[\Override]
@@ -43,8 +35,7 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $address = getenv('NEO4J_ADDRESS');
         $this->address = is_string($address) ? $address : '';
 
-        $this->ogm = new OGM();
-        $this->parser = new ResponseParser($this->ogm);
+        $this->parser = new ResponseParser(new OGM());
     }
 
     public function testCorrectClientSetup(): void
@@ -137,9 +128,9 @@ class Neo4jQueryAPIUnitTest extends TestCase
         $result = $this->parser->parseRunQueryResponse($mockResponse);
         $this->assertInstanceOf(ResultSet::class, $result);
 
-        $bookmarks = $result->getBookmarks();
+        $bookmarks = $result->bookmarks;
         $this->assertInstanceOf(Bookmarks::class, $bookmarks);
-        $this->assertCount(3, $bookmarks->getBookmarks());
-        $this->assertEquals(['bm1', 'bm2', 'bm3'], $bookmarks->getBookmarks());
+        $this->assertCount(3, $bookmarks->bookmarks);
+        $this->assertEquals(['bm1', 'bm2', 'bm3'], $bookmarks->bookmarks);
     }
 }

@@ -30,4 +30,5 @@ final class Point
     {
         return "SRID={$this->srid};POINT ({$this->x} {$this->y})";
     }
+
 }

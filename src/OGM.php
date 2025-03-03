@@ -36,12 +36,11 @@ final class OGM
 
     private function parsePoint(string $value): Point
     {
-        // Match SRID and coordinate values
         if (preg_match('/SRID=(\d+);POINT(?: Z)? \(([-\d.]+) ([-\d.]+)(?: ([-\d.]+))?\)/', $value, $matches)) {
             $srid = (int) $matches[1];
             $x = (float) $matches[2];
             $y = (float) $matches[3];
-            $z = isset($matches[4]) ? (float) $matches[4] : null; // Handle optional Z coordinate
+            $z = isset($matches[4]) ? (float) $matches[4] : null;
 
             return new Point($x, $y, $z, $srid);
         }

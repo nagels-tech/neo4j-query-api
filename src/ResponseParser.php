@@ -12,7 +12,6 @@ use Neo4j\QueryAPI\Objects\Bookmarks;
 use Neo4j\QueryAPI\Results\ResultRow;
 use RuntimeException;
 use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
-use Neo4j\QueryAPI\Objects\Point;
 
 final class ResponseParser
 {
@@ -30,7 +29,7 @@ final class ResponseParser
         $profiledQueryPlan = $this->buildProfiledQueryPlan($data['profiledQueryPlan'] ?? null);
         $accessMode = $this->getAccessMode($data['accessMode'] ?? '');
 
-        return new ResultSet($rows, $counters, $bookmarks, $profiledQueryPlan, $accessMode);
+        return new ResultSet($rows, $bookmarks, $accessMode, $counters, $profiledQueryPlan);
     }
 
     private function validateAndDecodeResponse(ResponseInterface $response): array
@@ -86,9 +85,6 @@ final class ResponseParser
         return $value;
     }
 
-
-
-
     private function buildCounters(array $countersData): ResultCounters
     {
         return new ResultCounters(
@@ -118,23 +114,19 @@ final class ResponseParser
         return AccessMode::tryFrom($accessModeData) ?? AccessMode::WRITE;
     }
 
-    private function buildProfiledQueryPlan(?array $queryPlanData): ?ProfiledQueryPlan
+    private function buildProfiledQueryPlan(mixed $queryPlanData): ?ProfiledQueryPlan
     {
-        if ($queryPlanData === null || empty($queryPlanData)) {
+        if (! is_array($queryPlanData)) {
             return null;
         }
 
-        /**
-         * @var array<string, mixed> $mappedArguments
-         */
+        /** @var array<array-key, mixed> $mappedArguments */
         $mappedArguments = array_map(function (mixed $value): mixed {
-            if (is_array($value) && isset($value['$type']) && isset($value['_value'])) {
+            if (is_array($value) && array_key_exists('$type', $value) && array_key_exists('_value', $value)) {
                 return $this->ogm->map($value);
             }
-
             return $value;
         }, $queryPlanData['arguments'] ?? []);
-
 
         $queryArguments = new ProfiledQueryPlanArguments(
             globalMemory: $mappedArguments['GlobalMemory'] ?? null,
@@ -158,13 +150,10 @@ final class ResponseParser
             planner: $mappedArguments['planner'] ?? null,
             rows: $mappedArguments['Rows'] ?? null
         );
-
-        $children = array_map(
-            fn (array $child): ?ProfiledQueryPlan => $this->buildProfiledQueryPlan($child),
-            $queryPlanData['children'] ?? []
-        );
+        $children = array_map(fn (mixed $child): ?ProfiledQueryPlan => $this->buildProfiledQueryPlan($child), $queryPlanData['children'] ?? []);
 
         return new ProfiledQueryPlan(
+            $queryArguments,
             $queryPlanData['dbHits'] ?? 0,
             $queryPlanData['records'] ?? 0,
             $queryPlanData['hasPageCacheStats'] ?? false,
@@ -173,10 +162,9 @@ final class ResponseParser
             $queryPlanData['pageCacheHitRatio'] ?? 0.0,
             $queryPlanData['time'] ?? 0,
             $queryPlanData['operatorType'] ?? '',
-            $queryArguments,
             $children,
             $queryPlanData['identifiers'] ?? []
         );
-    }
 
+    }
 }

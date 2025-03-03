@@ -10,10 +10,7 @@ use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-/**
- * @api
- */
-class Neo4jTransactionIntegrationTest extends TestCase
+final class Neo4jTransactionIntegrationTest extends TestCase
 {
     use CreatesQueryAPI;
 

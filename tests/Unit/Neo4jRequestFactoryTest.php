@@ -2,11 +2,10 @@
 
 namespace Neo4j\QueryAPI\Tests\Unit;
 
-use Exception;
 use Neo4j\QueryAPI\Configuration;
-use Nyholm\Psr7\Factory\Psr17Factory;
+use Override;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use GuzzleHttp\Psr7\Request;
@@ -15,26 +14,16 @@ use Neo4j\QueryAPI\Neo4jRequestFactory;
 use Neo4j\QueryAPI\Objects\Authentication;
 use RuntimeException;
 
-/**
- *  @api
- */
-class Neo4jRequestFactoryTest extends TestCase
+final class Neo4jRequestFactoryTest extends TestCase
 {
-    /** @psalm-suppress PropertyNotSetInConstructor */
-    private RequestFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $psr17Factory;
+    private RequestFactoryInterface&MockObject $psr17Factory;
 
-    /** @psalm-suppress PropertyNotSetInConstructor */
-    private StreamFactoryInterface&\PHPUnit\Framework\MockObject\MockObject $streamFactory;
-
-
+    private StreamFactoryInterface&MockObject $streamFactory;
 
     private string $address = '';
     private string $authHeader = '';
 
-    /**
-     * @throws Exception
-     */
-    #[\Override]
+    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,9 +37,6 @@ class Neo4jRequestFactoryTest extends TestCase
         $this->authHeader = $auth->getHeader();
     }
 
-    /**
-     * Test for buildRunQueryRequest
-     */
     public function testBuildRunQueryRequest(): void
     {
         $cypher = 'MATCH (n) RETURN n';
@@ -90,9 +76,6 @@ class Neo4jRequestFactoryTest extends TestCase
 
     }
 
-    /**
-     * Test for buildBeginTransactionRequest
-     */
     public function testBuildBeginTransactionRequest(): void
     {
         $database = 'neo4j';
@@ -119,9 +102,6 @@ class Neo4jRequestFactoryTest extends TestCase
         $this->assertEquals($uri, (string) $request->getUri());
     }
 
-    /**
-     * Test for buildCommitRequest
-     */
     public function testBuildCommitRequest(): void
     {
         $database = 'neo4j';
@@ -149,9 +129,6 @@ class Neo4jRequestFactoryTest extends TestCase
         $this->assertEquals($uri, (string) $request->getUri());
     }
 
-    /**
-     * Test for buildRollbackRequest
-     */
     public function testBuildRollbackRequest(): void
     {
         $database = 'neo4j';
@@ -179,9 +156,6 @@ class Neo4jRequestFactoryTest extends TestCase
         $this->assertEquals($uri, (string) $request->getUri());
     }
 
-    /**
-     * Test for createRequest method with headers and body
-     */
     public function testCreateRequestWithHeadersAndBody(): void
     {
         $cypher = 'MATCH (n) RETURN n';
@@ -222,9 +196,6 @@ class Neo4jRequestFactoryTest extends TestCase
 
     }
 
-    /**
-     * Test createRequest without Authorization header
-     */
     public function testCreateRequestWithoutAuthorizationHeader(): void
     {
         $cypher = 'MATCH (n) RETURN n';

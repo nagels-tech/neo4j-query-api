@@ -29,7 +29,7 @@ final class Neo4jOGMTest extends TestCase
         ];
 
         $node = $this->ogm->map($nodeData);
-        $this->assertEquals('Ayush', $node->getProperties()['name']['_value']);
+        $this->assertEquals('Ayush', $node->properties['name']['_value']);
     }
 
     public function testWithSimpleRelationship(): void
@@ -85,7 +85,7 @@ final class Neo4jOGMTest extends TestCase
 
         $this->assertCount(2, $path->nodes);
         $this->assertCount(1, $path->relationships);
-        $this->assertEquals('A', $path->nodes[0]->getProperties()['name']['_value']);
-        $this->assertEquals('B', $path->nodes[1]->getProperties()['name']['_value']);
+        $this->assertEquals('A', $path->nodes[0]->properties['name']['_value']);
+        $this->assertEquals('B', $path->nodes[1]->properties['name']['_value']);
     }
 }

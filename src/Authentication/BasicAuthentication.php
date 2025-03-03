@@ -4,10 +4,7 @@ namespace Neo4j\QueryAPI\Authentication;
 
 use Psr\Http\Message\RequestInterface;
 
-/**
- *  @api
- */
-class BasicAuthentication implements AuthenticateInterface
+final class BasicAuthentication implements AuthenticateInterface
 {
     private string $username;
     private string $password;

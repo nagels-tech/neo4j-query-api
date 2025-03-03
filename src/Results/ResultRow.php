@@ -34,12 +34,6 @@ final class ResultRow implements ArrayAccess, Countable, IteratorAggregate
         return $this->data[$offset];
     }
 
-    public function get(string $row): mixed
-    {
-        return $this->offsetGet($row);
-    }
-
-
 
     #[\Override]
     public function offsetExists($offset): bool
@@ -58,7 +52,10 @@ final class ResultRow implements ArrayAccess, Countable, IteratorAggregate
         throw new BadMethodCallException("You can't Unset {$offset}.");
 
     }
-
+    public function get(string $row): mixed
+    {
+        return $this->offsetGet($row);
+    }
     #[\Override]
     public function count(): int
     {

@@ -2,23 +2,31 @@
 <phpunit bootstrap="tests/bootstrap.php"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
->
-    <!-- Test Suite Configuration -->
+         failOnDeprecation="true"
+         failOnNotice="true"
+         failOnPhpunitDeprecation="true"
+         failOnIncomplete="true"
+         failOnEmptyTestSuite="true"
+         failOnRisky="true"
+         failOnSkipped="true"
+         failOnWarning="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnPhpunitDeprecations="true">
     <testsuites>
         <testsuite name="Application Test Suite">
-            <directory>./tests</directory> <!-- Path to your tests directory -->
+            <directory>./tests</directory>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory>./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory>./tests/Integration</directory>
         </testsuite>
     </testsuites>
 
-<!--
-    &lt;!&ndash; Logging &ndash;&gt;
-    <logging>
-        <log type="testdox" target="php://stdout" />
-    </logging>
--->
-
+    <php>
 <!--    <env name="NEO4J_ADDRESS" value="<put your address here>"/>-->
 <!--    <env name="NEO4J_USERNAME" value="<put your name here>"/>-->
 <!--    <env name="NEO4J_PASSWORD" value="<put your password here>"/>-->
-    <!-- No need to set sensitive information here -->
+    </php>
 </phpunit>

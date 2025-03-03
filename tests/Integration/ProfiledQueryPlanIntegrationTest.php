@@ -2,6 +2,19 @@
 
 namespace Neo4j\QueryAPI\Tests\Integration;
 
+use Neo4j\QueryAPI\Configuration;
+use Neo4j\QueryAPI\ResponseParser;
+use Neo4j\QueryAPI\OGM;
+use Neo4j\QueryAPI\Neo4jRequestFactory;
+use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
+use Http\Discovery\Psr17Factory;
+use Neo4j\QueryAPI\Neo4jQueryAPI;
+use Neo4j\QueryAPI\Objects\Authentication;
+use Neo4j\QueryAPI\Objects\ProfiledQueryPlan;
+use Neo4j\QueryAPI\Results\ResultSet;
 use Neo4j\QueryAPI\Tests\CreatesQueryAPI;
 use PHPUnit\Framework\TestCase;
 
@@ -71,5 +84,76 @@ final class ProfiledQueryPlanIntegrationTest extends TestCase
 
         $result = $this->api->run($query);
         $this->assertNotNull($result->profiledQueryPlan, "Profiled query plan not found");
+    }
+
+    public function testProfileCreateKnowsBidirectionalRelationships(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 100) AS i
+    UNWIND range(1, 100) AS j
+    MATCH (a:Person {id: i}), (b:Person {id: j})
+    WHERE a.id < b.id AND rand() < 0.1
+    CREATE (a)-[:KNOWS]->(b), (b)-[:KNOWS]->(a);
+    ";
+
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->profiledQueryPlan, "profiled query plan not found");
+        $body = file_get_contents(__DIR__ . '/../resources/responses/complex-query-profile.json');
+        if ($body === false) {
+            throw new \UnexpectedValueException('Could not find complex query profile');
+        }
+        $mockSack = new MockHandler([
+            new Response(200, [], $body),
+        ]);
+
+        $handler = HandlerStack::create($mockSack);
+        $client = new Client(['handler' => $handler]);
+        $auth = Authentication::fromEnvironment();
+
+        $api = new Neo4jQueryAPI(
+            $client,
+            new ResponseParser(new OGM()),
+            new Neo4jRequestFactory(
+                new Psr17Factory(),
+                new Psr17Factory(),
+                new Configuration('ABC'),
+                $auth
+            ),
+            new Configuration('ABC'),
+        );
+
+        $result = $api->run($query);
+
+        $plan = $result->profiledQueryPlan;
+        $this->assertNotNull($plan, "The result of the query should not be null.");
+
+        $expected = require __DIR__ . '/../resources/expected/complex-query-profile.php';
+
+        $this->assertEquals($expected->profiledQueryPlan, $plan, "Profiled query plan does not match the expected value.");
+    }
+    public function testProfileCreateActedInRelationships(): void
+    {
+        $query = "
+    PROFILE UNWIND range(1, 50) AS i
+    MATCH (p:Person {id: i}), (m:Movie {year: 2000 + i})
+    WHERE p.job = 'Artist'
+    CREATE (p)-[:ACTED_IN]->(m);
+    ";
+
+        $result = $this->api->run($query);
+        $this->assertNotNull($result->profiledQueryPlan, "profiled query plan not found");
+    }
+
+    public function testChildQueryPlanExistence(): void
+    {
+        $result = $this->api->run("PROFILE MATCH (n:Person {name: 'Alice'}) RETURN n.name");
+
+        $profiledQueryPlan = $result->profiledQueryPlan;
+        $this->assertNotNull($profiledQueryPlan);
+        $this->assertNotEmpty($profiledQueryPlan->children);
+
+        foreach ($profiledQueryPlan->children as $child) {
+            $this->assertInstanceOf(ProfiledQueryPlan::class, $child);
+        }
     }
 }

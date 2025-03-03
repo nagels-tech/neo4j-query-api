@@ -11,9 +11,6 @@ final class Authentication
 {
     public static function basic(string $username, string $password): AuthenticateInterface
     {
-        $username = $username ?: 'defaultUsername';
-        $password = $password ?: 'defaultPassword';
-
         return new BasicAuthentication($username, $password);
     }
 
@@ -29,14 +26,14 @@ final class Authentication
         );
     }
 
-    public static function noAuth(): AuthenticateInterface
-    {
-        return new NoAuth();
-    }
-
 
     public static function bearer(string $token): AuthenticateInterface
     {
         return new BearerAuthentication($token);
+    }
+
+    public static function noAuth(): NoAuth
+    {
+        return new NoAuth();
     }
 }

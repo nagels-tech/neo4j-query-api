@@ -22,10 +22,10 @@ final class ResultSet implements IteratorAggregate, Countable
      */
     public function __construct(
         public readonly array $rows,
-        public readonly ?ResultCounters $counters = null,
         public readonly Bookmarks $bookmarks,
-        public readonly ?ProfiledQueryPlan $profiledQueryPlan,
-        public readonly AccessMode $accessMode
+        public readonly AccessMode $accessMode,
+        public readonly ?ResultCounters $counters = null,
+        public readonly ?ProfiledQueryPlan $profiledQueryPlan = null
     ) {
     }
 
@@ -38,11 +38,6 @@ final class ResultSet implements IteratorAggregate, Countable
         return new ArrayIterator($this->rows);
     }
 
-    public function getQueryCounters(): ?ResultCounters
-    {
-        return $this->counters;
-    }
-
 
     #[\Override]
     public function count(): int
@@ -50,18 +45,4 @@ final class ResultSet implements IteratorAggregate, Countable
         return count($this->rows);
     }
 
-    public function getBookmarks(): ?Bookmarks
-    {
-        return $this->bookmarks;
-    }
-
-    public function getAccessMode(): ?AccessMode
-    {
-        return $this->accessMode;
-    }
-
-    public function getData(): array
-    {
-        return $this->rows;
-    }
 }

@@ -4,10 +4,7 @@ namespace Neo4j\QueryAPI\Exception;
 
 use Exception;
 
-/**
- * @api
- */
-class Neo4jException extends Exception
+final class Neo4jException extends Exception
 {
     private readonly string $errorCode;
     private readonly ?string $errorType;
@@ -38,6 +35,7 @@ class Neo4jException extends Exception
      */
     public static function fromNeo4jResponse(array $response, ?\Throwable $exception = null): self
     {
+
         $errorDetails = $response['errors'][0] ?? ['message' => 'Unknown error', 'code' => 'Neo.UnknownError'];
 
 

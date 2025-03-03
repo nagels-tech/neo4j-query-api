@@ -1,0 +1,906 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<crap_result>
+  <project/>
+  <timestamp>2025-03-03 08:46:42</timestamp>
+  <stats>
+    <name>Method Crap Stats</name>
+    <methodCount>81</methodCount>
+    <crapMethodCount>0</crapMethodCount>
+    <crapLoad>0</crapLoad>
+    <totalCrap>154.05</totalCrap>
+    <crapMethodPercent>0</crapMethodPercent>
+  </stats>
+  <methods>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\BasicAuthentication</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(?string $username, ?string $password)</methodSignature>
+      <fullMethod>__construct(?string $username, ?string $password)</fullMethod>
+      <crap>3</crap>
+      <complexity>3</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\BasicAuthentication</className>
+      <methodName>authenticate</methodName>
+      <methodSignature>authenticate(Psr\Http\Message\RequestInterface $request): Psr\Http\Message\RequestInterface</methodSignature>
+      <fullMethod>authenticate(Psr\Http\Message\RequestInterface $request): Psr\Http\Message\RequestInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\BasicAuthentication</className>
+      <methodName>getHeader</methodName>
+      <methodSignature>getHeader(): string</methodSignature>
+      <fullMethod>getHeader(): string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\BasicAuthentication</className>
+      <methodName>getType</methodName>
+      <methodSignature>getType(): string</methodSignature>
+      <fullMethod>getType(): string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\BearerAuthentication</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(string $token)</methodSignature>
+      <fullMethod>__construct(string $token)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\BearerAuthentication</className>
+      <methodName>authenticate</methodName>
+      <methodSignature>authenticate(Psr\Http\Message\RequestInterface $request): Psr\Http\Message\RequestInterface</methodSignature>
+      <fullMethod>authenticate(Psr\Http\Message\RequestInterface $request): Psr\Http\Message\RequestInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\BearerAuthentication</className>
+      <methodName>getHeader</methodName>
+      <methodSignature>getHeader(): string</methodSignature>
+      <fullMethod>getHeader(): string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\BearerAuthentication</className>
+      <methodName>getType</methodName>
+      <methodSignature>getType(): string</methodSignature>
+      <fullMethod>getType(): string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\NoAuth</className>
+      <methodName>getHeader</methodName>
+      <methodSignature>getHeader(): string</methodSignature>
+      <fullMethod>getHeader(): string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\NoAuth</className>
+      <methodName>getType</methodName>
+      <methodSignature>getType(): string</methodSignature>
+      <fullMethod>getType(): string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Authentication</package>
+      <className>Neo4j\QueryAPI\Authentication\NoAuth</className>
+      <methodName>authenticate</methodName>
+      <methodSignature>authenticate(Psr\Http\Message\RequestInterface $request): Psr\Http\Message\RequestInterface</methodSignature>
+      <fullMethod>authenticate(Psr\Http\Message\RequestInterface $request): Psr\Http\Message\RequestInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Configuration</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(string $baseUri, string $database, bool $includeCounters, Neo4j\QueryAPI\Objects\Bookmarks $bookmarks, Neo4j\QueryAPI\Enums\AccessMode $accessMode)</methodSignature>
+      <fullMethod>__construct(string $baseUri, string $database, bool $includeCounters, Neo4j\QueryAPI\Objects\Bookmarks $bookmarks, Neo4j\QueryAPI\Enums\AccessMode $accessMode)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Exception</package>
+      <className>Neo4j\QueryAPI\Exception\Neo4jException</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(array $errorDetails, int $statusCode, ?Throwable $previous)</methodSignature>
+      <fullMethod>__construct(array $errorDetails, int $statusCode, ?Throwable $previous)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Exception</package>
+      <className>Neo4j\QueryAPI\Exception\Neo4jException</className>
+      <methodName>fromNeo4jResponse</methodName>
+      <methodSignature>fromNeo4jResponse(array $response, ?Throwable $exception): self</methodSignature>
+      <fullMethod>fromNeo4jResponse(array $response, ?Throwable $exception): self</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Exception</package>
+      <className>Neo4j\QueryAPI\Exception\Neo4jException</className>
+      <methodName>getErrorCode</methodName>
+      <methodSignature>getErrorCode(): string</methodSignature>
+      <fullMethod>getErrorCode(): string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Exception</package>
+      <className>Neo4j\QueryAPI\Exception\Neo4jException</className>
+      <methodName>getType</methodName>
+      <methodSignature>getType(): ?string</methodSignature>
+      <fullMethod>getType(): ?string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Exception</package>
+      <className>Neo4j\QueryAPI\Exception\Neo4jException</className>
+      <methodName>getSubType</methodName>
+      <methodSignature>getSubType(): ?string</methodSignature>
+      <fullMethod>getSubType(): ?string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Exception</package>
+      <className>Neo4j\QueryAPI\Exception\Neo4jException</className>
+      <methodName>getName</methodName>
+      <methodSignature>getName(): ?string</methodSignature>
+      <fullMethod>getName(): ?string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jQueryAPI</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(Psr\Http\Client\ClientInterface $client, Neo4j\QueryAPI\ResponseParser $responseParser, Neo4j\QueryAPI\Neo4jRequestFactory $requestFactory, Neo4j\QueryAPI\Configuration $config)</methodSignature>
+      <fullMethod>__construct(Psr\Http\Client\ClientInterface $client, Neo4j\QueryAPI\ResponseParser $responseParser, Neo4j\QueryAPI\Neo4jRequestFactory $requestFactory, Neo4j\QueryAPI\Configuration $config)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jQueryAPI</className>
+      <methodName>login</methodName>
+      <methodSignature>login(string $address, ?Neo4j\QueryAPI\Authentication\AuthenticateInterface $auth, ?Neo4j\QueryAPI\Configuration $config): self</methodSignature>
+      <fullMethod>login(string $address, ?Neo4j\QueryAPI\Authentication\AuthenticateInterface $auth, ?Neo4j\QueryAPI\Configuration $config): self</fullMethod>
+      <crap>5</crap>
+      <complexity>5</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jQueryAPI</className>
+      <methodName>create</methodName>
+      <methodSignature>create(Neo4j\QueryAPI\Configuration $configuration, Neo4j\QueryAPI\Authentication\AuthenticateInterface $auth): self</methodSignature>
+      <fullMethod>create(Neo4j\QueryAPI\Configuration $configuration, Neo4j\QueryAPI\Authentication\AuthenticateInterface $auth): self</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jQueryAPI</className>
+      <methodName>getConfig</methodName>
+      <methodSignature>getConfig(): Neo4j\QueryAPI\Configuration</methodSignature>
+      <fullMethod>getConfig(): Neo4j\QueryAPI\Configuration</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jQueryAPI</className>
+      <methodName>run</methodName>
+      <methodSignature>run(string $cypher, array $parameters): Neo4j\QueryAPI\Results\ResultSet</methodSignature>
+      <fullMethod>run(string $cypher, array $parameters): Neo4j\QueryAPI\Results\ResultSet</fullMethod>
+      <crap>2.26</crap>
+      <complexity>2</complexity>
+      <coverage>60</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jQueryAPI</className>
+      <methodName>beginTransaction</methodName>
+      <methodSignature>beginTransaction(): Neo4j\QueryAPI\Transaction</methodSignature>
+      <fullMethod>beginTransaction(): Neo4j\QueryAPI\Transaction</fullMethod>
+      <crap>2.01</crap>
+      <complexity>2</complexity>
+      <coverage>86.67</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jQueryAPI</className>
+      <methodName>handleRequestException</methodName>
+      <methodSignature>handleRequestException(Psr\Http\Client\RequestExceptionInterface $e): void</methodSignature>
+      <fullMethod>handleRequestException(Psr\Http\Client\RequestExceptionInterface $e): void</fullMethod>
+      <crap>12</crap>
+      <complexity>3</complexity>
+      <coverage>0</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jRequestFactory</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(Psr\Http\Message\RequestFactoryInterface $psr17Factory, Psr\Http\Message\StreamFactoryInterface $streamFactory, Neo4j\QueryAPI\Configuration $configuration, Neo4j\QueryAPI\Authentication\AuthenticateInterface $auth)</methodSignature>
+      <fullMethod>__construct(Psr\Http\Message\RequestFactoryInterface $psr17Factory, Psr\Http\Message\StreamFactoryInterface $streamFactory, Neo4j\QueryAPI\Configuration $configuration, Neo4j\QueryAPI\Authentication\AuthenticateInterface $auth)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jRequestFactory</className>
+      <methodName>buildRunQueryRequest</methodName>
+      <methodSignature>buildRunQueryRequest(string $cypher, array $parameters): Psr\Http\Message\RequestInterface</methodSignature>
+      <fullMethod>buildRunQueryRequest(string $cypher, array $parameters): Psr\Http\Message\RequestInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jRequestFactory</className>
+      <methodName>buildBeginTransactionRequest</methodName>
+      <methodSignature>buildBeginTransactionRequest(): Psr\Http\Message\RequestInterface</methodSignature>
+      <fullMethod>buildBeginTransactionRequest(): Psr\Http\Message\RequestInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jRequestFactory</className>
+      <methodName>buildCommitRequest</methodName>
+      <methodSignature>buildCommitRequest(string $transactionId, string $clusterAffinity): Psr\Http\Message\RequestInterface</methodSignature>
+      <fullMethod>buildCommitRequest(string $transactionId, string $clusterAffinity): Psr\Http\Message\RequestInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jRequestFactory</className>
+      <methodName>buildRollbackRequest</methodName>
+      <methodSignature>buildRollbackRequest(string $transactionId, string $clusterAffinity): Psr\Http\Message\RequestInterface</methodSignature>
+      <fullMethod>buildRollbackRequest(string $transactionId, string $clusterAffinity): Psr\Http\Message\RequestInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jRequestFactory</className>
+      <methodName>buildTransactionRunRequest</methodName>
+      <methodSignature>buildTransactionRunRequest(string $query, array $parameters, string $transactionId, string $clusterAffinity): Psr\Http\Message\RequestInterface</methodSignature>
+      <fullMethod>buildTransactionRunRequest(string $query, array $parameters, string $transactionId, string $clusterAffinity): Psr\Http\Message\RequestInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Neo4jRequestFactory</className>
+      <methodName>createRequest</methodName>
+      <methodSignature>createRequest(string $uri, ?string $cypher, ?array $parameters): Psr\Http\Message\RequestInterface</methodSignature>
+      <fullMethod>createRequest(string $uri, ?string $cypher, ?array $parameters): Psr\Http\Message\RequestInterface</fullMethod>
+      <crap>8</crap>
+      <complexity>8</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\OGM</className>
+      <methodName>map</methodName>
+      <methodSignature>map(array $data): mixed</methodSignature>
+      <fullMethod>map(array $data): mixed</fullMethod>
+      <crap>6.02</crap>
+      <complexity>6</complexity>
+      <coverage>92.31</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\OGM</className>
+      <methodName>parsePoint</methodName>
+      <methodSignature>parsePoint(string $value): Neo4j\QueryAPI\Objects\Point</methodSignature>
+      <fullMethod>parsePoint(string $value): Neo4j\QueryAPI\Objects\Point</fullMethod>
+      <crap>3</crap>
+      <complexity>3</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\OGM</className>
+      <methodName>mapNode</methodName>
+      <methodSignature>mapNode(array $nodeData): Neo4j\QueryAPI\Objects\Node</methodSignature>
+      <fullMethod>mapNode(array $nodeData): Neo4j\QueryAPI\Objects\Node</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\OGM</className>
+      <methodName>mapRelationship</methodName>
+      <methodSignature>mapRelationship(array $relationshipData): Neo4j\QueryAPI\Objects\Relationship</methodSignature>
+      <fullMethod>mapRelationship(array $relationshipData): Neo4j\QueryAPI\Objects\Relationship</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\OGM</className>
+      <methodName>parseWKT</methodName>
+      <methodSignature>parseWKT(string $wkt): Neo4j\QueryAPI\Objects\Point</methodSignature>
+      <fullMethod>parseWKT(string $wkt): Neo4j\QueryAPI\Objects\Point</fullMethod>
+      <crap>3</crap>
+      <complexity>3</complexity>
+      <coverage>92.86</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\OGM</className>
+      <methodName>mapPath</methodName>
+      <methodSignature>mapPath(array $pathData): Neo4j\QueryAPI\Objects\Path</methodSignature>
+      <fullMethod>mapPath(array $pathData): Neo4j\QueryAPI\Objects\Path</fullMethod>
+      <crap>4</crap>
+      <complexity>4</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\OGM</className>
+      <methodName>mapProperties</methodName>
+      <methodSignature>mapProperties(array $properties): array</methodSignature>
+      <fullMethod>mapProperties(array $properties): array</fullMethod>
+      <crap>7.29</crap>
+      <complexity>7</complexity>
+      <coverage>81.82</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Authentication</className>
+      <methodName>basic</methodName>
+      <methodSignature>basic(string $username, string $password): Neo4j\QueryAPI\Authentication\AuthenticateInterface</methodSignature>
+      <fullMethod>basic(string $username, string $password): Neo4j\QueryAPI\Authentication\AuthenticateInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Authentication</className>
+      <methodName>fromEnvironment</methodName>
+      <methodSignature>fromEnvironment(): Neo4j\QueryAPI\Authentication\AuthenticateInterface</methodSignature>
+      <fullMethod>fromEnvironment(): Neo4j\QueryAPI\Authentication\AuthenticateInterface</fullMethod>
+      <crap>3</crap>
+      <complexity>3</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Authentication</className>
+      <methodName>bearer</methodName>
+      <methodSignature>bearer(string $token): Neo4j\QueryAPI\Authentication\AuthenticateInterface</methodSignature>
+      <fullMethod>bearer(string $token): Neo4j\QueryAPI\Authentication\AuthenticateInterface</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Authentication</className>
+      <methodName>noAuth</methodName>
+      <methodSignature>noAuth(): Neo4j\QueryAPI\Authentication\NoAuth</methodSignature>
+      <fullMethod>noAuth(): Neo4j\QueryAPI\Authentication\NoAuth</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Bookmarks</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(array $bookmarks)</methodSignature>
+      <fullMethod>__construct(array $bookmarks)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Bookmarks</className>
+      <methodName>addBookmarks</methodName>
+      <methodSignature>addBookmarks(?Neo4j\QueryAPI\Objects\Bookmarks $newBookmarks): void</methodSignature>
+      <fullMethod>addBookmarks(?Neo4j\QueryAPI\Objects\Bookmarks $newBookmarks): void</fullMethod>
+      <crap>2</crap>
+      <complexity>2</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Bookmarks</className>
+      <methodName>count</methodName>
+      <methodSignature>count(): int</methodSignature>
+      <fullMethod>count(): int</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Bookmarks</className>
+      <methodName>jsonSerialize</methodName>
+      <methodSignature>jsonSerialize(): array</methodSignature>
+      <fullMethod>jsonSerialize(): array</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Node</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(array $labels, array $properties)</methodSignature>
+      <fullMethod>__construct(array $labels, array $properties)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Node</className>
+      <methodName>toArray</methodName>
+      <methodSignature>toArray(): array</methodSignature>
+      <fullMethod>toArray(): array</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Path</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(array $nodes, array $relationships)</methodSignature>
+      <fullMethod>__construct(array $nodes, array $relationships)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Point</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(float $x, float $y, float|null $z, int $srid)</methodSignature>
+      <fullMethod>__construct(float $x, float $y, float|null $z, int $srid)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Point</className>
+      <methodName>__toString</methodName>
+      <methodSignature>__toString(): string</methodSignature>
+      <fullMethod>__toString(): string</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\ProfiledQueryPlan</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments $arguments, int $dbHits, int $records, bool $hasPageCacheStats, int $pageCacheHits, int $pageCacheMisses, float $pageCacheHitRatio, int $time, string $operatorType, array $children, array $identifiers)</methodSignature>
+      <fullMethod>__construct(Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments $arguments, int $dbHits, int $records, bool $hasPageCacheStats, int $pageCacheHits, int $pageCacheMisses, float $pageCacheHitRatio, int $time, string $operatorType, array $children, array $identifiers)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\ProfiledQueryPlanArguments</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(?int $globalMemory, ?string $plannerImpl, ?int $memory, ?string $stringRepresentation, ?string $runtime, ?int $time, ?int $pageCacheMisses, ?int $pageCacheHits, ?string $runtimeImpl, ?int $version, ?int $dbHits, ?int $batchSize, ?string $details, ?string $plannerVersion, ?string $pipelineInfo, null|string|float $runtimeVersion, ?int $id, ?float $estimatedRows, ?string $planner, ?int $rows)</methodSignature>
+      <fullMethod>__construct(?int $globalMemory, ?string $plannerImpl, ?int $memory, ?string $stringRepresentation, ?string $runtime, ?int $time, ?int $pageCacheMisses, ?int $pageCacheHits, ?string $runtimeImpl, ?int $version, ?int $dbHits, ?int $batchSize, ?string $details, ?string $plannerVersion, ?string $pipelineInfo, null|string|float $runtimeVersion, ?int $id, ?float $estimatedRows, ?string $planner, ?int $rows)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\Relationship</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(string $type, array $properties)</methodSignature>
+      <fullMethod>__construct(string $type, array $properties)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Objects</package>
+      <className>Neo4j\QueryAPI\Objects\ResultCounters</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(bool $containsUpdates, int $nodesCreated, int $nodesDeleted, int $propertiesSet, int $relationshipsCreated, int $relationshipsDeleted, int $labelsAdded, int $labelsRemoved, int $indexesAdded, int $indexesRemoved, int $constraintsAdded, int $constraintsRemoved, bool $containsSystemUpdates, int $systemUpdates)</methodSignature>
+      <fullMethod>__construct(bool $containsUpdates, int $nodesCreated, int $nodesDeleted, int $propertiesSet, int $relationshipsCreated, int $relationshipsDeleted, int $labelsAdded, int $labelsRemoved, int $indexesAdded, int $indexesRemoved, int $constraintsAdded, int $constraintsRemoved, bool $containsSystemUpdates, int $systemUpdates)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\ResponseParser</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(Neo4j\QueryAPI\OGM $ogm)</methodSignature>
+      <fullMethod>__construct(Neo4j\QueryAPI\OGM $ogm)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\ResponseParser</className>
+      <methodName>parseRunQueryResponse</methodName>
+      <methodSignature>parseRunQueryResponse(Psr\Http\Message\ResponseInterface $response): Neo4j\QueryAPI\Results\ResultSet</methodSignature>
+      <fullMethod>parseRunQueryResponse(Psr\Http\Message\ResponseInterface $response): Neo4j\QueryAPI\Results\ResultSet</fullMethod>
+      <crap>2</crap>
+      <complexity>2</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\ResponseParser</className>
+      <methodName>validateAndDecodeResponse</methodName>
+      <methodSignature>validateAndDecodeResponse(Psr\Http\Message\ResponseInterface $response): array</methodSignature>
+      <fullMethod>validateAndDecodeResponse(Psr\Http\Message\ResponseInterface $response): array</fullMethod>
+      <crap>3</crap>
+      <complexity>3</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\ResponseParser</className>
+      <methodName>mapRows</methodName>
+      <methodSignature>mapRows(array $fields, array $values): array</methodSignature>
+      <fullMethod>mapRows(array $fields, array $values): array</fullMethod>
+      <crap>2</crap>
+      <complexity>2</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\ResponseParser</className>
+      <methodName>formatOGMOutput</methodName>
+      <methodSignature>formatOGMOutput(mixed $value): mixed</methodSignature>
+      <fullMethod>formatOGMOutput(mixed $value): mixed</fullMethod>
+      <crap>4</crap>
+      <complexity>4</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\ResponseParser</className>
+      <methodName>buildCounters</methodName>
+      <methodSignature>buildCounters(array $countersData): Neo4j\QueryAPI\Objects\ResultCounters</methodSignature>
+      <fullMethod>buildCounters(array $countersData): Neo4j\QueryAPI\Objects\ResultCounters</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\ResponseParser</className>
+      <methodName>buildBookmarks</methodName>
+      <methodSignature>buildBookmarks(array $bookmarksData): Neo4j\QueryAPI\Objects\Bookmarks</methodSignature>
+      <fullMethod>buildBookmarks(array $bookmarksData): Neo4j\QueryAPI\Objects\Bookmarks</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\ResponseParser</className>
+      <methodName>getAccessMode</methodName>
+      <methodSignature>getAccessMode(string $accessModeData): Neo4j\QueryAPI\Enums\AccessMode</methodSignature>
+      <fullMethod>getAccessMode(string $accessModeData): Neo4j\QueryAPI\Enums\AccessMode</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\ResponseParser</className>
+      <methodName>buildProfiledQueryPlan</methodName>
+      <methodSignature>buildProfiledQueryPlan(mixed $queryPlanData): ?Neo4j\QueryAPI\Objects\ProfiledQueryPlan</methodSignature>
+      <fullMethod>buildProfiledQueryPlan(mixed $queryPlanData): ?Neo4j\QueryAPI\Objects\ProfiledQueryPlan</fullMethod>
+      <crap>5</crap>
+      <complexity>5</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultRow</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(array $data)</methodSignature>
+      <fullMethod>__construct(array $data)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultRow</className>
+      <methodName>offsetGet</methodName>
+      <methodSignature>offsetGet(mixed $offset): mixed</methodSignature>
+      <fullMethod>offsetGet(mixed $offset): mixed</fullMethod>
+      <crap>2</crap>
+      <complexity>2</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultRow</className>
+      <methodName>offsetExists</methodName>
+      <methodSignature>offsetExists($offset): bool</methodSignature>
+      <fullMethod>offsetExists($offset): bool</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultRow</className>
+      <methodName>offsetSet</methodName>
+      <methodSignature>offsetSet($offset, $value): void</methodSignature>
+      <fullMethod>offsetSet($offset, $value): void</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultRow</className>
+      <methodName>offsetUnset</methodName>
+      <methodSignature>offsetUnset($offset): void</methodSignature>
+      <fullMethod>offsetUnset($offset): void</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultRow</className>
+      <methodName>get</methodName>
+      <methodSignature>get(string $row): mixed</methodSignature>
+      <fullMethod>get(string $row): mixed</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultRow</className>
+      <methodName>count</methodName>
+      <methodSignature>count(): int</methodSignature>
+      <fullMethod>count(): int</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultRow</className>
+      <methodName>getIterator</methodName>
+      <methodSignature>getIterator(): Traversable</methodSignature>
+      <fullMethod>getIterator(): Traversable</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultSet</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(array $rows, Neo4j\QueryAPI\Objects\Bookmarks $bookmarks, Neo4j\QueryAPI\Enums\AccessMode $accessMode, ?Neo4j\QueryAPI\Objects\ResultCounters $counters, ?Neo4j\QueryAPI\Objects\ProfiledQueryPlan $profiledQueryPlan)</methodSignature>
+      <fullMethod>__construct(array $rows, Neo4j\QueryAPI\Objects\Bookmarks $bookmarks, Neo4j\QueryAPI\Enums\AccessMode $accessMode, ?Neo4j\QueryAPI\Objects\ResultCounters $counters, ?Neo4j\QueryAPI\Objects\ProfiledQueryPlan $profiledQueryPlan)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultSet</className>
+      <methodName>getIterator</methodName>
+      <methodSignature>getIterator(): Traversable</methodSignature>
+      <fullMethod>getIterator(): Traversable</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI\Results</package>
+      <className>Neo4j\QueryAPI\Results\ResultSet</className>
+      <methodName>count</methodName>
+      <methodSignature>count(): int</methodSignature>
+      <fullMethod>count(): int</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Transaction</className>
+      <methodName>__construct</methodName>
+      <methodSignature>__construct(Psr\Http\Client\ClientInterface $client, Neo4j\QueryAPI\ResponseParser $responseParser, Neo4j\QueryAPI\Neo4jRequestFactory $requestFactory, string $clusterAffinity, string $transactionId)</methodSignature>
+      <fullMethod>__construct(Psr\Http\Client\ClientInterface $client, Neo4j\QueryAPI\ResponseParser $responseParser, Neo4j\QueryAPI\Neo4jRequestFactory $requestFactory, string $clusterAffinity, string $transactionId)</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Transaction</className>
+      <methodName>run</methodName>
+      <methodSignature>run(string $query, array $parameters): Neo4j\QueryAPI\Results\ResultSet</methodSignature>
+      <fullMethod>run(string $query, array $parameters): Neo4j\QueryAPI\Results\ResultSet</fullMethod>
+      <crap>3.47</crap>
+      <complexity>3</complexity>
+      <coverage>62.5</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Transaction</className>
+      <methodName>commit</methodName>
+      <methodSignature>commit(): void</methodSignature>
+      <fullMethod>commit(): void</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Transaction</className>
+      <methodName>rollback</methodName>
+      <methodSignature>rollback(): void</methodSignature>
+      <fullMethod>rollback(): void</fullMethod>
+      <crap>1</crap>
+      <complexity>1</complexity>
+      <coverage>100</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+    <method>
+      <package>Neo4j\QueryAPI</package>
+      <className>Neo4j\QueryAPI\Transaction</className>
+      <methodName>handleRequestException</methodName>
+      <methodSignature>handleRequestException(Psr\Http\Client\RequestExceptionInterface $e): void</methodSignature>
+      <fullMethod>handleRequestException(Psr\Http\Client\RequestExceptionInterface $e): void</fullMethod>
+      <crap>12</crap>
+      <complexity>3</complexity>
+      <coverage>0</coverage>
+      <crapLoad>0</crapLoad>
+    </method>
+  </methods>
+</crap_result>

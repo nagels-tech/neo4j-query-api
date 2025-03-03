@@ -6,7 +6,6 @@
         "psr/http-client": "^1.0",
         "ext-json": "*",
         "php": "^8.1",
-        "nyholm/psr7": "^1.8",
         "php-http/discovery": "^1.17"
     },
     "require-dev": {
@@ -15,7 +14,8 @@
         "friendsofphp/php-cs-fixer": "^3.68",
         "vimeo/psalm": "^6.8",
         "dg/bypass-finals": "^1.9",
-        "psalm/plugin-phpunit": "^0.19.2"
+        "psalm/plugin-phpunit": "^0.19.2",
+        "psalm/plugin-mockery": "^1.2"
     },
 
     "autoload": {
@@ -52,7 +52,10 @@
         "cs": "vendor/bin/php-cs-fixer fix --dry-run --diff --allow-risky=yes",
         "cs:fix": "vendor/bin/php-cs-fixer fix --allow-risky=yes",
         "psalm": "vendor/bin/psalm --no-cache --show-info=true",
-        "phpunit" : "vendor/bin/phpunit"
+        "all-tests" : "vendor/bin/phpunit --configuration=phpunit.xml --testsuite=All ./tests/",
+        "unit-tests" : "vendor/bin/phpunit --configuration=phpunit.xml --testsuite=Unit",
+        "integration-tests" : "vendor/bin/phpunit --configuration=phpunit.xml --testsuite=Integration",
+        "phpunit-with-coverage" : "XDEBUG_MODE=coverage php -d memory_limit=-1 vendor/bin/phpunit --configuration=phpunitCoverage.xml --testsuite=All --coverage-filter=src tests"
     }
 
 }

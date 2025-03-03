@@ -7,10 +7,7 @@ use OutOfBoundsException;
 use BadMethodCallException;
 use PHPUnit\Framework\TestCase;
 
-/**
- *  @api
- */
-class ResultRowTest extends TestCase
+final class ResultRowTest extends TestCase
 {
     public function testArrayAccessGet(): void
     {
@@ -23,7 +20,6 @@ class ResultRowTest extends TestCase
         $this->assertEquals('Bob', $row['name']);
         $this->assertEquals(20, $row['age']);
     }
-    /** @psalm-suppress UnusedVariable */
     public function testArrayAccessInvalidKey(): void
     {
         $row = new ResultRow([
@@ -34,7 +30,7 @@ class ResultRowTest extends TestCase
         $this->expectException(OutOfBoundsException::class);
         $this->expectExceptionMessage('Column phone not found.');
 
-        $value = $row['phone'];
+        $row['phone'];
     }
 
     public function testArrayAccessSetThrowsException(): void
