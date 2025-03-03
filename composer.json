@@ -55,7 +55,7 @@
         "all-tests" : "vendor/bin/phpunit --configuration=phpunit.xml --testsuite=All ./tests/",
         "unit-tests" : "vendor/bin/phpunit --configuration=phpunit.xml --testsuite=Unit",
         "integration-tests" : "vendor/bin/phpunit --configuration=phpunit.xml --testsuite=Integration",
-        "phpunit-with-coverage" : "XDEBUG_MODE=coverage php -d memory_limit=-1 vendor/bin/phpunit --configuration=phpunit.xml --testsuite=All --coverage-filter=src tests"
+        "phpunit-with-coverage" : "XDEBUG_MODE=coverage php -d memory_limit=-1 vendor/bin/phpunit --configuration=phpunitCoverage.xml --testsuite=All --coverage-filter=src tests"
     }
 
 }
