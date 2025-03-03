@@ -29,7 +29,7 @@ final class ResponseParser
         $profiledQueryPlan = $this->buildProfiledQueryPlan($data['profiledQueryPlan'] ?? null);
         $accessMode = $this->getAccessMode($data['accessMode'] ?? '');
 
-        return new ResultSet($rows, $counters, $bookmarks, $profiledQueryPlan, $accessMode);
+        return new ResultSet($rows, $bookmarks, $accessMode,$counters,$profiledQueryPlan);
     }
 
     private function validateAndDecodeResponse(ResponseInterface $response): array
@@ -153,6 +153,7 @@ final class ResponseParser
         $children = array_map(fn (mixed $child): ?ProfiledQueryPlan => $this->buildProfiledQueryPlan($child), $queryPlanData['children'] ?? []);
 
         return new ProfiledQueryPlan(
+            $queryArguments,
             $queryPlanData['dbHits'] ?? 0,
             $queryPlanData['records'] ?? 0,
             $queryPlanData['hasPageCacheStats'] ?? false,
@@ -161,9 +162,9 @@ final class ResponseParser
             $queryPlanData['pageCacheHitRatio'] ?? 0.0,
             $queryPlanData['time'] ?? 0,
             $queryPlanData['operatorType'] ?? '',
-            $queryArguments,
             $children,
             $queryPlanData['identifiers'] ?? []
         );
+
     }
 }

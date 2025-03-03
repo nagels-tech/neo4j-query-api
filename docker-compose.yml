@@ -7,6 +7,9 @@ services:
     container_name: php-app
     volumes:
       - .:/var/www
+    environment:
+          - FAIL_ON_DEPRECATION=1
+          - FAIL_ON_PHPUNIT_DEPRECATION=1
     networks:
       - mynetwork
 
