@@ -8,8 +8,9 @@ services:
     volumes:
       - .:/var/www
     environment:
-          - FAIL_ON_DEPRECATION=1
-          - FAIL_ON_PHPUNIT_DEPRECATION=1
+      - NEO4J_ADDRESS=${NEO4J_ADDRESS-http://localhost:7474}
+      - NEO4J_USERNAME=${NEO4J_USERNAME-neo4j}
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD-}
     networks:
       - mynetwork
 
