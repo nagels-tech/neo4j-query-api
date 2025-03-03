@@ -1,0 +1,392 @@
+<?xml version="1.0"?>
+<phpunit xmlns="https://schema.phpunit.de/coverage/1.0">
+  <build time="Mon Mar 3 8:46:42 UTC 2025" phpunit="10.5.45" coverage="10.1.16">
+    <runtime name="PHP" version="8.3.16" url="https://www.php.net/"/>
+    <driver name="xdebug" version="3.4.1"/>
+  </build>
+  <project source="/home/pratiksha/dev/Neo4j-Client/src">
+    <tests>
+      <test name="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithWriteAccessMode" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithReadAccessMode" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testReadModeWithWriteQuery" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testWriteModeWithReadQuery" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testCreateBookmarks" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testInvalidBookmarkThrowsException" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithExactNames" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithSingleName" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithInteger" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithFloat" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNull" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithBoolean" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithString" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithArray" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDate" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDuration" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_2DPoint" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_3DPoint" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian2DPoint" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian3DPoint" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNode" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithPath" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithMap" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithRelationship" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jOGMTest::testWithNode" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jOGMTest::testWithSimpleRelationship" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jOGMTest::testWithPath" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testParseRunQueryResponse" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryHandling" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testCounters" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryException" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testLoginWithValidConfiguration" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testLoginWithNullConfiguration" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testConfigOnly" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionCommit" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionRollback" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndCommit" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndRollback" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileExistence" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateQueryExistence" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateMovieQueryExistence" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateFriendsQueryExistence" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateKnowsBidirectionalRelationships" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateActedInRelationships" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testChildQueryPlanExistence" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testAuthenticateAddsAuthorizationHeader" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testGetHeaderReturnsCorrectValue" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testGetTypeReturnsBasic" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Authentication\BearerAuthenticationUnitTest::testAuthenticateAddsAuthorizationHeader" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Authentication\BearerAuthenticationUnitTest::testGetHeaderReturnsCorrectValue" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Authentication\BearerAuthenticationUnitTest::testGetTypeReturnsBearer" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Authentication\NoAuthUnitTest::testAuthenticateReturnsUnmodifiedRequest" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Authentication\NoAuthUnitTest::testGetHeaderReturnsEmptyString" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Authentication\NoAuthUnitTest::testGetTypeReturnsNoAuth" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testBearerToken" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testBasicAuthentication" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testFallbackToEnvironmentVariables" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jExceptionUnitTest::testConstructor" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jExceptionUnitTest::testConstructorWithMissingErrorDetails" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jExceptionUnitTest::testFromNeo4jResponse" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jExceptionUnitTest::testFromNeo4jResponseWithMissingDetails" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jExceptionUnitTest::testFromNeo4jResponseWithNullResponse" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jExceptionUnitTest::testExceptionChaining" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testCorrectClientSetup" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testRunSuccess" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testParseValidResponse" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testParseInvalidResponse" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testGetAccessMode" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testParseBookmarks" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRunQueryRequest" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildBeginTransactionRequest" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildCommitRequest" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRollbackRequest" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithHeadersAndBody" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithoutAuthorizationHeader" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testMapInteger" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testMapFloat" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testMapString" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testMapBoolean" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testMapNull" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testMapArray" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testMapNode" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testMapRelationship" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testMapPoint" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testParseWKT" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testInvalidWKTThrowsException" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\OGMUnitTest::testInvalidPointFormatThrowsException" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\ResultRowTest::testArrayAccessGet" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\ResultRowTest::testArrayAccessInvalidKey" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\ResultRowTest::testArrayAccessSetThrowsException" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\ResultRowTest::testArrayAccessUnsetThrowsException" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Results\ResultRowUnitTest::testOffsetGetReturnsValue" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Results\ResultRowUnitTest::testOffsetGetThrowsExceptionForInvalidKey" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Results\ResultRowUnitTest::testOffsetExists" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Results\ResultRowUnitTest::testOffsetSetThrowsException" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Results\ResultRowUnitTest::testOffsetUnsetThrowsException" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Results\ResultRowUnitTest::testGetReturnsValue" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Results\ResultRowUnitTest::testCount" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\Results\ResultRowUnitTest::testIterator" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\AuthenticationUnitTest::testBasicReturnsBasicAuthenticationInstance" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\AuthenticationUnitTest::testFromEnvironmentReturnsBasicAuthenticationInstance" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\AuthenticationUnitTest::testBearerReturnsBearerAuthenticationInstance" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\BookmarksUnitTest::testGetBookmarksReturnsCorrectArray" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\BookmarksUnitTest::testAddBookmarksMergesUniqueValues" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\BookmarksUnitTest::testAddBookmarksDoesNothingWhenNullIsPassed" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\BookmarksUnitTest::testCountReturnsCorrectNumber" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\BookmarksUnitTest::testJsonSerializeReturnsCorrectArray" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\NodeUnitTest::testGetLabelsReturnsCorrectArray" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\NodeUnitTest::testGetPropertiesReturnsCorrectArray" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\NodeUnitTest::testToArrayReturnsCorrectStructure" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\PathUnitTest::testGetNodesReturnsCorrectArray" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\PathUnitTest::testGetRelationshipsReturnsCorrectArray" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\PointUnitTest::testGetXReturnsCorrectValue" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\PointUnitTest::testGetYReturnsCorrectValue" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\PointUnitTest::testGetZReturnsCorrectValue" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\PointUnitTest::testGetSridReturnsCorrectValue" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\PointUnitTest::testToStringReturnsCorrectFormat" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\RelationshipUnitTest::testGetTypeReturnsCorrectType" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\RelationshipUnitTest::testGetPropertiesReturnsCorrectArray" size="unknown" status="success"/>
+      <test name="Neo4j\QueryAPI\Tests\Unit\objects\RelationshipUnitTest::testEmptyPropertiesByDefault" size="unknown" status="success"/>
+    </tests>
+    <directory name="/">
+      <totals>
+        <lines total="1231" comments="140" code="1091" executable="310" executed="289" percent="93.23"/>
+        <methods count="81" tested="73" percent="90.12"/>
+        <functions count="0" tested="0" percent="0"/>
+        <classes count="21" tested="18" percent="85.71"/>
+        <traits count="0" tested="0" percent="0"/>
+      </totals>
+      <directory name="Authentication">
+        <totals>
+          <lines total="116" comments="6" code="110" executable="14" executed="14" percent="100.00"/>
+          <methods count="11" tested="11" percent="100.00"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="3" tested="3" percent="100.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+        <file name="AuthenticateInterface.php" href="Authentication/AuthenticateInterface.php.xml">
+          <totals>
+            <lines total="16" comments="3" code="13" executable="0" executed="0" percent="0"/>
+            <methods count="0" tested="0" percent="0"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="0" tested="0" percent="0"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="BasicAuthentication.php" href="Authentication/BasicAuthentication.php.xml">
+          <totals>
+            <lines total="40" comments="3" code="37" executable="6" executed="6" percent="100.00"/>
+            <methods count="4" tested="4" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="BearerAuthentication.php" href="Authentication/BearerAuthentication.php.xml">
+          <totals>
+            <lines total="34" comments="0" code="34" executable="5" executed="5" percent="100.00"/>
+            <methods count="4" tested="4" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="NoAuth.php" href="Authentication/NoAuth.php.xml">
+          <totals>
+            <lines total="26" comments="0" code="26" executable="3" executed="3" percent="100.00"/>
+            <methods count="3" tested="3" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+      </directory>
+      <directory name="Enums">
+        <totals>
+          <lines total="10" comments="0" code="10" executable="0" executed="0" percent="0"/>
+          <methods count="0" tested="0" percent="0"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="0" tested="0" percent="0"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+        <file name="AccessMode.php" href="Enums/AccessMode.php.xml">
+          <totals>
+            <lines total="10" comments="0" code="10" executable="0" executed="0" percent="0"/>
+            <methods count="0" tested="0" percent="0"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="0" tested="0" percent="0"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+      </directory>
+      <directory name="Exception">
+        <totals>
+          <lines total="65" comments="7" code="58" executable="13" executed="13" percent="100.00"/>
+          <methods count="6" tested="6" percent="100.00"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="1" tested="1" percent="100.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+        <file name="Neo4jException.php" href="Exception/Neo4jException.php.xml">
+          <totals>
+            <lines total="65" comments="7" code="58" executable="13" executed="13" percent="100.00"/>
+            <methods count="6" tested="6" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+      </directory>
+      <directory name="Objects">
+        <totals>
+          <lines total="288" comments="57" code="231" executable="28" executed="28" percent="100.00"/>
+          <methods count="17" tested="17" percent="100.00"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="9" tested="9" percent="100.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+        <file name="Authentication.php" href="Objects/Authentication.php.xml">
+          <totals>
+            <lines total="40" comments="0" code="40" executable="9" executed="9" percent="100.00"/>
+            <methods count="4" tested="4" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="Bookmarks.php" href="Objects/Bookmarks.php.xml">
+          <totals>
+            <lines total="32" comments="0" code="32" executable="5" executed="5" percent="100.00"/>
+            <methods count="4" tested="4" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="Node.php" href="Objects/Node.php.xml">
+          <totals>
+            <lines total="34" comments="13" code="21" executable="5" executed="5" percent="100.00"/>
+            <methods count="2" tested="2" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="Path.php" href="Objects/Path.php.xml">
+          <totals>
+            <lines total="34" comments="15" code="19" executable="2" executed="2" percent="100.00"/>
+            <methods count="1" tested="1" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="Point.php" href="Objects/Point.php.xml">
+          <totals>
+            <lines total="35" comments="14" code="21" executable="2" executed="2" percent="100.00"/>
+            <methods count="2" tested="2" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="ProfiledQueryPlan.php" href="Objects/ProfiledQueryPlan.php.xml">
+          <totals>
+            <lines total="22" comments="0" code="22" executable="1" executed="1" percent="100.00"/>
+            <methods count="1" tested="1" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="ProfiledQueryPlanArguments.php" href="Objects/ProfiledQueryPlanArguments.php.xml">
+          <totals>
+            <lines total="31" comments="0" code="31" executable="1" executed="1" percent="100.00"/>
+            <methods count="1" tested="1" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="Relationship.php" href="Objects/Relationship.php.xml">
+          <totals>
+            <lines total="34" comments="15" code="19" executable="2" executed="2" percent="100.00"/>
+            <methods count="1" tested="1" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="ResultCounters.php" href="Objects/ResultCounters.php.xml">
+          <totals>
+            <lines total="26" comments="0" code="26" executable="1" executed="1" percent="100.00"/>
+            <methods count="1" tested="1" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+      </directory>
+      <directory name="Results">
+        <totals>
+          <lines total="120" comments="16" code="104" executable="13" executed="13" percent="100.00"/>
+          <methods count="11" tested="11" percent="100.00"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="2" tested="2" percent="100.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+        <file name="ResultRow.php" href="Results/ResultRow.php.xml">
+          <totals>
+            <lines total="71" comments="6" code="65" executable="10" executed="10" percent="100.00"/>
+            <methods count="8" tested="8" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+        <file name="ResultSet.php" href="Results/ResultSet.php.xml">
+          <totals>
+            <lines total="49" comments="10" code="39" executable="3" executed="3" percent="100.00"/>
+            <methods count="3" tested="3" percent="100.00"/>
+            <functions count="0" tested="0" percent="0"/>
+            <classes count="1" tested="1" percent="100.00"/>
+            <traits count="0" tested="0" percent="0"/>
+          </totals>
+        </file>
+      </directory>
+      <file name="Configuration.php" href="Configuration.php.xml">
+        <totals>
+          <lines total="32" comments="11" code="21" executable="1" executed="1" percent="100.00"/>
+          <methods count="1" tested="1" percent="100.00"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="1" tested="1" percent="100.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+      </file>
+      <file name="Neo4jQueryAPI.php" href="Neo4jQueryAPI.php.xml">
+        <totals>
+          <lines total="125" comments="10" code="115" executable="46" executed="37" percent="80.43"/>
+          <methods count="7" tested="4" percent="57.14"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="1" tested="0" percent="0.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+      </file>
+      <file name="Neo4jRequestFactory.php" href="Neo4jRequestFactory.php.xml">
+        <totals>
+          <lines total="91" comments="1" code="90" executable="28" executed="28" percent="100.00"/>
+          <methods count="7" tested="7" percent="100.00"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="1" tested="1" percent="100.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+      </file>
+      <file name="OGM.php" href="OGM.php.xml">
+        <totals>
+          <lines total="134" comments="4" code="130" executable="61" executed="57" percent="93.44"/>
+          <methods count="7" tested="4" percent="57.14"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="1" tested="0" percent="0.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+      </file>
+      <file name="ResponseParser.php" href="ResponseParser.php.xml">
+        <totals>
+          <lines total="171" comments="15" code="156" executable="88" executed="88" percent="100.00"/>
+          <methods count="9" tested="9" percent="100.00"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="1" tested="1" percent="100.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+      </file>
+      <file name="Transaction.php" href="Transaction.php.xml">
+        <totals>
+          <lines total="79" comments="13" code="66" executable="18" executed="10" percent="55.56"/>
+          <methods count="5" tested="3" percent="60.00"/>
+          <functions count="0" tested="0" percent="0"/>
+          <classes count="1" tested="0" percent="0.00"/>
+          <traits count="0" tested="0" percent="0"/>
+        </totals>
+      </file>
+    </directory>
+  </project>
+</phpunit>

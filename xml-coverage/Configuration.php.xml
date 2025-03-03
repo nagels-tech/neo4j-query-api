@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<phpunit xmlns="https://schema.phpunit.de/coverage/1.0">
+  <file name="Configuration.php" path="/">
+    <totals>
+      <lines total="32" comments="11" code="21" executable="1" executed="1" percent="100.00"/>
+      <methods count="1" tested="1" percent="100.00"/>
+      <functions count="0" tested="0" percent="0"/>
+      <classes count="1" tested="1" percent="100.00"/>
+      <traits count="0" tested="0" percent="0"/>
+    </totals>
+    <class name="Neo4j\QueryAPI\Configuration" start="9" executable="1" executed="1" crap="1">
+      <namespace name="Neo4j\QueryAPI"/>
+      <method name="__construct" signature="__construct(string $baseUri, string $database, bool $includeCounters, Neo4j\QueryAPI\Objects\Bookmarks $bookmarks, Neo4j\QueryAPI\Enums\AccessMode $accessMode)" start="22" end="30" crap="1" executable="1" executed="1" coverage="100"/>
+    </class>
+    <coverage>
+      <line nr="30">
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithWriteAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithReadAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testReadModeWithWriteQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testWriteModeWithReadQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testCreateBookmarks"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testInvalidBookmarkThrowsException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithExactNames"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithSingleName"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithInteger"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithFloat"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNull"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithBoolean"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithString"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithArray"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDate"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDuration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithPath"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithMap"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithRelationship"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testParseRunQueryResponse"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryHandling"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testCounters"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testLoginWithValidConfiguration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testLoginWithNullConfiguration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testConfigOnly"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateMovieQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateFriendsQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateKnowsBidirectionalRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateActedInRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testChildQueryPlanExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testCorrectClientSetup"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testRunSuccess"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRunQueryRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildBeginTransactionRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildCommitRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRollbackRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithHeadersAndBody"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithoutAuthorizationHeader"/>
+      </line>
+    </coverage>
+    <source>
+      <line no="1">
+        <token name="T_OPEN_TAG">&lt;?php</token>
+      </line>
+      <line no="2"/>
+      <line no="3">
+        <token name="T_NAMESPACE">namespace</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">Neo4j\QueryAPI</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="4"/>
+      <line no="5">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">InvalidArgumentException</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="6">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">Neo4j\QueryAPI\Objects\Bookmarks</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="7">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">Neo4j\QueryAPI\Enums\AccessMode</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="8"/>
+      <line no="9">
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CLASS">class</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Configuration</token>
+      </line>
+      <line no="10">
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="11">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_DOC_COMMENT">/**</token>
+      </line>
+      <line no="12">
+        <token name="T_DOC_COMMENT">     * Constructor for Configuration class.</token>
+      </line>
+      <line no="13">
+        <token name="T_DOC_COMMENT">     *</token>
+      </line>
+      <line no="14">
+        <token name="T_DOC_COMMENT">     * @param string $baseUri     The base URI for the Neo4j instance.</token>
+      </line>
+      <line no="15">
+        <token name="T_DOC_COMMENT">     * @param string $database    The name of the database to connect to.</token>
+      </line>
+      <line no="16">
+        <token name="T_DOC_COMMENT">     * @param bool   $includeCounters Whether to include counters in the response.</token>
+      </line>
+      <line no="17">
+        <token name="T_DOC_COMMENT">     * @param Bookmarks $bookmarks Bookmarks for tracking queries.</token>
+      </line>
+      <line no="18">
+        <token name="T_DOC_COMMENT">     * @param AccessMode $accessMode The access mode for the connection (read/write).</token>
+      </line>
+      <line no="19">
+        <token name="T_DOC_COMMENT">     *</token>
+      </line>
+      <line no="20">
+        <token name="T_DOC_COMMENT">     * @throws InvalidArgumentException if $baseUri is empty.</token>
+      </line>
+      <line no="21">
+        <token name="T_DOC_COMMENT">     */</token>
+      </line>
+      <line no="22">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">__construct</token>
+        <token name="T_OPEN_BRACKET">(</token>
+      </line>
+      <line no="23">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE">  </token>
+        <token name="T_STRING">string</token>
+        <token name="T_WHITESPACE">     </token>
+        <token name="T_VARIABLE">$baseUri</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="24">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE">  </token>
+        <token name="T_STRING">string</token>
+        <token name="T_WHITESPACE">     </token>
+        <token name="T_VARIABLE">$database</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'neo4j'</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="25">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE">  </token>
+        <token name="T_STRING">bool</token>
+        <token name="T_WHITESPACE">       </token>
+        <token name="T_VARIABLE">$includeCounters</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">true</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="26">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE">  </token>
+        <token name="T_STRING">Bookmarks</token>
+        <token name="T_WHITESPACE">  </token>
+        <token name="T_VARIABLE">$bookmarks</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NEW">new</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">Bookmarks</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_OPEN_SQUARE">[</token>
+        <token name="T_CLOSE_SQUARE">]</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="27">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE">  </token>
+        <token name="T_STRING">AccessMode</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$accessMode</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">AccessMode</token>
+        <token name="T_DOUBLE_COLON">::</token>
+        <token name="T_STRING">WRITE</token>
+        <token name="T_COMMA">,</token>
+      </line>
+      <line no="28">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="29"/>
+      <line no="30">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="31">
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="32"/>
+    </source>
+  </file>
+</phpunit>

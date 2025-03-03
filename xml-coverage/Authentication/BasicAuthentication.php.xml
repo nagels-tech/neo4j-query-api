@@ -1,0 +1,612 @@
+<?xml version="1.0"?>
+<phpunit xmlns="https://schema.phpunit.de/coverage/1.0">
+  <file name="BasicAuthentication.php" path="/Authentication">
+    <totals>
+      <lines total="40" comments="3" code="37" executable="6" executed="6" percent="100.00"/>
+      <methods count="4" tested="4" percent="100.00"/>
+      <functions count="0" tested="0" percent="0"/>
+      <classes count="1" tested="1" percent="100.00"/>
+      <traits count="0" tested="0" percent="0"/>
+    </totals>
+    <class name="Neo4j\QueryAPI\Authentication\BasicAuthentication" start="7" executable="6" executed="6" crap="6">
+      <namespace name="Neo4j\QueryAPI\Authentication"/>
+      <method name="__construct" signature="__construct(?string $username, ?string $password)" start="12" end="16" crap="3" executable="2" executed="2" coverage="100"/>
+      <method name="authenticate" signature="authenticate(Psr\Http\Message\RequestInterface $request): Psr\Http\Message\RequestInterface" start="19" end="24" crap="1" executable="2" executed="2" coverage="100"/>
+      <method name="getHeader" signature="getHeader(): string" start="26" end="30" crap="1" executable="1" executed="1" coverage="100"/>
+      <method name="getType" signature="getType(): string" start="34" end="38" crap="1" executable="1" executed="1" coverage="100"/>
+    </class>
+    <coverage>
+      <line nr="14">
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithWriteAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithReadAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testReadModeWithWriteQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testWriteModeWithReadQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testCreateBookmarks"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testInvalidBookmarkThrowsException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithExactNames"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithSingleName"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithInteger"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithFloat"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNull"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithBoolean"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithString"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithArray"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDate"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDuration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithPath"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithMap"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithRelationship"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testParseRunQueryResponse"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryHandling"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testCounters"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testLoginWithValidConfiguration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testLoginWithNullConfiguration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testConfigOnly"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateMovieQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateFriendsQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateKnowsBidirectionalRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateActedInRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testChildQueryPlanExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testAuthenticateAddsAuthorizationHeader"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testGetHeaderReturnsCorrectValue"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testGetTypeReturnsBasic"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testBasicAuthentication"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testFallbackToEnvironmentVariables"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testCorrectClientSetup"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testRunSuccess"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRunQueryRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildBeginTransactionRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildCommitRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRollbackRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithHeadersAndBody"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithoutAuthorizationHeader"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\objects\AuthenticationUnitTest::testBasicReturnsBasicAuthenticationInstance"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\objects\AuthenticationUnitTest::testFromEnvironmentReturnsBasicAuthenticationInstance"/>
+      </line>
+      <line nr="15">
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithWriteAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithReadAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testReadModeWithWriteQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testWriteModeWithReadQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testCreateBookmarks"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testInvalidBookmarkThrowsException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithExactNames"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithSingleName"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithInteger"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithFloat"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNull"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithBoolean"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithString"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithArray"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDate"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDuration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithPath"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithMap"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithRelationship"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testParseRunQueryResponse"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryHandling"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testCounters"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testLoginWithValidConfiguration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testLoginWithNullConfiguration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPITest::testConfigOnly"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateMovieQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateFriendsQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateKnowsBidirectionalRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateActedInRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testChildQueryPlanExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testAuthenticateAddsAuthorizationHeader"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testGetHeaderReturnsCorrectValue"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testGetTypeReturnsBasic"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testBasicAuthentication"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testFallbackToEnvironmentVariables"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testCorrectClientSetup"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testRunSuccess"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRunQueryRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildBeginTransactionRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildCommitRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRollbackRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithHeadersAndBody"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithoutAuthorizationHeader"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\objects\AuthenticationUnitTest::testBasicReturnsBasicAuthenticationInstance"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\objects\AuthenticationUnitTest::testFromEnvironmentReturnsBasicAuthenticationInstance"/>
+      </line>
+      <line nr="22">
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithWriteAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithReadAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testReadModeWithWriteQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testWriteModeWithReadQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testCreateBookmarks"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testInvalidBookmarkThrowsException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithExactNames"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithSingleName"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithInteger"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithFloat"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNull"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithBoolean"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithString"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithArray"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDate"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDuration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithPath"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithMap"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithRelationship"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testParseRunQueryResponse"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryHandling"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testCounters"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateMovieQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateFriendsQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateKnowsBidirectionalRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateActedInRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testChildQueryPlanExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testAuthenticateAddsAuthorizationHeader"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testRunSuccess"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRunQueryRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildBeginTransactionRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildCommitRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRollbackRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithHeadersAndBody"/>
+      </line>
+      <line nr="23">
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithWriteAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithReadAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testReadModeWithWriteQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testWriteModeWithReadQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testCreateBookmarks"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testInvalidBookmarkThrowsException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithExactNames"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithSingleName"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithInteger"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithFloat"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNull"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithBoolean"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithString"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithArray"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDate"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDuration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithPath"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithMap"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithRelationship"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testParseRunQueryResponse"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryHandling"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testCounters"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateMovieQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateFriendsQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateKnowsBidirectionalRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateActedInRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testChildQueryPlanExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testAuthenticateAddsAuthorizationHeader"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testRunSuccess"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRunQueryRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildBeginTransactionRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildCommitRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRollbackRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithHeadersAndBody"/>
+      </line>
+      <line nr="29">
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithWriteAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testRunWithReadAccessMode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testReadModeWithWriteQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\AccessModesIntegrationTest::testWriteModeWithReadQuery"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testCreateBookmarks"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\BookmarksIntegrationTest::testInvalidBookmarkThrowsException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithExactNames"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithSingleName"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithInteger"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithFloat"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNull"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithBoolean"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithString"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithArray"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDate"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithDuration"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithWGS84_3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian2DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithCartesian3DPoint"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithNode"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithPath"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithMap"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\DataTypesIntegrationTest::testWithRelationship"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testParseRunQueryResponse"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryHandling"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testCounters"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jQueryAPIIntegrationTest::testInvalidQueryException"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testTransactionRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndCommit"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\Neo4jTransactionIntegrationTest::testCreateNodeAndRollback"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateMovieQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateFriendsQueryExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateKnowsBidirectionalRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testProfileCreateActedInRelationships"/>
+        <covered by="Neo4j\QueryAPI\Tests\Integration\ProfiledQueryPlanIntegrationTest::testChildQueryPlanExistence"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testAuthenticateAddsAuthorizationHeader"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testGetHeaderReturnsCorrectValue"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testBasicAuthentication"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testFallbackToEnvironmentVariables"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jQueryAPIUnitTest::testRunSuccess"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRunQueryRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildBeginTransactionRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildCommitRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testBuildRollbackRequest"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithHeadersAndBody"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Neo4jRequestFactoryTest::testCreateRequestWithoutAuthorizationHeader"/>
+      </line>
+      <line nr="37">
+        <covered by="Neo4j\QueryAPI\Tests\Unit\Authentication\BasicAuthenticationUnitTest::testGetTypeReturnsBasic"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testBasicAuthentication"/>
+        <covered by="Neo4j\QueryAPI\Tests\Unit\AuthenticationTest::testFallbackToEnvironmentVariables"/>
+      </line>
+    </coverage>
+    <source>
+      <line no="1">
+        <token name="T_OPEN_TAG">&lt;?php</token>
+      </line>
+      <line no="2"/>
+      <line no="3">
+        <token name="T_NAMESPACE">namespace</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">Neo4j\QueryAPI\Authentication</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="4"/>
+      <line no="5">
+        <token name="T_USE">use</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_NAME_QUALIFIED">Psr\Http\Message\RequestInterface</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="6"/>
+      <line no="7">
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CLASS">class</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">BasicAuthentication</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_IMPLEMENTS">implements</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">AuthenticateInterface</token>
+      </line>
+      <line no="8">
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="9">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PRIVATE">private</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">string</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$username</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="10">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PRIVATE">private</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">string</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$password</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="11"/>
+      <line no="12">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">__construct</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_QUESTION_MARK">?</token>
+        <token name="T_STRING">string</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$username</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">null</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_QUESTION_MARK">?</token>
+        <token name="T_STRING">string</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$password</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">null</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+      </line>
+      <line no="13">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="14">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$this</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">username</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$username</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_COALESCE">??</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_STRING">is_string</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$envUser</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">getenv</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">"NEO4J_USERNAME"</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_QUESTION_MARK">?</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$envUser</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_COLON">:</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">''</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="15">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$this</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">password</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$password</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_COALESCE">??</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_STRING">is_string</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$envPass</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">getenv</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">"NEO4J_PASSWORD"</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_QUESTION_MARK">?</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$envPass</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_COLON">:</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">''</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="16">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="17"/>
+      <line no="18"/>
+      <line no="19">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_ATTRIBUTE">#[</token>
+        <token name="T_NAME_FULLY_QUALIFIED">\Override</token>
+        <token name="T_CLOSE_SQUARE">]</token>
+      </line>
+      <line no="20">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">authenticate</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_STRING">RequestInterface</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$request</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COLON">:</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">RequestInterface</token>
+      </line>
+      <line no="21">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="22">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_VARIABLE">$authHeader</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_EQUAL">=</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$this</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">getHeader</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="23">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$request</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">withHeader</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Authorization'</token>
+        <token name="T_COMMA">,</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$authHeader</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="24">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="25"/>
+      <line no="26">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_ATTRIBUTE">#[</token>
+        <token name="T_NAME_FULLY_QUALIFIED">\Override</token>
+        <token name="T_CLOSE_SQUARE">]</token>
+      </line>
+      <line no="27">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">getHeader</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COLON">:</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">string</token>
+      </line>
+      <line no="28">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="29">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Basic '</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOT">.</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">base64_encode</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_VARIABLE">$this</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">username</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOT">.</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">':'</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_DOT">.</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_VARIABLE">$this</token>
+        <token name="T_OBJECT_OPERATOR">-&gt;</token>
+        <token name="T_STRING">password</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="30">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="31">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_DOC_COMMENT">/**</token>
+      </line>
+      <line no="32">
+        <token name="T_DOC_COMMENT">     * @psalm-suppress UnusedMethod</token>
+      </line>
+      <line no="33">
+        <token name="T_DOC_COMMENT">     */</token>
+      </line>
+      <line no="34">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_ATTRIBUTE">#[</token>
+        <token name="T_NAME_FULLY_QUALIFIED">\Override</token>
+        <token name="T_CLOSE_SQUARE">]</token>
+      </line>
+      <line no="35">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_PUBLIC">public</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_FUNCTION">function</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">getType</token>
+        <token name="T_OPEN_BRACKET">(</token>
+        <token name="T_CLOSE_BRACKET">)</token>
+        <token name="T_COLON">:</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_STRING">string</token>
+      </line>
+      <line no="36">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_OPEN_CURLY">{</token>
+      </line>
+      <line no="37">
+        <token name="T_WHITESPACE">        </token>
+        <token name="T_RETURN">return</token>
+        <token name="T_WHITESPACE"> </token>
+        <token name="T_CONSTANT_ENCAPSED_STRING">'Basic'</token>
+        <token name="T_SEMICOLON">;</token>
+      </line>
+      <line no="38">
+        <token name="T_WHITESPACE">    </token>
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="39">
+        <token name="T_CLOSE_CURLY">}</token>
+      </line>
+      <line no="40"/>
+    </source>
+  </file>
+</phpunit>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd">
+    <!-- Define a basic testsuite -->
+    <testsuites>
+        <testsuite name="Default">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+
+    <!-- Coverage configuration -->
+    <php>
+        <!-- Define environment variables here -->
+        <env name="NEO4J_ADDRESS" value="***REMOVED***"/>
+        <env name="NEO4J_USERNAME" value="neo4j"/>
+        <env name="NEO4J_PASSWORD" value="***REMOVED***"/>
+    </php>
+    <source>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </source>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory>src</directory>
+        </include>
+        <report>
+            <clover outputFile="clover.xml"/>
+            <cobertura outputFile="cobertura.xml"/>
+            <crap4j outputFile="crap4j.xml" threshold="50"/>
+            <html outputDirectory="coverage" lowUpperBound="35" highLowerBound="70"/>
+            <php outputFile="coverage.php"/>
+            <text outputFile="coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
+            <xml outputDirectory="xml-coverage"/>
+            <!-- Generates an HTML report in the "coverage" folder -->
+            <!-- Also output a text summary in the console -->
+            <text/>
+        </report>
+    </coverage>
+</phpunit>
