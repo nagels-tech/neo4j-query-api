@@ -5,6 +5,7 @@ namespace Neo4j\QueryAPI\Objects;
 final class ProfiledQueryPlan
 {
     public function __construct(
+        public readonly ProfiledQueryPlanArguments $arguments,
         public readonly int $dbHits = 0,
         public readonly int $records = 0,
         public readonly bool $hasPageCacheStats = false,
@@ -13,7 +14,6 @@ final class ProfiledQueryPlan
         public readonly float $pageCacheHitRatio = 0.0,
         public readonly int $time = 0,
         public readonly string $operatorType = '',
-        public readonly ProfiledQueryPlanArguments $arguments,
         public readonly array $children = [],
         public readonly array $identifiers = []
     ) {
