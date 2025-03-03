@@ -10,7 +10,8 @@
          failOnRisky="true"
          failOnSkipped="true"
          failOnWarning="true"
->
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnPhpunitDeprecations="true">
     <testsuites>
         <testsuite name="Application Test Suite">
             <directory>./tests</directory>
