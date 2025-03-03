@@ -18,3 +18,5 @@ test
 coverage
 xml-coverage
 composer.lock
+
+.env
