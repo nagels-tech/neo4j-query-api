@@ -24,6 +24,15 @@
         </testsuite>
     </testsuites>
 
+    <coverage>
+        <include>
+            <directory>src/</directory>
+        </include>
+        <report>
+            <clover outputFile="coverage.xml"/>
+        </report>
+    </coverage>
+
     <php>
 <!--    <env name="NEO4J_ADDRESS" value="<put your address here>"/>-->
 <!--    <env name="NEO4J_USERNAME" value="<put your name here>"/>-->
