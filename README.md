@@ -1,5 +1,10 @@
 # Neo4j Query API client
 
+
+![License](https://img.shields.io/github/license/nagels-tech/neo4j-query-api)
+![Version](https://img.shields.io/github/v/release/nagels-tech/neo4j-query-api)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2cb8a1e71ed04987b1c763a09e196c84)](https://app.codacy.com/gh/nagels-tech/neo4j-query-api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+
 ## Interact programmatically with Top Graph Technology
 
 - Easy to start with, just build your client in one line and start running queries
