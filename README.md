@@ -5,6 +5,7 @@
 ![Version](https://img.shields.io/github/v/release/nagels-tech/neo4j-query-api)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2cb8a1e71ed04987b1c763a09e196c84)](https://app.codacy.com/gh/nagels-tech/neo4j-query-api/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![codecov](https://codecov.io/github/nagels-tech/neo4j-query-api/graph/badge.svg?token=NTHCFY38D7)](https://codecov.io/github/nagels-tech/neo4j-query-api)
+![Packagist Downloads](https://img.shields.io/packagist/dt/neo4j-php/query-api)
 
 ## Interact programmatically with Top Graph Technology
 

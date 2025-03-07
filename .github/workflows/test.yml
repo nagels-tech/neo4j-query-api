@@ -53,7 +53,7 @@ jobs:
           NEO4J_PASSWORD: "password"
         run: vendor/bin/phpunit --configuration phpunit.coverage.xml ./tests
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@0565863
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/coverage.xml
