@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd">
+<phpunit bootstrap="tests/bootstrap.php"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         failOnDeprecation="true"
+         failOnNotice="true"
+         failOnPhpunitDeprecation="true"
+         failOnIncomplete="true"
+         failOnEmptyTestSuite="true"
+         failOnRisky="true"
+         failOnSkipped="true"
+         failOnWarning="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnPhpunitDeprecations="true">
     <!-- Define a basic testsuite -->
     <testsuites>
         <testsuite name="Default">
@@ -13,10 +24,7 @@
         </include>
     </source>
 
-    <coverage processUncoveredFiles="true">
-        <include>
-            <directory>src</directory>
-        </include>
+    <coverage>
         <report>
             <clover outputFile="./coverage/clover.xml"/>
             <cobertura outputFile="./coverage/cobertura.xml"/>

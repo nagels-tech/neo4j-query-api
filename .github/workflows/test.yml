@@ -24,7 +24,7 @@ jobs:
           --health-retries 5
           --health-timeout 5s
 
-    name: Run PHPUnit Tests
+    name: Run PHPUnit Tests With Coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -51,4 +51,11 @@ jobs:
           NEO4J_ADDRESS: "http://localhost:7474"
           NEO4J_USERNAME: "neo4j"
           NEO4J_PASSWORD: "password"
-        run: vendor/bin/phpunit --configuration phpunit.dist.xml ./tests
+        run: vendor/bin/phpunit --configuration phpunit.coverage.xml ./tests
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage.xml
+          fail_ci_if_error: true
+          verbose: true
