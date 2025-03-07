@@ -24,7 +24,7 @@ jobs:
           --health-retries 5
           --health-timeout 5s
 
-    name: Run PHPUnit Tests
+    name: Run PHPUnit Tests With Coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -53,7 +53,7 @@ jobs:
           NEO4J_PASSWORD: "password"
         run: vendor/bin/phpunit --configuration phpunit.coverage.xml ./tests
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@0565863
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/coverage.xml
