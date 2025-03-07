@@ -51,4 +51,11 @@ jobs:
           NEO4J_ADDRESS: "http://localhost:7474"
           NEO4J_USERNAME: "neo4j"
           NEO4J_PASSWORD: "password"
-        run: vendor/bin/phpunit --configuration phpunit.dist.xml ./tests
+        run: vendor/bin/phpunit --configuration phpunit.coverage.xml ./tests
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage.xml
+          fail_ci_if_error: true
+          verbose: true
