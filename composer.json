@@ -1,4 +1,5 @@
 {
+    "license" : "MIT",
     "type": "library",
     "name": "neo4j-php/query-api",
     "description": "Easy to use class to run Cypher queries on the Query API",
