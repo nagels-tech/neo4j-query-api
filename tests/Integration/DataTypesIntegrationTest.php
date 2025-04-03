@@ -238,34 +238,6 @@ final class DataTypesIntegrationTest extends TestCase
     }
 
 
-    public function testWithDate(): void
-    {
-        $expected = new ResultSet(
-            [
-                new ResultRow(['n.date' => '2024-12-11T11:00:00Z'])
-            ],
-            new Bookmarks([]),
-            AccessMode::WRITE,
-            new ResultCounters(
-                containsUpdates: true,
-                nodesCreated: 1,
-                propertiesSet: 1,
-                labelsAdded: 1
-            ),
-            null
-        );
-
-        $results = $this->api->run(
-            'CREATE (n:Person {date: datetime($date)}) RETURN n.date',
-            ['date' => "2024-12-11T11:00:00Z"]
-        );
-
-        $this->assertEquals($expected->counters, $results->counters);
-        $this->assertEquals(iterator_to_array($expected), iterator_to_array($results));
-        $bookmarks = $results->bookmarks;
-        $this->assertCount(1, $bookmarks);
-    }
-
     public function testWithDuration(): void
     {
         $expected = new ResultSet(

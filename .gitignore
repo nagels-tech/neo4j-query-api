@@ -20,3 +20,4 @@ xml-coverage
 composer.lock
 
 .env
+.phpunit.result.cache
