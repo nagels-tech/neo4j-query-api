@@ -18,7 +18,7 @@ use Traversable;
  * @implements ArrayAccess<int, ResultRow>
  * @implements IteratorAggregate<int, ResultRow>
  */
-final class ResultSet implements IteratorAggregate, Countable, ArrayAccess
+ class ResultSet implements IteratorAggregate, Countable, ArrayAccess
 {
     /**
      * @param list<ResultRow> $rows
