@@ -15,6 +15,7 @@ use Traversable;
 
 /**
  * @template TValue
+ * @implements ArrayAccess<int, ResultRow>
  * @implements IteratorAggregate<int, ResultRow>
  */
 final class ResultSet implements IteratorAggregate, Countable, ArrayAccess
@@ -28,8 +29,7 @@ final class ResultSet implements IteratorAggregate, Countable, ArrayAccess
         public readonly AccessMode         $accessMode,
         public readonly ?ResultCounters    $counters = null,
         public readonly ?ProfiledQueryPlan $profiledQueryPlan = null
-    )
-    {
+    ) {
     }
 
     /**
@@ -56,21 +56,25 @@ final class ResultSet implements IteratorAggregate, Countable, ArrayAccess
         return $this->rows[$index];
 
     }
+    #[\Override]
 
     public function offsetExists(mixed $offset): bool
     {
         return isset($this->rows[$offset]);
     }
+    #[\Override]
 
     public function offsetGet(mixed $offset): mixed
     {
         return $this->rows[$offset] ?? throw new \OutOfBoundsException("Index $offset is out of bounds.");
     }
+    #[\Override]
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
         throw new \LogicException("ResultSet is immutable. You cannot modify elements.");
     }
+    #[\Override]
 
     public function offsetUnset(mixed $offset): void
     {

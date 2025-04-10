@@ -4,7 +4,7 @@ namespace Neo4j\QueryAPI\Objects\Temporal;
 
 final class Date
 {
-    public  int $days;
+    public int $days;
 
     public function __construct(int $days)
     {

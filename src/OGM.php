@@ -41,8 +41,8 @@ final class OGM
             'OffsetDateTime' => $this->mapDateTime($data['_value']),
             'Time' => $this->mapTime($data['_value']),
             'LocalTime' => $this->mapLocalTime($data['_value']),
-            'LocalDateTime'=> $this->mapLocalDateTime($data['_value']),
-            'Duration'=>$this->mapDuration($data['_value']),
+            'LocalDateTime' => $this->mapLocalDateTime($data['_value']),
+            'Duration' => $this->mapDuration($data['_value']),
 
             'String' => $this->isValidTimeZone($data['_value'])
                 ? new DateTimeZoneId($data['_value'])  //  Convert timezone strings to `DateTimeZoneId`
@@ -147,19 +147,19 @@ final class OGM
         return $mappedProperties;
     }
 
-    private function mapDate(string $value)
+    private function mapDate(string $value): Date
     {
         $totalDaysSinceEpoch = (new \DateTime($value))->diff(new \DateTime('@0'))->days;
 
         return new Date($totalDaysSinceEpoch);
     }
 
-    private function mapDateTime(string $value)
+    private function mapDateTime(string $value): DateTime
     {
         return new DateTime($value);
     }
 
-    private function mapDateTimeZoneId(string $value)
+    private function mapDateTimeZoneId(string $value): DateTimeZoneId
     {
         return new DateTimeZoneId($value);
     }
@@ -169,24 +169,24 @@ final class OGM
         return in_array($value, timezone_identifiers_list(), true);
     }
 
-    private function mapTime(mixed $_value)
+    private function mapTime(mixed $_value): Time
     {
         return new Time($_value);
 
     }
 
-    private function mapLocalTime(mixed $_value)
+    private function mapLocalTime(mixed $_value): LocalTime
     {
         return new LocalTime($_value);
     }
 
-    private function mapLocalDateTime(mixed $_value)
+    private function mapLocalDateTime(mixed $_value): LocalDateTime
     {
-         return new LocalDateTime($_value);
+        return new LocalDateTime($_value);
     }
 
-    private function mapDuration(mixed $_value)
+    private function mapDuration(mixed $_value): Duration
     {
-         return new Duration($_value);
+        return new Duration($_value);
     }
 }

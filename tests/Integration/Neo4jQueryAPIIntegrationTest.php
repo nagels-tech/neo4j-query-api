@@ -25,8 +25,8 @@ use Throwable;
 final class Neo4jQueryAPIIntegrationTest extends TestCase
 {
     private Neo4jQueryAPI $api;
+    #[\Override]
 
-    #[Override]
     public function setUp(): void
     {
         parent::setUp();
@@ -136,8 +136,11 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
         $datetime = $results->rows[0]->data['datetime'];
         $this->assertInstanceOf(DateTime::class, $datetime);
 
-        $this->assertEquals(date_create()->format('Y-m-d'), $datetime->getDateTime()->format('Y-m-d'));
+        $now = date_create();
+        $this->assertNotFalse($now);
+        $this->assertEquals($now->format('Y-m-d'), $datetime->getDateTime()->format('Y-m-d'));
     }
+
 
     public function testTemporalDateTimeZoneId(): void
     {
@@ -165,6 +168,8 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $neo4jTime = $time->getTime();
         $expectedTime = (new \DateTime())->format('H:i');
+        $this->assertNotEmpty($expectedTime);
+
         $this->assertStringStartsWith($expectedTime, $neo4jTime);
     }
 
@@ -180,6 +185,7 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
         $neo4jLocalTime = $localTime->getLocalTime();
 
         $expectedLocalTime = (new \DateTime())->format('H:i');
+        $this->assertNotEmpty($expectedLocalTime);
 
         $this->assertStringStartsWith($expectedLocalTime, $neo4jLocalTime);
     }
@@ -197,7 +203,11 @@ final class Neo4jQueryAPIIntegrationTest extends TestCase
 
         $neo4jLocalDateTime = $localDateTime->getLocalDateTime();
 
-        $expectedDate = date_create()->format('Y-m-d');
+        $expectedDateTime = date_create();
+        $this->assertNotFalse($expectedDateTime); // 💡 Ensure it's not false
+
+        $expectedDate = $expectedDateTime->format('Y-m-d');
+        $this->assertNotEmpty($expectedDate);
 
         $this->assertEquals($expectedDate, $neo4jLocalDateTime->format('Y-m-d'));
     }

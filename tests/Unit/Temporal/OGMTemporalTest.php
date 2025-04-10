@@ -6,9 +6,10 @@ use PHPUnit\Framework\TestCase;
 use Neo4j\QueryAPI\OGM;
 use Neo4j\QueryAPI\Objects\Temporal\Date;
 
-class OGMTemporalTest extends TestCase
+final class OGMTemporalTest extends TestCase
 {
     private OGM $ogm;
+    #[\Override]
 
     protected function setUp(): void
     {
