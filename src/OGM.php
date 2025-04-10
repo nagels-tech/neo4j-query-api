@@ -16,7 +16,7 @@ use Neo4j\QueryAPI\Objects\Temporal\LocalDateTime;
 use Neo4j\QueryAPI\Objects\Temporal\LocalTime;
 use Neo4j\QueryAPI\Objects\Temporal\Time;
 
-class OGM
+final class OGM
 {
     /**
      * @param array<array-key, mixed> $data
