@@ -18,7 +18,7 @@ use Traversable;
 final class ResultRow implements ArrayAccess, Countable, IteratorAggregate
 {
     /** @var array<string, TValue> */
-    private array $data;
+    public array $data;
 
     public function __construct(array $data)
     {
